@@ -1,12 +1,1 @@
 target/
-
-.idea/
-*.iml
-
-.settings/
-.project
-.classpath
-
-.vscode/
-
-.DS_Store
