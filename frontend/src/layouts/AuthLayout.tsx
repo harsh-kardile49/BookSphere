@@ -7,13 +7,7 @@ const AuthLayout = () => {
         className="row justify-content-center align-items-center"
         style={{ minHeight: "100vh" }}
       >
-        <div className="col-md-6 col-lg-4">
-          <div className="card shadow">
-            <div className="card-body">
-              <Outlet />
-            </div>
-          </div>
-        </div>
+        <Outlet />
       </div>
     </div>
   );

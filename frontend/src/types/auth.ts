@@ -1,16 +1,22 @@
 /**
- * User Model
+ * User Roles Supported in BookSphere
+ */
+export type UserRole = "ADMIN" | "LIBRARIAN" | "STUDENT" | "USER";
+
+/**
+ * User Entity Interface
  */
 export interface User {
-  id: number;
+  id: number | string;
   firstName: string;
   lastName: string;
   email: string;
-  role: "ADMIN" | "USER";
+  role: UserRole;
+  avatarUrl?: string;
 }
 
 /**
- * Login Request
+ * Login Request Payload
  */
 export interface LoginRequest {
   email: string;
@@ -18,15 +24,7 @@ export interface LoginRequest {
 }
 
 /**
- * Login Response
- */
-export interface LoginResponse {
-  token: string;
-  user: User;
-}
-
-/**
- * Register Request
+ * Register Request Payload
  */
 export interface RegisterRequest {
   firstName: string;
@@ -34,4 +32,16 @@ export interface RegisterRequest {
   email: string;
   password: string;
   confirmPassword: string;
+  role?: UserRole;
 }
+
+/**
+ * Authentication API Response
+ */
+export interface LoginResponse {
+  token: string;
+  refreshToken?: string;
+  user: User;
+}
+
+export type AuthResponse = LoginResponse;

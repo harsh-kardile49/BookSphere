@@ -1,66 +1,93 @@
 import { NavLink } from "react-router-dom";
+import { useAuthStore } from "../../store/authStore";
+import type { UserRole } from "../../types/auth";
+
+interface NavMenuItem {
+  label: string;
+  path: string;
+  icon: string;
+  roles: UserRole[];
+}
+
+const MENU_ITEMS: NavMenuItem[] = [
+  {
+    label: "Dashboard",
+    path: "/dashboard",
+    icon: "📊",
+    roles: ["ADMIN", "LIBRARIAN", "STUDENT", "USER"],
+  },
+  {
+    label: "Books Catalogue",
+    path: "/books",
+    icon: "📖",
+    roles: ["ADMIN", "LIBRARIAN"],
+  },
+  {
+    label: "Members Directory",
+    path: "/members",
+    icon: "👥",
+    roles: ["ADMIN", "LIBRARIAN"],
+  },
+  {
+    label: "Borrowing Management",
+    path: "/borrow",
+    icon: "🔄",
+    roles: ["ADMIN", "LIBRARIAN"],
+  },
+  {
+    label: "Analytics & Reports",
+    path: "/reports",
+    icon: "📈",
+    roles: ["ADMIN"],
+  },
+  {
+    label: "My Borrowed Books",
+    path: "/my-books",
+    icon: "📚",
+    roles: ["STUDENT", "USER"],
+  },
+  {
+    label: "My Profile",
+    path: "/profile",
+    icon: "👤",
+    roles: ["STUDENT", "USER"],
+  },
+];
 
 const Sidebar = () => {
+  const { user } = useAuthStore();
+  const userRole = user?.role || "STUDENT";
+
+  const visibleMenuItems = MENU_ITEMS.filter((item) =>
+    item.roles.includes(userRole)
+  );
+
   return (
-    <aside className="bg-light vh-100 border-end">
+    <aside className="bg-white min-vh-100 border-end shadow-sm">
       <div className="p-3">
-        <h5 className="text-primary fw-bold">Menu</h5>
+        <div className="d-flex align-items-center justify-content-between mb-3 px-2">
+          <small className="text-uppercase text-muted fw-bold tracking-wider">
+            Navigation Menu
+          </small>
+        </div>
 
-        <div className="list-group list-group-flush">
-          <NavLink
-            to="/dashboard"
-            className={({ isActive }) =>
-              `list-group-item list-group-item-action ${
-                isActive ? "active" : ""
-              }`
-            }
-          >
-            Dashboard
-          </NavLink>
-
-          <NavLink
-            to="/books"
-            className={({ isActive }) =>
-              `list-group-item list-group-item-action ${
-                isActive ? "active" : ""
-              }`
-            }
-          >
-            Books
-          </NavLink>
-
-          <NavLink
-            to="/members"
-            className={({ isActive }) =>
-              `list-group-item list-group-item-action ${
-                isActive ? "active" : ""
-              }`
-            }
-          >
-            Members
-          </NavLink>
-
-          <NavLink
-            to="/borrow"
-            className={({ isActive }) =>
-              `list-group-item list-group-item-action ${
-                isActive ? "active" : ""
-              }`
-            }
-          >
-            Borrow
-          </NavLink>
-
-          <NavLink
-            to="/return"
-            className={({ isActive }) =>
-              `list-group-item list-group-item-action ${
-                isActive ? "active" : ""
-              }`
-            }
-          >
-            Return
-          </NavLink>
+        <div className="list-group list-group-flush gap-1">
+          {visibleMenuItems.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              className={({ isActive }) =>
+                `list-group-item list-group-item-action rounded-3 border-0 py-2 px-3 fw-medium d-flex align-items-center gap-2 ${
+                  isActive
+                    ? "bg-primary text-white shadow-sm"
+                    : "text-secondary bg-transparent hover-bg-light"
+                }`
+              }
+            >
+              <span>{item.icon}</span>
+              <span>{item.label}</span>
+            </NavLink>
+          ))}
         </div>
       </div>
     </aside>
