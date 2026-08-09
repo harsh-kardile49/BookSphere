@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/books")
+@RequestMapping("/books")  // base url endpoint
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class BookController {
@@ -73,12 +73,21 @@ public class BookController {
 
     @GetMapping("/page")
     public Page<Book> getBooks(
+
             @RequestParam(defaultValue = "0") int page,
+
             @RequestParam(defaultValue = "5") int size,
-            @RequestParam(defaultValue = "price") String sortBy) {
+
+            @RequestParam(defaultValue = "price") String sortBy,
+
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        Sort sort = direction.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
 
         return bookService.getBooks(
-                PageRequest.of(page, size, Sort.by(sortBy))
+                PageRequest.of(page, size, sort)
         );
     }
 }
