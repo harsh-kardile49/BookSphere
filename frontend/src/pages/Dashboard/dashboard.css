@@ -1,0 +1,448 @@
+/* ============================================
+   BookSphere Dashboard Styles — 4K Ultra-Responsive
+   ============================================ */
+
+/* ── Dashboard Container ── */
+.dashboard-page {
+  max-width: 1760px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* ── Section Header ── */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.section-title {
+  font-size: clamp(0.9rem, 1vw, 1.1rem);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.section-subtitle {
+  font-size: clamp(0.75rem, 0.8vw, 0.85rem);
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.section-link {
+  font-size: clamp(0.75rem, 0.8vw, 0.85rem);
+  font-weight: 500;
+  color: var(--text-accent);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: opacity var(--transition-fast);
+}
+
+.section-link:hover {
+  opacity: 0.75;
+  color: var(--text-accent);
+}
+
+/* ── Dashboard Card ── */
+.dash-card {
+  background: var(--surface-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: clamp(16px, 1.5vw, 24px);
+  box-shadow: var(--shadow-sm);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: box-shadow var(--transition-normal), transform var(--transition-normal);
+}
+
+.dash-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.dash-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+/* ── KPI Cards ── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: clamp(10px, 1vw, 18px);
+}
+
+.kpi-card {
+  background: var(--surface-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: clamp(14px, 1.2vw, 20px);
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-normal), transform var(--transition-normal);
+}
+
+.kpi-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.kpi-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.kpi-label {
+  font-size: clamp(0.72rem, 0.75vw, 0.82rem);
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: 0.01em;
+  margin-bottom: 4px;
+}
+
+.kpi-value {
+  font-size: clamp(1.35rem, 1.6vw, 1.85rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+
+.kpi-trend {
+  font-size: clamp(0.68rem, 0.7vw, 0.78rem);
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.kpi-trend--up {
+  color: var(--bs-emerald);
+}
+
+.kpi-trend--down {
+  color: var(--bs-red);
+}
+
+.kpi-trend--neutral {
+  color: var(--text-muted);
+}
+
+.kpi-sparkline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 36px;
+  opacity: 0.14;
+}
+
+/* ── Chart Area ── */
+.chart-filters {
+  display: flex;
+  gap: 4px;
+  background: var(--surface-page);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+  border: 1px solid var(--border-light);
+}
+
+.chart-filter-btn {
+  font-size: clamp(0.68rem, 0.7vw, 0.78rem);
+  font-weight: 500;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.chart-filter-btn:hover {
+  color: var(--text-secondary);
+}
+
+.chart-filter-btn--active {
+  background: var(--surface-card);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── Popular Books ── */
+.popular-book-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.popular-book-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.popular-book-rank {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.68rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.popular-book-cover {
+  width: 36px;
+  height: 48px;
+  border-radius: 6px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.popular-book-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.popular-book-title {
+  font-size: clamp(0.8rem, 0.85vw, 0.9rem);
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.popular-book-author {
+  font-size: clamp(0.7rem, 0.75vw, 0.78rem);
+  color: var(--text-muted);
+}
+
+.popular-book-bar {
+  width: clamp(50px, 4vw, 80px);
+  height: 4px;
+  background: var(--surface-page);
+  border-radius: 2px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.popular-book-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: var(--bs-indigo);
+  transition: width var(--transition-normal);
+}
+
+.popular-book-count {
+  font-size: clamp(0.7rem, 0.75vw, 0.8rem);
+  font-weight: 600;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  width: 28px;
+  text-align: right;
+}
+
+/* ── Overdue Table ── */
+.overdue-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.overdue-row:last-child {
+  border-bottom: none;
+}
+
+.overdue-badge {
+  font-size: clamp(0.65rem, 0.7vw, 0.75rem);
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.overdue-badge--warning {
+  background: var(--bs-amber-light);
+  color: #92400e;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.overdue-badge--danger {
+  background: var(--bs-red-light);
+  color: #991b1b;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+/* ── Activity Timeline ── */
+.activity-item {
+  display: flex;
+  gap: 12px;
+  padding: 10px 0;
+  position: relative;
+}
+
+.activity-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 38px;
+  bottom: -2px;
+  width: 1px;
+  background: var(--border-light);
+}
+
+.activity-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.activity-text {
+  font-size: clamp(0.78rem, 0.82vw, 0.88rem);
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.activity-text strong {
+  font-weight: 600;
+}
+
+.activity-time {
+  font-size: clamp(0.68rem, 0.7vw, 0.75rem);
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+/* ── Quick Actions ── */
+.quick-action-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.quick-action-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  background: var(--surface-page);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: clamp(12px, 1.2vw, 16px);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  text-align: left;
+}
+
+.quick-action-btn:hover {
+  background: var(--surface-card);
+  border-color: var(--bs-indigo);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.quick-action-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.quick-action-label {
+  font-size: clamp(0.78rem, 0.82vw, 0.88rem);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.quick-action-desc {
+  font-size: clamp(0.68rem, 0.72vw, 0.78rem);
+  color: var(--text-muted);
+  line-height: 1.3;
+}
+
+/* ── Availability Ring ── */
+.ring-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.ring-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.ring-legend-label {
+  font-size: clamp(0.75rem, 0.8vw, 0.84rem);
+  color: var(--text-secondary);
+  flex: 1;
+}
+
+.ring-legend-value {
+  font-size: clamp(0.75rem, 0.8vw, 0.84rem);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* ── Responsive Breakpoints (Including 4K & Ultra-Wide) ── */
+@media (max-width: 1599px) {
+  .kpi-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 1100px) {
+  .kpi-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .quick-action-grid {
+    grid-template-columns: 1fr;
+  }
+  .dash-card {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 576px) {
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
+}

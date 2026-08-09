@@ -35,15 +35,17 @@ const AppRoutes = () => {
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<Dashboard />} />
 
-          {/* Admin & Librarian Routes */}
+          {/* Books Routes */}
+          <Route path="/books" element={<Books />} />
           <Route
-            path="/books"
+            path="/books/add"
             element={
               <ProtectedRoute allowedRoles={["ADMIN", "LIBRARIAN"]}>
-                <Books />
+                <PlaceholderPage title="Add New Book Form" />
               </ProtectedRoute>
             }
           />
+          <Route path="/books/:id" element={<Books />} />
           <Route
             path="/members"
             element={
