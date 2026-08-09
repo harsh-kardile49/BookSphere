@@ -5,6 +5,7 @@ import {
   UserPlus,
   CalendarPlus,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 
 interface QuickAction {
@@ -75,6 +76,7 @@ const actions: QuickAction[] = [
 ];
 
 const QuickActions = () => {
+  const navigate = useNavigate();
   const { user } = useAuthStore();
   const role = user?.role || "STUDENT";
 
@@ -91,10 +93,7 @@ const QuickActions = () => {
           <button
             key={action.label}
             className="quick-action-btn"
-            onClick={() => {
-              // Navigate via window.location for now; can integrate with useNavigate in parent
-              window.location.href = action.path;
-            }}
+            onClick={() => navigate(action.path)}
           >
             <div
               className="quick-action-icon"

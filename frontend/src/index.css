@@ -105,7 +105,98 @@ h6 {
 /* ── Selection ── */
 ::selection {
   background: var(--bs-indigo-light);
-  color: var(--bs-indigo);
 }
 
-```
+/* ============================================
+   Apple Dynamic Island Toast Notifications
+   ============================================ */
+
+[data-sonner-toaster][data-position^='top'] {
+  top: 20px !important;
+}
+
+[data-sonner-toaster] {
+  font-family: 'Manrope', sans-serif !important;
+}
+
+.dynamic-island-toast {
+  background: #09090b !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  border-radius: 9999px !important;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05) !important;
+  padding: 10px 22px !important;
+  gap: 12px !important;
+  min-height: 46px !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transform-origin: top center !important;
+}
+
+.dynamic-island-toast [data-title] {
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  font-size: 0.86rem !important;
+  letter-spacing: -0.01em !important;
+  margin: 0 !important;
+}
+
+.dynamic-island-toast [data-description] {
+  color: #a1a1aa !important;
+  font-size: 0.76rem !important;
+  font-weight: 500 !important;
+  margin-top: 2px !important;
+}
+
+.dynamic-island-toast [data-icon] {
+  margin-right: 2px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.dynamic-island-toast [data-icon] svg {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+/* Success icon glow */
+.dynamic-island-toast[data-type="success"] [data-icon] {
+  color: #34d399 !important;
+}
+
+/* Error icon glow */
+.dynamic-island-toast[data-type="error"] [data-icon] {
+  color: #f87171 !important;
+}
+
+/* Info icon glow */
+.dynamic-island-toast[data-type="info"] [data-icon] {
+  color: #818cf8 !important;
+}
+
+/* Warning icon glow */
+.dynamic-island-toast[data-type="warning"] [data-icon] {
+  color: #fbbf24 !important;
+}
+
+/* Close button styling inside Dynamic Island pill */
+.dynamic-island-toast [data-close-button] {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  color: #e4e4e7 !important;
+  border-radius: 50% !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  right: 12px !important;
+  left: auto !important;
+  width: 20px !important;
+  height: 20px !important;
+  transition: all 0.15s ease !important;
+}
+
+.dynamic-island-toast [data-close-button]:hover {
+  background: rgba(255, 255, 255, 0.25) !important;
+  color: #ffffff !important;
+}

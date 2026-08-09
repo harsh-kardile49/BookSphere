@@ -5,6 +5,9 @@ import AuthLayout from "../layouts/AuthLayout";
 import AdminLayout from "../layouts/AdminLayout";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import Books from "../pages/Books/Books";
+import Borrow from "../pages/Borrow/Borrow";
+import Return from "../pages/Return/Return";
+import Members from "../pages/Members/Members";
 import NotFound from "../pages/NotFound";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -49,19 +52,13 @@ const AppRoutes = () => {
           <Route
             path="/members"
             element={
-              <ProtectedRoute allowedRoles={["ADMIN", "LIBRARIAN"]}>
-                <PlaceholderPage title="Members Management" />
+              <ProtectedRoute allowedRoles={["ADMIN", "LIBRARIAN", "STUDENT", "USER"]}>
+                <Members />
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/borrow"
-            element={
-              <ProtectedRoute allowedRoles={["ADMIN", "LIBRARIAN"]}>
-                <PlaceholderPage title="Borrow & Return Management" />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/borrow" element={<Borrow />} />
+          <Route path="/return" element={<Return />} />
           <Route
             path="/reports"
             element={

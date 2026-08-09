@@ -69,15 +69,14 @@ const BookDetailsModal = ({ book, onClose }: BookDetailsModalProps) => {
                   </div>
 
                   <span
-                    className={`badge ${
-                      book.availability === "Available"
-                        ? "bg-success-subtle text-success"
-                        : book.availability === "Issued"
+                    className={`badge ${book.availability === "Available"
+                      ? "bg-success-subtle text-success"
+                      : book.availability === "Issued"
                         ? "bg-primary-subtle text-primary"
                         : book.availability === "Reserved"
-                        ? "bg-warning-subtle text-warning-emphasis"
-                        : "bg-danger-subtle text-danger"
-                    } px-3 py-1 rounded-pill`}
+                          ? "bg-warning-subtle text-warning-emphasis"
+                          : "bg-danger-subtle text-danger"
+                      } px-3 py-1 rounded-pill`}
                   >
                     ● {book.availability}
                   </span>

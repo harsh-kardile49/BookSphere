@@ -44,14 +44,15 @@ const MENU_ITEMS: NavMenuItem[] = [
     roles: ["ADMIN", "LIBRARIAN", "STUDENT", "USER"],
   },
   {
-    id: "saved",
-    path: "/saved",
+    id: "return",
+    path: "/return",
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+        <path d="M3 3v5h5"></path>
       </svg>
     ),
-    roles: ["STUDENT", "USER"],
+    roles: ["ADMIN", "LIBRARIAN", "STUDENT", "USER"],
   },
   {
     id: "members",
@@ -64,7 +65,17 @@ const MENU_ITEMS: NavMenuItem[] = [
         <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
       </svg>
     ),
-    roles: ["ADMIN", "LIBRARIAN"],
+    roles: ["ADMIN", "LIBRARIAN", "STUDENT", "USER"],
+  },
+  {
+    id: "saved",
+    path: "/saved",
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+      </svg>
+    ),
+    roles: ["STUDENT", "USER"],
   },
   {
     id: "settings",

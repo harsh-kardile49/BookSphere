@@ -3,16 +3,13 @@ import { Toaster } from "sonner";
 const Toast = () => {
   return (
     <Toaster
-      position="top-right"
-      richColors
-      closeButton
-      duration={3000}
+      position="top-center"
+      duration={3200}
       expand={false}
       visibleToasts={3}
+      closeButton
       toastOptions={{
-        style: {
-          borderRadius: "12px",
-        },
+        className: "dynamic-island-toast",
       }}
     />
   );
