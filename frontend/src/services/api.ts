@@ -1,7 +1,8 @@
 import axios from "axios";
 import { getToken, clearStorage } from "../utils/storage";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
+// Spring Boot backend API base URL
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 const api = axios.create({
   baseURL: API_URL,
@@ -43,7 +44,6 @@ api.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       console.warn("Unauthorized access detected (401). Clearing session...");
       clearStorage();
-      // Redirect to login if in browser context and not already on /login
       if (window.location.pathname !== "/login") {
         window.location.href = "/login";
       }

@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { Star } from "lucide-react";
 import type { Book } from "../data/booksData";
 
@@ -7,6 +8,13 @@ interface BookCardProps {
 }
 
 const BookCard = ({ book, onSelectBook }: BookCardProps) => {
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    onSelectBook(book);
+    navigate(`/books/${book.id}`);
+  };
+
   const getStatusClass = (status: string) => {
     switch (status) {
       case "Available":
@@ -23,7 +31,7 @@ const BookCard = ({ book, onSelectBook }: BookCardProps) => {
   };
 
   return (
-    <div className="book-card" onClick={() => onSelectBook(book)}>
+    <div className="book-card" onClick={handleCardClick}>
       {/* Cover Image Placeholder */}
       <div
         className="book-card-cover-wrapper"

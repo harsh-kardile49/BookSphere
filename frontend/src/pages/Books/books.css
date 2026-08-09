@@ -509,3 +509,416 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* ============================================
+   Book Detail Page Editorial 3D Showcase Styles
+   ============================================ */
+
+.book-detail-page-container {
+  background-color: #f6f4ee;
+  min-height: 100vh;
+  padding: 24px 36px 60px 36px;
+  font-family: 'Manrope', sans-serif;
+  color: #1c1917;
+}
+
+/* Header */
+.book-detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 40px;
+}
+
+.book-detail-back-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #1c1917;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+}
+
+.book-detail-back-btn:hover {
+  background: #1c1917;
+  color: #ffffff;
+  transform: translateX(-2px);
+}
+
+.book-detail-search-box {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 9999px;
+  padding: 8px 18px;
+  width: 320px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.book-detail-search-input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.84rem;
+  color: #1c1917;
+  width: 100%;
+}
+
+.book-detail-icon-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #1c1917;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.book-detail-icon-btn:hover {
+  background: #eef2ff;
+  color: #6366f1;
+}
+
+.book-detail-user-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 9999px;
+  padding: 4px 14px 4px 4px;
+}
+
+.book-detail-user-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.book-detail-user-name {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #1c1917;
+}
+
+/* Hero Showcase Section */
+.book-detail-hero-section {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 48px;
+  align-items: center;
+  margin-bottom: 32px;
+  padding: 0 12px;
+}
+
+.book-detail-cover-showcase {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  position: relative;
+}
+
+/* Carousel Controls */
+.book-detail-carousel-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.book-detail-carousel-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1c1917;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.book-detail-carousel-btn:hover {
+  background: #1c1917;
+  color: #ffffff;
+  transform: scale(1.08);
+}
+
+/* 3D Floating Book Cover Card */
+.book-3d-cover-card {
+  width: 260px;
+  height: 380px;
+  border-radius: 14px;
+  position: relative;
+  box-shadow: 20px 24px 48px rgba(0, 0, 0, 0.28), -4px 0 12px rgba(0, 0, 0, 0.15);
+  transform: perspective(1000px) rotateY(-8deg) rotateX(2deg);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+  overflow: hidden;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.book-3d-cover-card:hover {
+  transform: perspective(1000px) rotateY(0deg) rotateX(0deg) translateY(-8px);
+  box-shadow: 24px 32px 60px rgba(0, 0, 0, 0.32);
+}
+
+.book-3d-spine-effect {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 14px;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(255,255,255,0.3) 0%, rgba(0,0,0,0.2) 100%);
+}
+
+.book-3d-cover-content {
+  position: relative;
+  z-index: 2;
+  color: #ffffff;
+}
+
+.book-3d-category-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 3px 10px;
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+}
+
+.book-3d-title {
+  font-size: 1.45rem;
+  font-weight: 800;
+  line-height: 1.25;
+  margin-top: 16px;
+  color: #ffffff;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.book-3d-initials {
+  font-size: 3.5rem;
+  font-weight: 900;
+  opacity: 0.18;
+  position: absolute;
+  right: 10px;
+  bottom: -10px;
+  color: #ffffff;
+}
+
+.book-3d-author {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: 6px;
+}
+
+.book-3d-bottom-glare {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 40%;
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.4) 100%);
+  pointer-events: none;
+}
+
+/* Hero Content Details */
+.book-detail-hero-content {
+  max-width: 640px;
+}
+
+.book-detail-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  font-family: 'Playfair Display', Georgia, serif;
+  color: #1c1917;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.book-detail-author {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #57534e;
+  margin-bottom: 18px;
+}
+
+.book-detail-teaser {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #57534e;
+  font-style: italic;
+  margin-bottom: 28px;
+  max-width: 520px;
+}
+
+/* Action Bar */
+.book-detail-action-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.btn-start-reading {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #1c1917;
+  color: #ffffff;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 12px 26px;
+  border-radius: 9999px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+}
+
+.btn-start-reading:hover {
+  background: #6366f1;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.3);
+}
+
+.book-detail-action-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #57534e;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.book-detail-action-btn:hover,
+.book-detail-action-btn.active {
+  background: #eef2ff;
+  color: #6366f1;
+  border-color: #6366f1;
+}
+
+/* Lower Elevated Content Card */
+.book-detail-content-card {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  margin-top: 20px;
+}
+
+.book-detail-section-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1c1917;
+  margin-bottom: 14px;
+}
+
+.book-detail-paragraph {
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: #57534e;
+  margin-bottom: 14px;
+}
+
+/* Review Quote Card */
+.book-detail-review-quote {
+  background: #f8f6f0;
+  border-radius: 16px;
+  padding: 18px;
+  margin-top: 24px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.book-detail-review-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.book-detail-review-name {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #1c1917;
+}
+
+.book-detail-review-text {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: #57534e;
+  font-style: italic;
+}
+
+/* Specifications Grid */
+.book-meta-spec-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.book-meta-spec-item {
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.book-meta-label {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #1c1917;
+  margin-bottom: 4px;
+}
+
+.book-meta-value {
+  font-size: 0.82rem;
+  color: #57534e;
+  line-height: 1.5;
+}
+
+.book-meta-isbn {
+  font-size: 0.78rem;
+  color: #a8a29e;
+}
+
+.book-meta-price {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #1c1917;
+}
+
+@media (max-width: 992px) {
+  .book-detail-hero-section {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .book-detail-cover-showcase {
+    justify-content: center;
+  }
+}
+

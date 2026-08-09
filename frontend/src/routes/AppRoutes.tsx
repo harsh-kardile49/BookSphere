@@ -5,6 +5,8 @@ import AuthLayout from "../layouts/AuthLayout";
 import AdminLayout from "../layouts/AdminLayout";
 import Dashboard from "../pages/Dashboard/Dashboard";
 import Books from "../pages/Books/Books";
+import AddBook from "../pages/Books/AddBook";
+import BookDetail from "../pages/Books/BookDetail";
 import Borrow from "../pages/Borrow/Borrow";
 import Return from "../pages/Return/Return";
 import Members from "../pages/Members/Members";
@@ -43,12 +45,12 @@ const AppRoutes = () => {
           <Route
             path="/books/add"
             element={
-              <ProtectedRoute allowedRoles={["ADMIN", "LIBRARIAN"]}>
-                <PlaceholderPage title="Add New Book Form" />
+              <ProtectedRoute allowedRoles={["ADMIN", "LIBRARIAN", "STUDENT", "USER"]}>
+                <AddBook />
               </ProtectedRoute>
             }
           />
-          <Route path="/books/:id" element={<Books />} />
+          <Route path="/books/:id" element={<BookDetail />} />
           <Route
             path="/members"
             element={
