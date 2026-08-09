@@ -2,16 +2,17 @@ import { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import {
   ArrowLeft,
-  Search,
-  Bell,
   ChevronUp,
   ChevronDown,
   Bookmark,
   Share2,
-  Download,
   ArrowUpRight,
   CheckCircle2,
   ShieldCheck,
+  BookOpen,
+  MapPin,
+  Clock,
+  Tag,
 } from "lucide-react";
 import { getBookById, getAllBooks } from "../../services/book.service";
 import type { BackendBook } from "../../types/book";
@@ -32,13 +33,7 @@ const MOCK_REVIEWS = [
     name: "Roberto Jordan",
     avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80",
     role: "Senior Member",
-    text: "What a delightful and magical book it is! It indeed transports readers to the wizarding world with unmatched depth and mastery.",
-  },
-  {
-    name: "Sophia Chen",
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80",
-    role: "Verified Reader",
-    text: "An imperative read for anyone serious about improving their craft and understanding core foundational principles.",
+    text: "An indispensable reference book in our library collection. Highly recommended for students and faculty.",
   },
 ];
 
@@ -50,7 +45,6 @@ const BookDetail = () => {
   const [allBooks, setAllBooks] = useState<BackendBook[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
 
   // Load current book and all books catalog for carousel navigation
   useEffect(() => {
@@ -110,22 +104,17 @@ const BookDetail = () => {
     navigate(`/books/${allBooks[nextIdx].id}`);
   };
 
-  const handleStartReading = () => {
-    toast.success("Loan Request Initiated!", {
-      description: `"${book?.title || 'Book'}" has been added to your active borrowing queue.`,
+  const handleIssueBook = () => {
+    toast.success("Proceeding to Book Issue", {
+      description: `Opening borrow transaction for "${book?.title || 'Book'}".`,
     });
+    navigate("/borrow");
   };
 
   const handleShare = () => {
     navigator.clipboard?.writeText(window.location.href);
     toast.info("Link Copied!", {
       description: "Book detail URL copied to your clipboard.",
-    });
-  };
-
-  const handleDownload = () => {
-    toast.success("Download Started", {
-      description: `Downloading catalog preview for "${book?.title || 'Book'}".`,
     });
   };
 
@@ -153,53 +142,24 @@ const BookDetail = () => {
   // Fallback presentation if book is null
   const displayBook = book || {
     id: 1,
-    title: "Harry Potter: Half Blood Prince",
-    author: "J.K. Rowling",
-    publisher: "Bloomsbury Publishing",
+    title: "Clean Code",
+    author: "Robert C. Martin",
+    publisher: "Prentice Hall",
     isbn: "9780132350884",
-    category: "Fiction / Fantasy",
+    category: "Programming",
     price: 699.0,
     quantity: 12,
-    publishedYear: 2005,
+    publishedYear: 2008,
   };
 
   return (
     <div className="book-detail-page-container">
-      {/* ── Top Header Navigation Bar ── */}
-      <div className="book-detail-header">
-        <div className="d-flex align-items-center gap-3">
-          <Link to="/books" className="book-detail-back-btn" title="Back to Catalog">
-            <ArrowLeft size={18} />
-          </Link>
-
-          {/* Search bar inside header */}
-          <div className="book-detail-search-box">
-            <Search size={16} className="text-muted me-2" />
-            <input
-              type="text"
-              placeholder="Search book name, author, edition..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="book-detail-search-input"
-            />
-          </div>
-        </div>
-
-        {/* User Profile & Notifications */}
-        <div className="d-flex align-items-center gap-3">
-          <button className="book-detail-icon-btn" title="Notifications">
-            <Bell size={18} />
-          </button>
-
-          <div className="book-detail-user-badge">
-            <img
-              src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80"
-              alt="Alexander Mark"
-              className="book-detail-user-avatar"
-            />
-            <span className="book-detail-user-name">Alexander Mark</span>
-          </div>
-        </div>
+      {/* ── Breadcrumb & Navigation Bar ── */}
+      <div className="book-detail-header mb-4">
+        <Link to="/books" className="d-inline-flex align-items-center gap-2 text-decoration-none fw-semibold text-dark small bg-white border px-3 py-2 rounded-pill shadow-sm">
+          <ArrowLeft size={16} />
+          <span>Back to Books Catalog</span>
+        </Link>
       </div>
 
       {/* ── Main Book Hero Showcase Section ── */}
@@ -211,14 +171,14 @@ const BookDetail = () => {
             <button
               className="book-detail-carousel-btn"
               onClick={handlePrevBook}
-              title="Previous Book"
+              title="Previous Book in Catalog"
             >
               <ChevronUp size={18} />
             </button>
             <button
               className="book-detail-carousel-btn"
               onClick={handleNextBook}
-              title="Next Book"
+              title="Next Book in Catalog"
             >
               <ChevronDown size={18} />
             </button>
@@ -228,7 +188,7 @@ const BookDetail = () => {
           <div className="book-3d-cover-card" style={{ background: currentGradient }}>
             <div className="book-3d-spine-effect" />
             <div className="book-3d-cover-content">
-              <span className="book-3d-category-badge">{displayBook.category || "Fantasy"}</span>
+              <span className="book-3d-category-badge">{displayBook.category || "General"}</span>
               <h2 className="book-3d-title">{displayBook.title}</h2>
               <div className="book-3d-initials">{coverInitials}</div>
               <p className="book-3d-author">{displayBook.author}</p>
@@ -237,22 +197,30 @@ const BookDetail = () => {
           </div>
         </div>
 
-        {/* Right: Book Headline, Teaser & Primary Action Toolbar */}
+        {/* Right: Book Headline, Overview & Primary Action Toolbar */}
         <div className="book-detail-hero-content">
+          <div className="d-flex align-items-center gap-2 mb-2">
+            <span className="badge bg-indigo-subtle text-primary fw-semibold rounded-pill px-3 py-1 text-uppercase tracking-wider small">
+              <Tag size={12} className="me-1" />
+              {displayBook.category || "General"}
+            </span>
+            <span className="text-muted small">Published {displayBook.publishedYear || 2026}</span>
+          </div>
+
           <h1 className="book-detail-title">{displayBook.title}</h1>
-          <h3 className="book-detail-author">{displayBook.author}</h3>
+          <h3 className="book-detail-author">by {displayBook.author}</h3>
 
           <p className="book-detail-teaser">
-            Get ready to uncover the dark secrets and betrayals in the book. A thrilling adventure awaits you with deep storytelling and profound mastery.
+            Available for member issuance in the main library catalog. Published by {displayBook.publisher || "Prentice Hall"} with ISBN {displayBook.isbn}.
           </p>
 
           {/* Primary Action Buttons Row */}
           <div className="book-detail-action-bar">
             <button
               className="btn-start-reading"
-              onClick={handleStartReading}
+              onClick={handleIssueBook}
             >
-              <span>Start reading</span>
+              <span>Issue / Borrow Book</span>
               <ArrowUpRight size={18} />
             </button>
 
@@ -263,7 +231,7 @@ const BookDetail = () => {
                   setIsBookmarked(!isBookmarked);
                   toast.success(isBookmarked ? "Removed from Saved" : "Added to Saved Books!");
                 }}
-                title="Bookmark Book"
+                title="Save Book"
               >
                 <Bookmark size={18} fill={isBookmarked ? "currentColor" : "none"} />
               </button>
@@ -271,17 +239,9 @@ const BookDetail = () => {
               <button
                 className="book-detail-action-btn"
                 onClick={handleShare}
-                title="Share Book"
+                title="Share Link"
               >
                 <Share2 size={18} />
-              </button>
-
-              <button
-                className="book-detail-action-btn"
-                onClick={handleDownload}
-                title="Download Details"
-              >
-                <Download size={18} />
               </button>
             </div>
           </div>
@@ -291,19 +251,37 @@ const BookDetail = () => {
       {/* ── Lower Elevated Content Card (White Surface) ── */}
       <div className="book-detail-content-card">
         <div className="row g-4 g-lg-5">
-          {/* Left Column: Description & Verified Review Quote */}
+          {/* Left Column: Library Description & Location */}
           <div className="col-lg-7">
             <div className="mb-4 pb-2">
-              <h4 className="book-detail-section-title">Description</h4>
+              <h4 className="book-detail-section-title">Library Overview & Details</h4>
               <p className="book-detail-paragraph">
-                The story takes place during the transformative journey where deep secrets, heart-wrenching decisions, and high-stakes choices define the characters' paths. It explores profound themes of mastery, resilience, and personal growth.
+                "{displayBook.title}" by {displayBook.author} is cataloged under the {displayBook.category || "General"} section. It provides detailed foundational concepts, practical patterns, and core principles essential for academic and professional study.
               </p>
               <p className="book-detail-paragraph mb-0">
-                With action-packed sequences, shocking twists, and moments of emotional depth, "{displayBook.title}" is a must-read for any enthusiast of classic literature and modern storytelling.
+                Registered members can issue this copy for up to 14 days under standard library borrowing policies. Overdue renewals or reservations can be managed via the Borrow & Return tabs.
               </p>
             </div>
 
-            {/* Verified Reader Endorsement Card */}
+            {/* Library Shelf Location & Policy Box */}
+            <div className="d-flex flex-wrap gap-3 mb-4 p-3 rounded-4 bg-light border">
+              <div className="d-flex align-items-center gap-2 text-dark small fw-semibold">
+                <MapPin size={16} className="text-primary" />
+                <span>Section B4 • Shelf 12</span>
+              </div>
+
+              <div className="d-flex align-items-center gap-2 text-dark small fw-semibold">
+                <Clock size={16} className="text-success" />
+                <span>14-Day Standard Loan</span>
+              </div>
+
+              <div className="d-flex align-items-center gap-2 text-dark small fw-semibold">
+                <BookOpen size={16} className="text-info" />
+                <span>Hardcover / Paperback</span>
+              </div>
+            </div>
+
+            {/* Member Review / Endorsement Card */}
             <div className="book-detail-review-quote">
               <div className="d-flex align-items-start gap-3">
                 <img
@@ -330,36 +308,35 @@ const BookDetail = () => {
           {/* Right Column: Metadata Specifications Grid */}
           <div className="col-lg-5 ps-lg-4 border-start-lg">
             <div className="book-meta-spec-grid">
-              {/* Publisher / Editors */}
+              {/* Publisher */}
               <div className="book-meta-spec-item">
-                <h6 className="book-meta-label">Publisher & Editors</h6>
+                <h6 className="book-meta-label">Publisher</h6>
                 <p className="book-meta-value">
-                  {displayBook.publisher || "Prentice Hall"}, {displayBook.author} (author), Christopher Reath, Alena Cestabon
+                  {displayBook.publisher || "Prentice Hall"}
                 </p>
               </div>
 
-              {/* Language */}
+              {/* Category & Published Year */}
               <div className="book-meta-spec-item">
-                <h6 className="book-meta-label">Language</h6>
-                <p className="book-meta-value">Standard English (USA & UK)</p>
+                <h6 className="book-meta-label">Category & Year</h6>
+                <p className="book-meta-value">
+                  {displayBook.category || "General"} • Published in {displayBook.publishedYear || 2026}
+                </p>
               </div>
 
               {/* Specifications */}
               <div className="book-meta-spec-item">
-                <h6 className="book-meta-label">Specifications & Format</h6>
-                <p className="book-meta-value mb-1">
-                  Paperback, textured finish, full color, 345 pages
-                </p>
-                <p className="book-meta-isbn font-monospace">
-                  ISBN: {displayBook.isbn || "978-0132350884"}
+                <h6 className="book-meta-label">ISBN Reference</h6>
+                <p className="book-meta-isbn font-monospace fs-6 fw-semibold text-dark">
+                  {displayBook.isbn || "978-0132350884"}
                 </p>
               </div>
 
-              {/* Price & Stock Availability */}
+              {/* Price & Inventory */}
               <div className="book-meta-spec-item border-0 pt-2">
                 <div className="d-flex align-items-center justify-content-between">
                   <div>
-                    <h6 className="book-meta-label">Inventory & Price</h6>
+                    <h6 className="book-meta-label">Library Inventory & Replacement Value</h6>
                     <div className="d-flex align-items-baseline gap-2">
                       <span className="book-meta-price">₹{displayBook.price || 699.0}</span>
                       <span className="text-muted small">
