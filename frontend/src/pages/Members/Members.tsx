@@ -5,6 +5,7 @@ import MembersKpiCards from "./components/MembersKpiCards";
 import MembersToolbar from "./components/MembersToolbar";
 import MembersTable from "./components/MembersTable";
 import AddMemberModal from "./components/AddMemberModal";
+import EditMemberModal from "./components/EditMemberModal";
 import MemberDetailsDrawer from "./components/MemberDetailsDrawer";
 import DeleteMemberModal from "./components/DeleteMemberModal";
 import { userService, type BackendUserDTO } from "../../services/user.service";
@@ -76,8 +77,9 @@ const Members = () => {
   const [selectedMembership, setSelectedMembership] = useState("ALL");
   const [selectedSort, setSelectedSort] = useState("recently_added");
 
-  // Selection states
+  // Selection & Modal states
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
+  const [editingMember, setEditingMember] = useState<Member | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [deletingMember, setDeletingMember] = useState<Member | null>(null);
 
@@ -175,6 +177,78 @@ const Members = () => {
     }
   };
 
+  // Handlers for Edit Member
+  const handleEditMember = (m: Member) => {
+    setEditingMember(m);
+  };
+
+  const handleUpdateMemberSubmit = async (data: {
+    id: string;
+    name: string;
+    email: string;
+    phone: string;
+    membershipType: MembershipType;
+    status: MemberStatus;
+    address: string;
+  }) => {
+    const nameParts = data.name.trim().split(" ");
+    const firstName = nameParts[0] || "Member";
+    const lastName = nameParts.slice(1).join(" ") || "User";
+
+    try {
+      const numId = Number(data.id);
+      if (!isNaN(numId)) {
+        await userService.updateUser(numId, {
+          firstName,
+          lastName,
+          email: data.email,
+          phone: data.phone,
+          role: data.membershipType === "Premium" ? "ADMIN" : data.membershipType === "Standard" ? "LIBRARIAN" : "STUDENT",
+        });
+      }
+
+      setMembersList((prev) =>
+        prev.map((m) =>
+          m.id === data.id
+            ? {
+                ...m,
+                name: data.name,
+                email: data.email,
+                phone: data.phone,
+                membershipType: data.membershipType,
+                status: data.status,
+                address: data.address,
+                avatarInitials: ((firstName[0] || "") + (lastName[0] || "")).toUpperCase() || "MB",
+              }
+            : m
+        )
+      );
+
+      if (selectedMember?.id === data.id) {
+        setSelectedMember((prev) =>
+          prev
+            ? {
+                ...prev,
+                name: data.name,
+                email: data.email,
+                phone: data.phone,
+                membershipType: data.membershipType,
+                status: data.status,
+                address: data.address,
+              }
+            : null
+        );
+      }
+
+      toast.success("Member updated", {
+        description: `${data.name}'s details saved`,
+      });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to update member";
+      toast.error("Update Failed", { description: msg });
+    }
+  };
+
   // Handlers for Delete Member
   const handleDeleteConfirm = async () => {
     if (!deletingMember) return;
@@ -189,9 +263,7 @@ const Members = () => {
       if (selectedMember?.id === memberToDelete.id) {
         setSelectedMember(null);
       }
-      toast.success("Member Removed", {
-        description: `${memberToDelete.name} deleted from library records.`,
-      });
+      toast.success("Member removed");
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Failed to delete member";
       toast.error("Delete Failed", { description: msg });
@@ -204,10 +276,6 @@ const Members = () => {
     toast.info("Exporting Members List", {
       description: `Exporting ${filteredMembers.length} member records to CSV.`,
     });
-  };
-
-  const handleEditMember = (m: Member) => {
-    setSelectedMember(m);
   };
 
   return (
@@ -262,6 +330,14 @@ const Members = () => {
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onAddMemberSubmit={handleAddMemberSubmit}
+      />
+
+      {/* Edit Member Modal */}
+      <EditMemberModal
+        member={editingMember}
+        isOpen={Boolean(editingMember)}
+        onClose={() => setEditingMember(null)}
+        onUpdateMemberSubmit={handleUpdateMemberSubmit}
       />
 
       {/* Delete Member Confirmation Modal */}

@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { getBookById, getAllBooks } from "../../services/book.service";
 import type { BackendBook } from "../../types/book";
+import ProgressiveImage from "../../components/common/ProgressiveImage";
 import { toast } from "sonner";
 import "./books.css";
 
@@ -196,15 +197,10 @@ const BookDetail = () => {
             }}
           >
             {displayBook.imageUrl ? (
-              <img
+              <ProgressiveImage
                 src={displayBook.imageUrl}
                 alt={displayBook.title}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  borderRadius: "14px",
-                }}
+                style={{ borderRadius: "14px" }}
               />
             ) : (
               <>

@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Star } from "lucide-react";
 import type { Book } from "../data/booksData";
+import ProgressiveImage from "../../../components/common/ProgressiveImage";
 
 interface BookCardProps {
   book: Book;
@@ -38,10 +39,10 @@ const BookCard = ({ book, onSelectBook }: BookCardProps) => {
         style={{ background: book.coverGradient }}
       >
         {book.imageUrl ? (
-          <img
+          <ProgressiveImage
             src={book.imageUrl}
             alt={book.title}
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            fallback={<div className="book-card-cover-initials">{book.coverInitial}</div>}
           />
         ) : (
           <div className="book-card-cover-initials">{book.coverInitial}</div>

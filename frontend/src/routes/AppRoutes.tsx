@@ -10,6 +10,7 @@ import BookDetail from "../pages/Books/BookDetail";
 import Borrow from "../pages/Borrow/Borrow";
 import Return from "../pages/Return/Return";
 import Members from "../pages/Members/Members";
+import Settings from "../pages/Settings/Settings";
 import NotFound from "../pages/NotFound";
 import ProtectedRoute from "./ProtectedRoute";
 
@@ -61,6 +62,7 @@ const AppRoutes = () => {
           />
           <Route path="/borrow" element={<Borrow />} />
           <Route path="/return" element={<Return />} />
+          <Route path="/settings" element={<Settings />} />
           <Route
             path="/reports"
             element={

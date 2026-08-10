@@ -153,21 +153,6 @@ const Sidebar = () => {
           </NavLink>
         ))}
       </div>
-
-      {/* Bottom Menu Lines Icon */}
-      <div className="mt-auto mb-2">
-        <button 
-          className="btn border-0 p-2 d-flex align-items-center justify-content-center"
-          style={{ color: "#78716c" }}
-          aria-label="Menu"
-        >
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="4" y1="12" x2="20" y2="12"></line>
-            <line x1="4" y1="6" x2="20" y2="6"></line>
-            <line x1="4" y1="18" x2="14" y2="18"></line>
-          </svg>
-        </button>
-      </div>
     </aside>
   );
 };

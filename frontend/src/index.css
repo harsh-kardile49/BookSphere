@@ -151,3 +151,47 @@ h6 {
   background: #e7e5e4 !important;
   color: #1c1917 !important;
 }
+
+/* ── Progressive Blur Image Loading ── */
+.progressive-img-container {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+.progressive-img-skeleton {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, #f0ede6 25%, #e8e4d9 50%, #f0ede6 75%);
+  background-size: 200% 100%;
+  animation: img-skeleton-shimmer 1.5s infinite;
+  z-index: 1;
+}
+
+@keyframes img-skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.progressive-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: filter 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s ease, transform 0.45s ease;
+  will-change: filter, opacity, transform;
+}
+
+.progressive-img-loading {
+  filter: blur(16px) scale(1.06);
+  opacity: 0;
+}
+
+.progressive-img-loaded {
+  filter: blur(0px) scale(1);
+  opacity: 1;
+}

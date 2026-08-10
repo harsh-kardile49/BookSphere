@@ -1,15 +1,29 @@
-import { useState, useRef, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useRef, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
+import { getAllBooks } from "../../services/book.service";
+import { userService, type BackendUserDTO } from "../../services/user.service";
+import type { BackendBook } from "../../types/book";
 import { toast } from "sonner";
 
 const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuthStore();
   const navigate = useNavigate();
+
+  // Dropdown UI states
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+
+  // Global Search states
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [catalogBooks, setCatalogBooks] = useState<BackendBook[]>([]);
+  const [catalogUsers, setCatalogUsers] = useState<BackendUserDTO[]>([]);
+
+  // Refs for outside click detection
   const userMenuRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
 
   // Close dropdowns on outside click
   useEffect(() => {
@@ -23,10 +37,85 @@ const Navbar = () => {
       if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
         setShowNotifications(false);
       }
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setIsSearchOpen(false);
+      }
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
+
+  // Keyboard shortcut (⌘ K / Ctrl K) to focus search
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        const searchInput = document.querySelector<HTMLInputElement>(".navbar-search-input");
+        searchInput?.focus();
+        setIsSearchOpen(true);
+      }
+      if (e.key === "Escape") {
+        setIsSearchOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  // Load catalog books & users for instant global search
+  const loadSearchData = async () => {
+    try {
+      const [booksRes, usersRes] = await Promise.allSettled([
+        getAllBooks(),
+        userService.getAllUsers(),
+      ]);
+
+      if (booksRes.status === "fulfilled" && Array.isArray(booksRes.value)) {
+        setCatalogBooks(booksRes.value);
+      }
+      if (usersRes.status === "fulfilled" && Array.isArray(usersRes.value)) {
+        setCatalogUsers(usersRes.value);
+      }
+    } catch (err) {
+      console.warn("Error pre-loading search catalog:", err);
+    }
+  };
+
+  const handleSearchFocus = () => {
+    setIsSearchOpen(true);
+    if (catalogBooks.length === 0 && catalogUsers.length === 0) {
+      loadSearchData();
+    }
+  };
+
+  // Matched search results logic
+  const matchedResults = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return { books: [], users: [] };
+
+    const books = catalogBooks
+      .filter(
+        (b) =>
+          b.title?.toLowerCase().includes(q) ||
+          b.author?.toLowerCase().includes(q) ||
+          b.isbn?.toLowerCase().includes(q) ||
+          b.category?.toLowerCase().includes(q)
+      )
+      .slice(0, 4);
+
+    const users = catalogUsers
+      .filter(
+        (u) =>
+          `${u.firstName} ${u.lastName}`.toLowerCase().includes(q) ||
+          u.email?.toLowerCase().includes(q)
+      )
+      .slice(0, 4);
+
+    return { books, users };
+  }, [searchQuery, catalogBooks, catalogUsers]);
+
+  const hasSearchMatches =
+    matchedResults.books.length > 0 || matchedResults.users.length > 0;
 
   const handleLogout = async () => {
     setShowUserMenu(false);
@@ -37,7 +126,9 @@ const Navbar = () => {
 
   const displayName = user?.firstName ? user.firstName.replace(/\./g, " ") : "User";
   const displayLastName = user?.lastName ? user.lastName.replace(/\./g, " ") : "";
-  const userInitials = (displayName[0] + (displayLastName[0] || displayName.split(" ")[1]?.[0] || "")).toUpperCase();
+  const userInitials = (
+    displayName[0] + (displayLastName[0] || displayName.split(" ")[1]?.[0] || "")
+  ).toUpperCase();
 
   const demoNotifications = [
     {
@@ -73,17 +164,18 @@ const Navbar = () => {
         boxShadow: "0 2px 12px rgba(0, 0, 0, 0.02)",
       }}
     >
-      <div className="container-fluid px-3 px-md-4" style={{ maxWidth: 1760, margin: "0 auto" }}>
+      <div
+        className="container-fluid px-3 px-md-4"
+        style={{ maxWidth: 1760, margin: "0 auto" }}
+      >
         <div className="d-flex align-items-center w-100 gap-3">
-
-          {/* ── Search Bar ── */}
-          <div className="flex-grow-1" style={{ maxWidth: 480 }}>
+          {/* ── Global Search Bar Component ── */}
+          <div className="flex-grow-1 position-relative" style={{ maxWidth: 480 }} ref={searchRef}>
             <div className="position-relative">
               <span
                 className="position-absolute top-50 translate-middle-y d-flex align-items-center"
                 style={{ left: 14, color: "#78716c", opacity: 0.6 }}
               >
-                {/* Search icon SVG */}
                 <svg
                   width="15"
                   height="15"
@@ -98,14 +190,22 @@ const Navbar = () => {
                   <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
               </span>
+
               <input
                 type="text"
-                className="form-control border-0"
-                placeholder="Search books, members, records…"
+                className="form-control border-0 navbar-search-input"
+                placeholder="Search books, members, records… (⌘ K)"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setIsSearchOpen(true);
+                }}
+                onFocus={handleSearchFocus}
                 style={{
                   paddingLeft: 38,
+                  paddingRight: 44,
                   borderRadius: 50,
-                  background: "rgba(255, 255, 255, 0.8)",
+                  background: "rgba(255, 255, 255, 0.85)",
                   border: "1px solid rgba(0, 0, 0, 0.06)",
                   boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
                   fontSize: ".85rem",
@@ -113,7 +213,133 @@ const Navbar = () => {
                   color: "#1c1917",
                 }}
               />
+
+              <span
+                className="position-absolute top-50 translate-middle-y d-none d-sm-inline-block px-1.5 py-0.5 rounded text-muted"
+                style={{
+                  right: 12,
+                  fontSize: ".68rem",
+                  background: "rgba(0,0,0,0.04)",
+                  border: "1px solid rgba(0,0,0,0.06)",
+                  fontFamily: "monospace",
+                }}
+              >
+                ⌘K
+              </span>
             </div>
+
+            {/* ── Global Search Instant Results Dropdown Menu ── */}
+            {isSearchOpen && searchQuery.trim().length > 0 && (
+              <div
+                className="position-absolute start-0 end-0 mt-2 rounded-4 shadow-lg overflow-hidden"
+                style={{
+                  zIndex: 1060,
+                  background: "#ffffff",
+                  border: "1px solid rgba(0, 0, 0, 0.08)",
+                  boxShadow: "0 14px 36px rgba(0, 0, 0, 0.12)",
+                  padding: "6px",
+                }}
+              >
+                {!hasSearchMatches ? (
+                  <div className="p-3 text-center text-muted small">
+                    No books or members found matching "<strong>{searchQuery}</strong>"
+                  </div>
+                ) : (
+                  <div>
+                    {/* Books Results Section */}
+                    {matchedResults.books.length > 0 && (
+                      <div className="mb-1">
+                        <div
+                          className="px-3 py-1.5 text-uppercase fw-bold tracking-wider text-muted"
+                          style={{ fontSize: ".68rem" }}
+                        >
+                          Books Catalog ({matchedResults.books.length})
+                        </div>
+                        {matchedResults.books.map((book) => (
+                          <div
+                            key={`book-${book.id}`}
+                            className="px-3 py-2.5 rounded-3 d-flex align-items-center justify-content-between text-decoration-none border-0 w-100 text-start"
+                            style={{
+                              cursor: "pointer",
+                              transition: "background 0.15s ease",
+                            }}
+                            onMouseEnter={(e) => (e.currentTarget.style.background = "#f5f5f4")}
+                            onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                            onClick={() => {
+                              setIsSearchOpen(false);
+                              setSearchQuery("");
+                              navigate(`/books/${book.id}`);
+                            }}
+                          >
+                            <div className="min-w-0 flex-grow-1 pe-2">
+                              <div className="fw-semibold text-dark text-truncate" style={{ fontSize: ".88rem" }}>
+                                {book.title}
+                              </div>
+                              <div className="text-muted text-truncate" style={{ fontSize: ".76rem" }}>
+                                by {book.author} · <span className="text-secondary">{book.category || "General"}</span>
+                              </div>
+                            </div>
+
+                            <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                              <span
+                                className="fw-semibold small"
+                                style={{ color: "#2563eb", fontSize: ".82rem" }}
+                              >
+                                ₹{book.price || 499}
+                              </span>
+                              <span className="text-muted small" style={{ fontSize: ".75rem" }}>
+                                →
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Members Results Section */}
+                    {matchedResults.users.length > 0 && (
+                      <div className={matchedResults.books.length > 0 ? "border-top pt-2 mt-1" : ""}>
+                        <div
+                          className="px-3 py-1.5 text-uppercase fw-bold tracking-wider text-muted"
+                          style={{ fontSize: ".68rem" }}
+                        >
+                          Library Members ({matchedResults.users.length})
+                        </div>
+                        {matchedResults.users.map((userItem) => (
+                          <div
+                            key={`user-${userItem.id}`}
+                            className="px-3 py-2.5 rounded-3 d-flex align-items-center justify-content-between text-decoration-none border-0 w-100 text-start"
+                            style={{
+                              cursor: "pointer",
+                              transition: "background 0.15s ease",
+                            }}
+                            onMouseEnter={(e) => (e.currentTarget.style.background = "#f5f5f4")}
+                            onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                            onClick={() => {
+                              setIsSearchOpen(false);
+                              setSearchQuery("");
+                              navigate("/members");
+                            }}
+                          >
+                            <div className="min-w-0 flex-grow-1 pe-2">
+                              <div className="fw-semibold text-dark text-truncate" style={{ fontSize: ".88rem" }}>
+                                {userItem.firstName} {userItem.lastName}
+                              </div>
+                              <div className="text-muted text-truncate" style={{ fontSize: ".76rem" }}>
+                                {userItem.email}
+                              </div>
+                            </div>
+                            <span className="badge bg-light text-secondary border rounded-pill px-2.5 py-1 small flex-shrink-0" style={{ fontSize: ".72rem" }}>
+                              {userItem.role}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* ── Right Actions ── */}
@@ -154,7 +380,6 @@ const Navbar = () => {
                     >
                       {displayName}
                     </span>
-                    {/* Chevron SVG */}
                     <svg
                       width="12"
                       height="12"
@@ -180,7 +405,7 @@ const Navbar = () => {
                     <div
                       className="position-absolute end-0 mt-2 rounded-4 shadow-lg overflow-hidden"
                       style={{
-                        width: 240,
+                        width: 250,
                         zIndex: 1050,
                         background: "rgba(255,252,248,0.95)",
                         backdropFilter: "blur(16px)",
@@ -249,72 +474,44 @@ const Navbar = () => {
                           style={{ fontSize: ".84rem", color: "#44403c" }}
                           onClick={() => {
                             setShowUserMenu(false);
-                            navigate("/profile");
+                            navigate("/settings");
                           }}
                         >
-                          <svg
-                            width="15"
-                            height="15"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                             <circle cx="12" cy="7" r="4" />
                           </svg>
-                          My Profile
+                          Account Profile & Security
                         </button>
+
                         <button
                           className="dropdown-item d-flex align-items-center gap-2 px-3 py-2 border-0 w-100 text-start"
                           style={{ fontSize: ".84rem", color: "#44403c" }}
                           onClick={() => {
                             setShowUserMenu(false);
-                            navigate("/dashboard");
+                            navigate("/settings");
                           }}
                         >
-                          <svg
-                            width="15"
-                            height="15"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <rect
-                              x="3"
-                              y="3"
-                              width="7"
-                              height="7"
-                              rx="1"
-                            />
-                            <rect
-                              x="14"
-                              y="3"
-                              width="7"
-                              height="7"
-                              rx="1"
-                            />
-                            <rect
-                              x="3"
-                              y="14"
-                              width="7"
-                              height="7"
-                              rx="1"
-                            />
-                            <rect
-                              x="14"
-                              y="14"
-                              width="7"
-                              height="7"
-                              rx="1"
-                            />
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <circle cx="12" cy="12" r="3" />
+                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
                           </svg>
-                          Dashboard
+                          System Preferences
+                        </button>
+
+                        <button
+                          className="dropdown-item d-flex align-items-center gap-2 px-3 py-2 border-0 w-100 text-start"
+                          style={{ fontSize: ".84rem", color: "#44403c" }}
+                          onClick={() => {
+                            setShowUserMenu(false);
+                            navigate("/borrow");
+                          }}
+                        >
+                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19" />
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                          </svg>
+                          Quick Issue Book
                         </button>
                       </div>
 
@@ -355,6 +552,7 @@ const Navbar = () => {
                     </div>
                   )}
                 </div>
+
                 {/* Notification Bell */}
                 <div className="position-relative" ref={notifRef}>
                   <button
@@ -373,7 +571,6 @@ const Navbar = () => {
                     }}
                     aria-label="Notifications"
                   >
-                    {/* Bell icon SVG */}
                     <svg
                       width="18"
                       height="18"
@@ -449,64 +646,30 @@ const Navbar = () => {
                             style={{
                               width: 8,
                               height: 8,
-                              background: n.unread ? "#f97316" : "#d1d5db",
+                              background: n.unread ? "#f97316" : "transparent",
                             }}
                           />
                           <div>
                             <div
-                              className="fw-medium"
                               style={{
-                                fontSize: ".82rem",
+                                fontSize: ".8rem",
                                 color: "#292524",
+                                fontWeight: n.unread ? 600 : 400,
                               }}
                             >
                               {n.text}
                             </div>
-                            <div
-                              style={{ fontSize: ".72rem", color: "#a8a29e" }}
-                            >
+                            <div style={{ fontSize: ".7rem", color: "#a8a29e" }}>
                               {n.time}
                             </div>
                           </div>
                         </div>
                       ))}
-                      <div className="text-center py-2">
-                        <button
-                          className="btn btn-sm fw-semibold border-0"
-                          style={{ color: "#ea580c", fontSize: ".8rem" }}
-                        >
-                          View all notifications
-                        </button>
-                      </div>
                     </div>
                   )}
                 </div>
-
               </>
-            ) : (
-              <div className="d-flex gap-2">
-                <Link
-                  to="/login"
-                  className="btn btn-sm fw-semibold rounded-pill px-3 border-0"
-                  style={{
-                    color: "#9a3412",
-                    background: "rgba(255,255,255,0.55)",
-                  }}
-                >
-                  Login
-                </Link>
-                <Link
-                  to="/register"
-                  className="btn btn-sm fw-bold rounded-pill px-3 text-white border-0"
-                  style={{
-                    background:
-                      "linear-gradient(135deg, #f97316 0%, #ea580c 100%)",
-                  }}
-                >
-                  Register
-                </Link>
-              </div>
-            )}
+            ) : null}
           </div>
         </div>
       </div>
