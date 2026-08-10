@@ -6,9 +6,9 @@ import com.ibm.dto.RegisterRequest;
 import com.ibm.entity.Role;
 import com.ibm.entity.User;
 import com.ibm.exception.EmailAlreadyExistsException;
-import com.ibm.repository.RoleRepository;
 import com.ibm.repository.UserRepository;
 import com.ibm.security.JwtService;
+import com.ibm.security.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
@@ -33,10 +32,14 @@ public class AuthServiceImpl implements AuthService {
             throw new EmailAlreadyExistsException("Email already registered.");
         }
 
-        Role studentRole = roleRepository
-                .findByRoleName("Student")
-                .orElseThrow(() ->
-                        new RuntimeException("Default Student role not found in database."));
+        Role userRole = Role.STUDENT;
+        if (request.getRole() != null && !request.getRole().isBlank()) {
+            try {
+                userRole = Role.valueOf(request.getRole().trim().toUpperCase());
+            } catch (IllegalArgumentException ex) {
+                userRole = Role.STUDENT;
+            }
+        }
 
         User user = new User();
 
@@ -49,8 +52,7 @@ public class AuthServiceImpl implements AuthService {
         );
 
         user.setPhone(request.getPhone());
-
-        user.setRole(studentRole);
+        user.setRole(userRole);
 
         userRepository.save(user);
 
@@ -68,11 +70,24 @@ public class AuthServiceImpl implements AuthService {
                         )
                 );
 
-        String token = jwtService.generateToken(
-                (org.springframework.security.core.userdetails.UserDetails)
-                        authentication.getPrincipal()
-        );
+        UserPrincipal userPrincipal =
+                (UserPrincipal) authentication.getPrincipal();
 
-        return new JwtResponse(token);
+        String token = jwtService.generateToken(userPrincipal);
+
+        // Fetch full user entity to populate response
+        User user = userRepository
+                .findByEmail(request.getEmail())
+                .orElseThrow(() ->
+                        new RuntimeException("User not found after authentication."));
+
+        return JwtResponse.builder()
+                .token(token)
+                .userId(user.getId())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .role(user.getRole().name())
+                .build();
     }
 }

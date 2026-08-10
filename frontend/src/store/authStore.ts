@@ -2,6 +2,7 @@ import { create } from "zustand";
 import type { User, UserRole, LoginRequest, RegisterRequest } from "../types/auth";
 import { AuthService } from "../services/auth.service";
 import { getToken, getRefreshToken, getUser, clearStorage } from "../utils/storage";
+import axios from "axios";
 
 interface AuthState {
   user: User | null;
@@ -20,6 +21,35 @@ interface AuthState {
   clearUser: () => void;
   initAuth: () => void;
   clearError: () => void;
+}
+
+/**
+ * Extracts a human-readable error message from an API error response.
+ * Handles Axios error responses with { message } body, validation error maps, and plain strings.
+ */
+function extractErrorMessage(err: unknown, fallback: string): string {
+  if (axios.isAxiosError(err)) {
+    const data = err.response?.data;
+    if (data) {
+      // Backend ErrorResponse: { status, message, timestamp }
+      if (typeof data === "object" && "message" in data && typeof data.message === "string") {
+        return data.message;
+      }
+      // Validation errors: { fieldName: "error message", ... }
+      if (typeof data === "object" && !Array.isArray(data)) {
+        const messages = Object.values(data).filter((v) => typeof v === "string") as string[];
+        if (messages.length > 0) return messages.join(". ");
+      }
+      // Plain string response
+      if (typeof data === "string" && data.length > 0 && data.length < 300) {
+        return data;
+      }
+    }
+    // Fallback to Axios message
+    if (err.message) return err.message;
+  }
+  if (err instanceof Error) return err.message;
+  return fallback;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -91,16 +121,16 @@ export const useAuthStore = create<AuthState>((set) => ({
         error: null,
       });
     } catch (err: unknown) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : "Login failed. Please check your credentials.";
+      const message = extractErrorMessage(
+        err,
+        "Login failed. Please check your credentials."
+      );
       set({
         isLoading: false,
         error: message,
         isAuthenticated: false,
       });
-      throw err;
+      throw new Error(message, { cause: err });
     }
   },
 
@@ -121,16 +151,16 @@ export const useAuthStore = create<AuthState>((set) => ({
         error: null,
       });
     } catch (err: unknown) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : "Registration failed. Please try again.";
+      const message = extractErrorMessage(
+        err,
+        "Registration failed. Please try again."
+      );
       set({
         isLoading: false,
         error: message,
         isAuthenticated: false,
       });
-      throw err;
+      throw new Error(message, { cause: err });
     }
   },
 

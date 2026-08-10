@@ -37,7 +37,7 @@ public class User {
 
     private String phone;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "role_id")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
     private Role role;
 }

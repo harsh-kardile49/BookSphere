@@ -18,10 +18,18 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(
+    public ResponseEntity<JwtResponse> register(
             @Valid @RequestBody RegisterRequest request) {
 
-        String response = authService.register(request);
+        // Register the user
+        authService.register(request);
+
+        // Auto-login: authenticate with the same credentials and return JWT + user info
+        LoginRequest loginRequest = new LoginRequest();
+        loginRequest.setEmail(request.getEmail());
+        loginRequest.setPassword(request.getPassword());
+
+        JwtResponse response = authService.login(loginRequest);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)

@@ -19,7 +19,7 @@ public class UserPrincipal implements UserDetails {
 
         return List.of(
                 new SimpleGrantedAuthority(
-                        "ROLE_" + user.getRole().getRoleName().toUpperCase()
+                        "ROLE_" + user.getRole().name()
                 )
         );
     }
