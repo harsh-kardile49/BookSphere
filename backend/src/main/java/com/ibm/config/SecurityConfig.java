@@ -60,8 +60,9 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/auth/register",
-                                "/auth/login"
+                                "/auth/**",
+                                "/books/**",
+                                "/error"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
