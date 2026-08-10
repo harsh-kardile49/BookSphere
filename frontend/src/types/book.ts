@@ -10,6 +10,7 @@ export interface BookPayload {
   price: number;
   quantity: number;
   publishedYear: number;
+  imageUrl?: string;
 }
 
 /**

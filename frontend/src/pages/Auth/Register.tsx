@@ -44,8 +44,8 @@ const Register = () => {
     try {
       clearError();
       await registerUser(data);
-      toast.success("Account created successfully!", {
-        description: `Welcome to BookSphere as ${data.role}!`,
+      toast.success("Account ready", {
+        description: `Registered as ${data.role}`,
       });
       navigate("/dashboard");
     } catch (err: unknown) {

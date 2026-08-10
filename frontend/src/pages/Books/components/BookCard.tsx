@@ -32,12 +32,20 @@ const BookCard = ({ book, onSelectBook }: BookCardProps) => {
 
   return (
     <div className="book-card" onClick={handleCardClick}>
-      {/* Cover Image Placeholder */}
+      {/* Cover Image Wrapper */}
       <div
         className="book-card-cover-wrapper"
         style={{ background: book.coverGradient }}
       >
-        <div className="book-card-cover-initials">{book.coverInitial}</div>
+        {book.imageUrl ? (
+          <img
+            src={book.imageUrl}
+            alt={book.title}
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          />
+        ) : (
+          <div className="book-card-cover-initials">{book.coverInitial}</div>
+        )}
         <div className="book-card-cover-overlay">
           <span className="btn-view-details">View Details →</span>
         </div>

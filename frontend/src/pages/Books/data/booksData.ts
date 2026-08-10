@@ -18,6 +18,7 @@ export interface Book {
   pages: number;
   description: string;
   issuesCount: number;
+  imageUrl?: string;
 }
 
 export interface CategoryStat {

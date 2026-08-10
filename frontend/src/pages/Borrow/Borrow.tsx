@@ -58,8 +58,8 @@ const Borrow = () => {
 
       setBorrowId(`BRW-${1000 + result.id}`);
       setIsSuccess(true);
-      toast.success("Book Issued Successfully!", {
-        description: `"${selectedBook.title}" issued to ${selectedMember.name} (Stock updated in MySQL).`,
+      toast.success("Book issued", {
+        description: `"${selectedBook.title}" → ${selectedMember.name}`,
       });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Failed to issue book";

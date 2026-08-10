@@ -31,7 +31,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     setShowUserMenu(false);
     await logout();
-    toast.success("Logged out successfully");
+    toast.success("Signed out");
     navigate("/login");
   };
 

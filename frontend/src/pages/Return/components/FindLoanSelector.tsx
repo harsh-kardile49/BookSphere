@@ -21,6 +21,7 @@ export interface ActiveBorrowLoan {
 interface FindLoanSelectorProps {
   selectedLoan: ActiveBorrowLoan | null;
   onSelectLoan: (loan: ActiveBorrowLoan | null) => void;
+  refreshKey?: number;
 }
 
 const GRADIENTS = [
@@ -35,6 +36,7 @@ const GRADIENTS = [
 const FindLoanSelector = ({
   selectedLoan,
   onSelectLoan,
+  refreshKey = 0,
 }: FindLoanSelectorProps) => {
   const [loansList, setLoansList] = useState<ActiveBorrowLoan[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -74,7 +76,7 @@ const FindLoanSelector = ({
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [refreshKey]);
 
   // Close dropdown on outside click
   useEffect(() => {

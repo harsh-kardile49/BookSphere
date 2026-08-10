@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { ArrowLeft, BookPlus, Sparkles, Check } from "lucide-react";
+import { ArrowLeft, BookPlus, Sparkles, Check, Image } from "lucide-react";
 import { addBook } from "../../services/book.service";
 import type { BookPayload } from "../../types/book";
 import { toast } from "sonner";
@@ -30,6 +30,7 @@ const AddBook = () => {
     price: 499,
     quantity: 10,
     publishedYear: new Date().getFullYear(),
+    imageUrl: "",
   });
 
   const handleChange = (
@@ -76,11 +77,10 @@ const AddBook = () => {
       });
       navigate("/books");
     } catch (err: unknown) {
-      console.warn("Backend API unavailable or error occurred, saving locally:", err);
-      toast.success("Book Added to Catalog!", {
-        description: `"${formData.title}" saved successfully.`,
+      console.warn("Backend API error saving book:", err);
+      toast.error("Failed to Add Book", {
+        description: "An error occurred while saving the book to the backend API.",
       });
-      navigate("/books");
     } finally {
       setIsLoading(false);
     }
@@ -172,7 +172,7 @@ const AddBook = () => {
             </div>
           </div>
 
-          <div className="row g-3 mb-4">
+          <div className="row g-3 mb-3">
             <div className="col-md-6">
               <label className="form-label fw-semibold text-dark small mb-1">
                 ISBN Number *
@@ -207,6 +207,23 @@ const AddBook = () => {
                 ))}
               </select>
             </div>
+          </div>
+
+          {/* Image Cover URL */}
+          <div className="mb-4">
+            <label className="form-label fw-semibold text-dark small mb-1 d-flex align-items-center gap-1">
+              <Image size={14} className="text-muted" />
+              <span>Cover Image URL (Optional)</span>
+            </label>
+            <input
+              type="url"
+              name="imageUrl"
+              className="form-control rounded-3 p-2.5 text-dark small"
+              style={{ background: "var(--surface-page)" }}
+              placeholder="e.g. https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c"
+              value={formData.imageUrl || ""}
+              onChange={handleChange}
+            />
           </div>
 
           {/* Section 2: Pricing & Stock */}

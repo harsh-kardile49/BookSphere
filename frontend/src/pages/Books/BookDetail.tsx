@@ -133,18 +133,25 @@ const BookDetail = () => {
     );
   }
 
-  // Fallback presentation if book is null
-  const displayBook = book || {
-    id: 1,
-    title: "Clean Code",
-    author: "Robert C. Martin",
-    publisher: "Prentice Hall",
-    isbn: "9780132350884",
-    category: "Programming",
-    price: 699.0,
-    quantity: 12,
-    publishedYear: 2008,
-  };
+  if (!book) {
+    return (
+      <div className="book-detail-page-container d-flex align-items-center justify-content-center min-vh-100">
+        <div className="text-center p-5 bg-white rounded-4 border shadow-sm" style={{ maxWidth: 450 }}>
+          <BookOpen size={48} className="text-secondary mb-3 opacity-50" />
+          <h4 className="fw-bold text-dark mb-2">Book Not Found</h4>
+          <p className="text-muted small mb-4">
+            The book record you are looking for does not exist in the database catalog.
+          </p>
+          <Link to="/books" className="btn btn-primary rounded-pill px-4 py-2 fw-bold" style={{ background: "var(--bs-indigo)", borderColor: "var(--bs-indigo)" }}>
+            <ArrowLeft size={16} className="me-2" />
+            Back to Books Catalog
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const displayBook = book;
 
   return (
     <div className="book-detail-page-container">
@@ -179,15 +186,38 @@ const BookDetail = () => {
           </div>
 
           {/* 3D Floating Book Cover Card */}
-          <div className="book-3d-cover-card" style={{ background: currentGradient }}>
-            <div className="book-3d-spine-effect" />
-            <div className="book-3d-cover-content">
-              <span className="book-3d-category-badge">{displayBook.category || "General"}</span>
-              <h2 className="book-3d-title">{displayBook.title}</h2>
-              <div className="book-3d-initials">{coverInitials}</div>
-              <p className="book-3d-author">{displayBook.author}</p>
-            </div>
-            <div className="book-3d-bottom-glare" />
+          <div
+            className="book-3d-cover-card"
+            style={{
+              background: displayBook.imageUrl ? "transparent" : currentGradient,
+              padding: displayBook.imageUrl ? 0 : "24px",
+              overflow: "hidden",
+              position: "relative",
+            }}
+          >
+            {displayBook.imageUrl ? (
+              <img
+                src={displayBook.imageUrl}
+                alt={displayBook.title}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  borderRadius: "14px",
+                }}
+              />
+            ) : (
+              <>
+                <div className="book-3d-spine-effect" />
+                <div className="book-3d-cover-content">
+                  <span className="book-3d-category-badge">{displayBook.category || "General"}</span>
+                  <h2 className="book-3d-title">{displayBook.title}</h2>
+                  <div className="book-3d-initials">{coverInitials}</div>
+                  <p className="book-3d-author">{displayBook.author}</p>
+                </div>
+                <div className="book-3d-bottom-glare" />
+              </>
+            )}
           </div>
         </div>
 

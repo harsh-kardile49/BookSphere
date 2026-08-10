@@ -40,8 +40,8 @@ const Login = () => {
     try {
       clearError();
       await login(data);
-      toast.success("Welcome back! Login successful.", {
-        description: "Redirecting to your dashboard...",
+      toast.success("Welcome back", {
+        description: "Opening workspace",
       });
       navigate("/dashboard");
     } catch (err: unknown) {

@@ -51,4 +51,7 @@ public class Book {
 
     @Column(name = "published_year")
     private Integer publishedYear;
+
+    @Column(name = "image_url")
+    private String imageUrl;
 }

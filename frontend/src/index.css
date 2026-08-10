@@ -107,3 +107,47 @@ h6 {
   background: var(--bs-indigo-light);
   color: var(--bs-indigo);
 }
+
+/* ── Apple UI / UX Floating White Pill Toast ── */
+.apple-ui-toast {
+  background: #ffffff !important;
+  color: #1c1917 !important;
+  border: 1px solid rgba(0, 0, 0, 0.08) !important;
+  border-radius: 9999px !important;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+  padding: 10px 22px !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Manrope', sans-serif !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+}
+
+.apple-ui-toast [data-title] {
+  font-weight: 600 !important;
+  color: #1c1917 !important;
+  font-size: 0.86rem !important;
+  letter-spacing: -0.01em !important;
+}
+
+.apple-ui-toast [data-description] {
+  color: #78716c !important;
+  font-size: 0.78rem !important;
+  font-weight: 450 !important;
+  margin-top: 1px !important;
+}
+
+.apple-ui-toast [data-icon] {
+  margin-right: 10px !important;
+}
+
+.apple-ui-toast [data-close-button] {
+  background: #f5f5f4 !important;
+  border: 1px solid rgba(0, 0, 0, 0.06) !important;
+  color: #78716c !important;
+  border-radius: 50% !important;
+  transition: all 0.15s ease !important;
+}
+
+.apple-ui-toast [data-close-button]:hover {
+  background: #e7e5e4 !important;
+  color: #1c1917 !important;
+}

@@ -47,6 +47,7 @@ const mapBackendToFrontendBook = (b: BackendBook, index: number): Book => {
     rating: 4.8,
     reviewCount: 24,
     availability: (b.quantity ?? 1) > 0 ? "Available" : "Issued",
+    imageUrl: b.imageUrl,
     description: `Published by ${b.publisher || "BookSphere"}. A comprehensive title in ${
       b.category || "General"
     }. Price: ₹${b.price || 499}.`,

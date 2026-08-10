@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { INITIAL_MEMBERS_DATA, type Member, type MembershipType, type MemberStatus } from "./data/membersData";
+import { INITIAL_MEMBERS_DATA, type Member, type MembershipType, type MemberStatus, type MemberLoan } from "./data/membersData";
 import MembersHeader from "./components/MembersHeader";
 import MembersKpiCards from "./components/MembersKpiCards";
 import MembersToolbar from "./components/MembersToolbar";
@@ -8,6 +8,7 @@ import AddMemberModal from "./components/AddMemberModal";
 import MemberDetailsDrawer from "./components/MemberDetailsDrawer";
 import DeleteMemberModal from "./components/DeleteMemberModal";
 import { userService, type BackendUserDTO } from "../../services/user.service";
+import { borrowService, type BorrowResponseDTO } from "../../services/borrow.service";
 import { toast } from "sonner";
 import "./members.css";
 
@@ -19,10 +20,31 @@ const GRADIENTS = [
   "linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)",
 ];
 
-function mapBackendUserToMember(user: BackendUserDTO, index: number): Member {
+function mapBackendUserToMember(
+  user: BackendUserDTO,
+  index: number,
+  allBorrows: BorrowResponseDTO[] = []
+): Member {
   const name = `${user.firstName} ${user.lastName}`.trim();
   const initials = ((user.firstName[0] || "") + (user.lastName[0] || "")).toUpperCase() || "MB";
   const gradient = GRADIENTS[index % GRADIENTS.length];
+
+  // Filter borrows belonging to this user
+  const userBorrows = allBorrows.filter((b) => Number(b.userId) === Number(user.id));
+  const activeBorrows = userBorrows.filter((b) => b.status === "ACTIVE");
+
+  const activeLoans: MemberLoan[] = activeBorrows.map((b, i) => ({
+    id: String(b.id),
+    bookTitle: b.bookTitle || "Issued Book",
+    author: b.bookAuthor || "Author",
+    coverGradient: GRADIENTS[i % GRADIENTS.length],
+    coverInitial: (b.bookTitle[0] || "B").toUpperCase(),
+    borrowDate: b.borrowDate,
+    dueDate: b.dueDate,
+    isOverdue: Boolean(b.isOverdue),
+  }));
+
+  const overdueCount = activeLoans.filter((l) => l.isOverdue).length;
 
   return {
     id: String(user.id),
@@ -33,14 +55,14 @@ function mapBackendUserToMember(user: BackendUserDTO, index: number): Member {
     membershipType: (user.role === "ADMIN" ? "Premium" : user.role === "LIBRARIAN" ? "Standard" : "Student") as MembershipType,
     avatarBg: gradient,
     avatarInitials: initials,
-    booksBorrowedCount: 0,
-    overdueCount: 0,
-    totalBorrowedCount: 5,
+    booksBorrowedCount: activeLoans.length,
+    overdueCount: overdueCount,
+    totalBorrowedCount: userBorrows.length,
     finesAmount: 0,
     status: "Active" as MemberStatus,
     joinedDate: "2026",
     address: "Library Registered Member",
-    activeLoans: [],
+    activeLoans: activeLoans,
     borrowingHistory: [],
     activityTimeline: [],
   };
@@ -59,25 +81,32 @@ const Members = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [deletingMember, setDeletingMember] = useState<Member | null>(null);
 
-  // Fetch users from Spring Boot backend on mount
+  // Fetch users & borrow transactions from Spring Boot backend on mount
   useEffect(() => {
     let isMounted = true;
-    const fetchUsers = async () => {
+    const fetchUsersAndLoans = async () => {
       setIsLoading(true);
       try {
-        const backendUsers = await userService.getAllUsers();
+        const [usersResult, borrowsResult] = await Promise.allSettled([
+          userService.getAllUsers(),
+          borrowService.getAllBorrows(),
+        ]);
+
+        const backendUsers = usersResult.status === "fulfilled" ? usersResult.value : [];
+        const allBorrows = borrowsResult.status === "fulfilled" ? borrowsResult.value : [];
+
         if (isMounted && Array.isArray(backendUsers) && backendUsers.length > 0) {
-          const mapped = backendUsers.map(mapBackendUserToMember);
+          const mapped = backendUsers.map((u, i) => mapBackendUserToMember(u, i, allBorrows));
           setMembersList(mapped);
         }
       } catch (err) {
-        console.warn("Backend /users API call error (using initial fallback data):", err);
+        console.warn("Backend /users API call error:", err);
       } finally {
         if (isMounted) setIsLoading(false);
       }
     };
 
-    fetchUsers();
+    fetchUsersAndLoans();
     return () => {
       isMounted = false;
     };
@@ -135,10 +164,10 @@ const Members = () => {
         role: data.membershipType === "Premium" ? "ADMIN" : data.membershipType === "Standard" ? "LIBRARIAN" : "STUDENT",
       });
 
-      const newMember = mapBackendUserToMember(created, membersList.length);
+      const newMember = mapBackendUserToMember(created, membersList.length, []);
       setMembersList((prev) => [newMember, ...prev]);
-      toast.success("Member Registered Successfully!", {
-        description: `${data.name} created in MySQL database.`,
+      toast.success("Member registered", {
+        description: `${data.name} added`,
       });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Failed to register member";

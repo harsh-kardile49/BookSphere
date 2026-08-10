@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { Star, BookOpen, Calendar, Globe, Hash, Layers } from "lucide-react";
 import type { Book } from "../data/booksData";
 
@@ -7,6 +8,7 @@ interface BookDetailsModalProps {
 }
 
 const BookDetailsModal = ({ book, onClose }: BookDetailsModalProps) => {
+  const navigate = useNavigate();
   if (!book) return null;
 
   return (
@@ -122,7 +124,14 @@ const BookDetailsModal = ({ book, onClose }: BookDetailsModalProps) => {
 
                 {/* Actions */}
                 <div className="d-flex gap-2">
-                  <button className="btn btn-dark fw-bold rounded-3 px-4 py-2 flex-grow-1">
+                  <button
+                    type="button"
+                    className="btn btn-dark fw-bold rounded-3 px-4 py-2 flex-grow-1"
+                    onClick={() => {
+                      onClose();
+                      navigate("/borrow");
+                    }}
+                  >
                     <BookOpen size={16} className="me-2" />
                     {book.availability === "Available"
                       ? "Issue Book"

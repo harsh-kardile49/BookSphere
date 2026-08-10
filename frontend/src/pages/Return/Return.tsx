@@ -17,6 +17,7 @@ const Return = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [returnId, setReturnId] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const handleConfirmReturn = async () => {
     if (!selectedLoan) return;
@@ -26,8 +27,8 @@ const Return = () => {
       await borrowService.returnBook(selectedLoan.id);
       setReturnId(`RTN-${1000 + selectedLoan.id}`);
       setIsSuccess(true);
-      toast.success("Book Returned & Stock Restored!", {
-        description: `"${selectedLoan.bookTitle}" returned by ${selectedLoan.userName}. Stock (+1) restored in MySQL.`,
+      toast.success("Book returned", {
+        description: `Inventory stock updated (+1)`,
       });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Failed to process return";
@@ -41,6 +42,7 @@ const Return = () => {
     setSelectedLoan(null);
     setIsSuccess(false);
     setReturnId("");
+    setRefreshKey((prev) => prev + 1);
   };
 
   return (
@@ -72,6 +74,7 @@ const Return = () => {
             <FindLoanSelector
               selectedLoan={selectedLoan}
               onSelectLoan={setSelectedLoan}
+              refreshKey={refreshKey}
             />
 
             {/* Step 2: Selected Loan Preview Card */}
