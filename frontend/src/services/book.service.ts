@@ -1,9 +1,9 @@
 import api from "./api";
-import type { BookPayload, BackendBook, PageResponse } from "../types/book";
+import type { BookPayload, BackendBook } from "../types/book";
 
 /**
- * BookSphere Backend API Services
- * Endpoints matched to docs/BACKEND_API_DOCUMENTATION.md
+ * BookSphere Backend API Services (Standard REST CRUD)
+ * Endpoints matched to BookController.java
  * Base URL: http://localhost:8080 (configured in api.ts)
  */
 
@@ -54,70 +54,12 @@ export const deleteBook = async (id: number | string): Promise<void> => {
   await api.delete(`/books/${id}`);
 };
 
-/**
- * 6. Search Books By Title
- * Endpoint: GET /books/search/title?title={title}
- */
-export const searchBooksByTitle = async (
-  title: string
-): Promise<BackendBook[]> => {
-  const response = await api.get<BackendBook[]>("/books/search/title", {
-    params: { title },
-  });
-  return response.data;
-};
-
-/**
- * 7. Search Books By Author
- * Endpoint: GET /books/search/author?author={author}
- */
-export const searchBooksByAuthor = async (
-  author: string
-): Promise<BackendBook[]> => {
-  const response = await api.get<BackendBook[]>("/books/search/author", {
-    params: { author },
-  });
-  return response.data;
-};
-
-/**
- * 8. Filter Books By Category
- * Endpoint: GET /books/category?category={category}
- */
-export const filterBooksByCategory = async (
-  category: string
-): Promise<BackendBook[]> => {
-  const response = await api.get<BackendBook[]>("/books/category", {
-    params: { category },
-  });
-  return response.data;
-};
-
-/**
- * 9. Pagination & Sorting
- * Endpoint: GET /books/page?page=0&size=5&sortBy=price
- */
-export const getBooksPage = async (
-  page = 0,
-  size = 10,
-  sortBy = "id"
-): Promise<PageResponse<BackendBook>> => {
-  const response = await api.get<PageResponse<BackendBook>>("/books/page", {
-    params: { page, size, sortBy },
-  });
-  return response.data;
-};
-
 export const bookService = {
   addBook,
   getAllBooks,
   getBookById,
   updateBook,
   deleteBook,
-  searchBooksByTitle,
-  searchBooksByAuthor,
-  filterBooksByCategory,
-  getBooksPage,
 };
 
 export default bookService;

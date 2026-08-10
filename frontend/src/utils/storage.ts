@@ -2,8 +2,6 @@ import type { User } from "../types/auth";
 
 // Fallback Keys in case env is undefined
 const TOKEN_KEY = import.meta.env.VITE_TOKEN_KEY || "booksphere_token";
-const REFRESH_TOKEN_KEY =
-  import.meta.env.VITE_REFRESH_TOKEN_KEY || "booksphere_refresh_token";
 const USER_KEY = import.meta.env.VITE_USER_KEY || "booksphere_user";
 
 /**
@@ -37,29 +35,6 @@ export const removeToken = (): void => {
     localStorage.removeItem(TOKEN_KEY);
   } catch (error) {
     console.error("Error removing access token from localStorage", error);
-  }
-};
-
-/**
- * Save refresh token to localStorage
- */
-export const saveRefreshToken = (refreshToken: string): void => {
-  try {
-    localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
-  } catch (error) {
-    console.error("Error saving refresh token to localStorage", error);
-  }
-};
-
-/**
- * Retrieve refresh token from localStorage
- */
-export const getRefreshToken = (): string | null => {
-  try {
-    return localStorage.getItem(REFRESH_TOKEN_KEY);
-  } catch (error) {
-    console.error("Error retrieving refresh token from localStorage", error);
-    return null;
   }
 };
 
@@ -103,10 +78,5 @@ export const removeUser = (): void => {
  */
 export const clearStorage = (): void => {
   removeToken();
-  try {
-    localStorage.removeItem(REFRESH_TOKEN_KEY);
-  } catch (error) {
-    console.error("Error removing refresh token from localStorage", error);
-  }
   removeUser();
 };

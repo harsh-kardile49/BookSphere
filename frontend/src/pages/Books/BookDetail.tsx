@@ -8,11 +8,14 @@ import {
   Share2,
   ArrowUpRight,
   CheckCircle2,
-  ShieldCheck,
   BookOpen,
   MapPin,
   Clock,
   Tag,
+  Building2,
+  Barcode,
+  Layers,
+  IndianRupee,
 } from "lucide-react";
 import { getBookById, getAllBooks } from "../../services/book.service";
 import type { BackendBook } from "../../types/book";
@@ -26,15 +29,6 @@ const GRADIENTS = [
   "linear-gradient(135deg, #f59e0b 0%, #b45309 100%)",
   "linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)",
   "linear-gradient(135deg, #10b981 0%, #047857 100%)",
-];
-
-const MOCK_REVIEWS = [
-  {
-    name: "Roberto Jordan",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80",
-    role: "Senior Member",
-    text: "An indispensable reference book in our library collection. Highly recommended for students and faculty.",
-  },
 ];
 
 const BookDetail = () => {
@@ -154,7 +148,7 @@ const BookDetail = () => {
 
   return (
     <div className="book-detail-page-container">
-      {/* ── Breadcrumb & Navigation Bar ── */}
+      {/* ── Navigation Header ── */}
       <div className="book-detail-header mb-4">
         <Link to="/books" className="d-inline-flex align-items-center gap-2 text-decoration-none fw-semibold text-dark small bg-white border px-3 py-2 rounded-pill shadow-sm">
           <ArrowLeft size={16} />
@@ -211,7 +205,7 @@ const BookDetail = () => {
           <h3 className="book-detail-author">by {displayBook.author}</h3>
 
           <p className="book-detail-teaser">
-            Available for member issuance in the main library catalog. Published by {displayBook.publisher || "Prentice Hall"} with ISBN {displayBook.isbn}.
+            Cataloged in the main library collection. Published by {displayBook.publisher || "Prentice Hall"} with ISBN {displayBook.isbn}. Available for member issuance under standard library policies.
           </p>
 
           {/* Primary Action Buttons Row */}
@@ -248,23 +242,23 @@ const BookDetail = () => {
         </div>
       </div>
 
-      {/* ── Lower Elevated Content Card (White Surface) ── */}
+      {/* ── Lower Elevated Content Card (Physical Library Info) ── */}
       <div className="book-detail-content-card">
         <div className="row g-4 g-lg-5">
-          {/* Left Column: Library Description & Location */}
+          {/* Left Column: Physical Library Inventory & Policy */}
           <div className="col-lg-7">
             <div className="mb-4 pb-2">
-              <h4 className="book-detail-section-title">Library Overview & Details</h4>
+              <h4 className="book-detail-section-title">Physical Library Inventory Information</h4>
               <p className="book-detail-paragraph">
-                "{displayBook.title}" by {displayBook.author} is cataloged under the {displayBook.category || "General"} section. It provides detailed foundational concepts, practical patterns, and core principles essential for academic and professional study.
+                "{displayBook.title}" by {displayBook.author} is cataloged under the {displayBook.category || "General"} section. It provides detailed foundational concepts, practical patterns, and core principles for academic reference and self-study.
               </p>
               <p className="book-detail-paragraph mb-0">
-                Registered members can issue this copy for up to 14 days under standard library borrowing policies. Overdue renewals or reservations can be managed via the Borrow & Return tabs.
+                Authorized library members can borrow this physical copy for up to 14 consecutive days. Late returns accrue standard daily fines as specified in library guidelines.
               </p>
             </div>
 
             {/* Library Shelf Location & Policy Box */}
-            <div className="d-flex flex-wrap gap-3 mb-4 p-3 rounded-4 bg-light border">
+            <div className="d-flex flex-wrap gap-3 p-3 rounded-4 bg-light border">
               <div className="d-flex align-items-center gap-2 text-dark small fw-semibold">
                 <MapPin size={16} className="text-primary" />
                 <span>Section B4 • Shelf 12</span>
@@ -277,30 +271,7 @@ const BookDetail = () => {
 
               <div className="d-flex align-items-center gap-2 text-dark small fw-semibold">
                 <BookOpen size={16} className="text-info" />
-                <span>Hardcover / Paperback</span>
-              </div>
-            </div>
-
-            {/* Member Review / Endorsement Card */}
-            <div className="book-detail-review-quote">
-              <div className="d-flex align-items-start gap-3">
-                <img
-                  src={MOCK_REVIEWS[0].avatar}
-                  alt={MOCK_REVIEWS[0].name}
-                  className="book-detail-review-avatar"
-                />
-                <div>
-                  <div className="d-flex align-items-center gap-2 mb-1">
-                    <h6 className="book-detail-review-name mb-0">{MOCK_REVIEWS[0].name}</h6>
-                    <span className="badge bg-success-subtle text-success small rounded-pill px-2">
-                      <ShieldCheck size={12} className="me-1" />
-                      {MOCK_REVIEWS[0].role}
-                    </span>
-                  </div>
-                  <p className="book-detail-review-text mb-0">
-                    "{MOCK_REVIEWS[0].text}"
-                  </p>
-                </div>
+                <span>Physical Print Copy</span>
               </div>
             </div>
           </div>
@@ -310,7 +281,10 @@ const BookDetail = () => {
             <div className="book-meta-spec-grid">
               {/* Publisher */}
               <div className="book-meta-spec-item">
-                <h6 className="book-meta-label">Publisher</h6>
+                <div className="d-flex align-items-center gap-2 mb-1">
+                  <Building2 size={14} className="text-muted" />
+                  <h6 className="book-meta-label mb-0">Publisher</h6>
+                </div>
                 <p className="book-meta-value">
                   {displayBook.publisher || "Prentice Hall"}
                 </p>
@@ -318,15 +292,21 @@ const BookDetail = () => {
 
               {/* Category & Published Year */}
               <div className="book-meta-spec-item">
-                <h6 className="book-meta-label">Category & Year</h6>
+                <div className="d-flex align-items-center gap-2 mb-1">
+                  <Layers size={14} className="text-muted" />
+                  <h6 className="book-meta-label mb-0">Category & Year</h6>
+                </div>
                 <p className="book-meta-value">
-                  {displayBook.category || "General"} • Published in {displayBook.publishedYear || 2026}
+                  {displayBook.category || "General"} • Published {displayBook.publishedYear || 2026}
                 </p>
               </div>
 
               {/* Specifications */}
               <div className="book-meta-spec-item">
-                <h6 className="book-meta-label">ISBN Reference</h6>
+                <div className="d-flex align-items-center gap-2 mb-1">
+                  <Barcode size={14} className="text-muted" />
+                  <h6 className="book-meta-label mb-0">ISBN Reference</h6>
+                </div>
                 <p className="book-meta-isbn font-monospace fs-6 fw-semibold text-dark">
                   {displayBook.isbn || "978-0132350884"}
                 </p>
@@ -336,11 +316,14 @@ const BookDetail = () => {
               <div className="book-meta-spec-item border-0 pt-2">
                 <div className="d-flex align-items-center justify-content-between">
                   <div>
-                    <h6 className="book-meta-label">Library Inventory & Replacement Value</h6>
+                    <div className="d-flex align-items-center gap-2 mb-1">
+                      <IndianRupee size={14} className="text-muted" />
+                      <h6 className="book-meta-label mb-0">Book Value & Copies</h6>
+                    </div>
                     <div className="d-flex align-items-baseline gap-2">
                       <span className="book-meta-price">₹{displayBook.price || 699.0}</span>
                       <span className="text-muted small">
-                        ({displayBook.quantity ?? 12} copies available)
+                        ({displayBook.quantity ?? 12} copies in stock)
                       </span>
                     </div>
                   </div>

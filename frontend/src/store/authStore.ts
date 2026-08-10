@@ -1,13 +1,12 @@
 import { create } from "zustand";
 import type { User, UserRole, LoginRequest, RegisterRequest } from "../types/auth";
 import { AuthService } from "../services/auth.service";
-import { getToken, getRefreshToken, getUser, clearStorage } from "../utils/storage";
+import { getToken, getUser, clearStorage } from "../utils/storage";
 import axios from "axios";
 
 interface AuthState {
   user: User | null;
   token: string | null;
-  refreshToken: string | null;
   role: UserRole | null;
   isAuthenticated: boolean;
   isLoading: boolean;
@@ -55,7 +54,6 @@ function extractErrorMessage(err: unknown, fallback: string): string {
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
   token: null,
-  refreshToken: null,
   role: null,
   isAuthenticated: false,
   isLoading: true,
@@ -67,14 +65,12 @@ export const useAuthStore = create<AuthState>((set) => ({
   initAuth: () => {
     try {
       const storedToken = getToken();
-      const storedRefreshToken = getRefreshToken();
       const storedUser = getUser();
 
       if (storedToken && storedUser) {
         set({
           user: storedUser,
           token: storedToken,
-          refreshToken: storedRefreshToken,
           role: storedUser.role,
           isAuthenticated: true,
           isLoading: false,
@@ -84,7 +80,6 @@ export const useAuthStore = create<AuthState>((set) => ({
         set({
           user: null,
           token: null,
-          refreshToken: null,
           role: null,
           isAuthenticated: false,
           isLoading: false,
@@ -95,7 +90,6 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({
         user: null,
         token: null,
-        refreshToken: null,
         role: null,
         isAuthenticated: false,
         isLoading: false,
@@ -114,7 +108,6 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({
         user: response.user,
         token: response.token,
-        refreshToken: response.refreshToken || null,
         role: response.user.role,
         isAuthenticated: true,
         isLoading: false,
@@ -144,7 +137,6 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({
         user: response.user,
         token: response.token,
-        refreshToken: response.refreshToken || null,
         role: response.user.role,
         isAuthenticated: true,
         isLoading: false,
@@ -176,7 +168,6 @@ export const useAuthStore = create<AuthState>((set) => ({
       set({
         user: null,
         token: null,
-        refreshToken: null,
         role: null,
         isAuthenticated: false,
         isLoading: false,
@@ -204,7 +195,6 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({
       user: null,
       token: null,
-      refreshToken: null,
       role: null,
       isAuthenticated: false,
       error: null,

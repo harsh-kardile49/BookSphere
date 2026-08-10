@@ -68,29 +68,15 @@ export const AuthService = {
   },
 
   /**
-   * Logout user and clear stored tokens
+   * Logout user and clear stored token and user data
    */
   logout: async (): Promise<void> => {
     try {
       await api.post("/auth/logout");
     } catch {
-      // Ignore network errors during logout — backend may not have a logout endpoint
+      // Ignore network errors during logout
     } finally {
       clearStorage();
-    }
-  },
-
-  /**
-   * Refresh JWT access token (if backend supports it in the future)
-   */
-  refreshToken: async (): Promise<string | null> => {
-    try {
-      const response = await api.post<{ token: string }>("/auth/refresh-token");
-      const newToken = response.data.token;
-      saveToken(newToken);
-      return newToken;
-    } catch {
-      return null;
     }
   },
 };
