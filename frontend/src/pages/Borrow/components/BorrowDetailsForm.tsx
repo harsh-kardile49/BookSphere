@@ -5,8 +5,6 @@ interface BorrowDetailsFormProps {
   onBorrowDateChange: (date: string) => void;
   dueDate: string;
   onDueDateChange: (date: string) => void;
-  notes: string;
-  onNotesChange: (notes: string) => void;
 }
 
 const BorrowDetailsForm = ({
@@ -14,12 +12,10 @@ const BorrowDetailsForm = ({
   onBorrowDateChange,
   dueDate,
   onDueDateChange,
-  notes,
-  onNotesChange,
 }: BorrowDetailsFormProps) => {
   return (
     <div className="form-section mb-0">
-      <div className="date-fields-grid">
+      <div className="date-fields-grid mb-3">
         {/* Borrow Date */}
         <div>
           <label className="form-section-label">Borrow Date</label>
@@ -49,28 +45,9 @@ const BorrowDetailsForm = ({
         </div>
       </div>
 
-      <div className="info-note mb-4">
+      <div className="info-note">
         <Info size={14} color="var(--bs-indigo)" />
         <span>Standard borrowing period: 14 days</span>
-      </div>
-
-      {/* Notes Field */}
-      <div>
-        <label className="form-section-label">Notes (Optional)</label>
-        <div className="position-relative">
-          <textarea
-            className="form-control border-light rounded-3 p-3 text-dark small"
-            style={{
-              background: "var(--surface-page)",
-              fontSize: ".86rem",
-              minHeight: 80,
-              resize: "none",
-            }}
-            placeholder="Add any notes about this borrowing..."
-            value={notes}
-            onChange={(e) => onNotesChange(e.target.value)}
-          />
-        </div>
       </div>
     </div>
   );

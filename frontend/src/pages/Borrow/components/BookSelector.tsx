@@ -1,16 +1,70 @@
 import { useState, useRef, useEffect } from "react";
 import { Search, X, AlertCircle } from "lucide-react";
-import { BOOKS_DATA, type Book } from "../../Books/data/booksData";
+import { bookService } from "../../../services/book.service";
+import type { BackendBook } from "../../../types/book";
 
-interface BookSelectorProps {
-  selectedBook: Book | null;
-  onSelectBook: (book: Book | null) => void;
+export interface BorrowableBook {
+  id: number;
+  title: string;
+  author: string;
+  isbn: string;
+  category: string;
+  quantity: number;
+  availability: "Available" | "Out of Stock";
+  coverGradient: string;
+  coverInitial: string;
 }
 
+interface BookSelectorProps {
+  selectedBook: BorrowableBook | null;
+  onSelectBook: (book: BorrowableBook | null) => void;
+}
+
+const GRADIENTS = [
+  "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)",
+  "linear-gradient(135deg, #6366f1 0%, #4338ca 100%)",
+  "linear-gradient(135deg, #06b6d4 0%, #0e7490 100%)",
+  "linear-gradient(135deg, #f59e0b 0%, #b45309 100%)",
+  "linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)",
+  "linear-gradient(135deg, #10b981 0%, #047857 100%)",
+];
+
 const BookSelector = ({ selectedBook, onSelectBook }: BookSelectorProps) => {
+  const [booksList, setBooksList] = useState<BorrowableBook[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Load real books from backend API
+  useEffect(() => {
+    let isMounted = true;
+    const loadBooks = async () => {
+      try {
+        const books: BackendBook[] = await bookService.getAllBooks();
+        if (isMounted && Array.isArray(books)) {
+          const mapped: BorrowableBook[] = books.map((b, i) => ({
+            id: Number(b.id),
+            title: b.title,
+            author: b.author,
+            isbn: b.isbn || "978-0132350884",
+            category: b.category || "General",
+            quantity: b.quantity ?? 1,
+            availability: (b.quantity ?? 1) > 0 ? "Available" : "Out of Stock",
+            coverGradient: GRADIENTS[i % GRADIENTS.length],
+            coverInitial: (b.title[0] || "B").toUpperCase(),
+          }));
+          setBooksList(mapped);
+        }
+      } catch (err) {
+        console.warn("Error fetching books for selector:", err);
+      }
+    };
+
+    loadBooks();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -26,7 +80,7 @@ const BookSelector = ({ selectedBook, onSelectBook }: BookSelectorProps) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const filteredBooks = BOOKS_DATA.filter(
+  const filteredBooks = booksList.filter(
     (b) =>
       b.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       b.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -45,7 +99,7 @@ const BookSelector = ({ selectedBook, onSelectBook }: BookSelectorProps) => {
             <input
               type="text"
               className="borrow-input"
-              placeholder="Search by title, author, or ISBN..."
+              placeholder="Search catalog by title, author, or ISBN..."
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
@@ -103,7 +157,7 @@ const BookSelector = ({ selectedBook, onSelectBook }: BookSelectorProps) => {
                             : "bg-secondary-subtle text-secondary"
                         } px-2 py-1 rounded-pill small`}
                       >
-                        {book.availability}
+                        {book.availability} ({book.quantity})
                       </span>
                     </div>
                   </div>
@@ -140,8 +194,8 @@ const BookSelector = ({ selectedBook, onSelectBook }: BookSelectorProps) => {
 
           <div className="d-flex align-items-center gap-3">
             <div className="text-end d-none d-sm-block">
-              <div className="small text-muted">Copies</div>
-              <div className="fw-bold text-success">5 available</div>
+              <div className="small text-muted">Stock</div>
+              <div className="fw-bold text-success">{selectedBook.quantity} available</div>
             </div>
 
             <button
@@ -161,7 +215,7 @@ const BookSelector = ({ selectedBook, onSelectBook }: BookSelectorProps) => {
         <div className="alert alert-danger mt-2 p-2 px-3 small d-flex align-items-center gap-2 rounded-3 border-0">
           <AlertCircle size={16} />
           <span>
-            This book is currently <strong>{selectedBook.availability}</strong> and cannot be borrowed.
+            This book is currently <strong>{selectedBook.availability}</strong> (Stock: 0) and cannot be borrowed.
           </span>
         </div>
       )}

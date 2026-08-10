@@ -1,13 +1,10 @@
 import { Check, BookOpen, RotateCcw } from "lucide-react";
-import type { ActiveLoan } from "../data/loansData";
-import type { BookCondition } from "./ReturnConditionForm";
+import type { ActiveBorrowLoan } from "./FindLoanSelector";
 
 interface ReturnSuccessViewProps {
   returnId: string;
-  loan: ActiveLoan;
+  loan: ActiveBorrowLoan;
   returnDate: string;
-  condition: BookCondition;
-  fineAmount: number;
   onReset: () => void;
 }
 
@@ -26,8 +23,6 @@ const ReturnSuccessView = ({
   returnId,
   loan,
   returnDate,
-  condition,
-  fineAmount,
   onReset,
 }: ReturnSuccessViewProps) => {
   return (
@@ -37,16 +32,16 @@ const ReturnSuccessView = ({
         <Check size={36} strokeWidth={3} />
       </div>
 
-      <h2 className="fw-bold text-dark mb-2">Book Returned Successfully</h2>
+      <h2 className="fw-bold text-dark mb-2">Book Returned & Stock Restored</h2>
       <p className="text-secondary small mb-0">
         <strong>"{loan.bookTitle}"</strong> has been successfully returned by{" "}
-        <strong>{loan.memberName}</strong>.
+        <strong>{loan.userName}</strong>. Inventory stock has been restored in MySQL.
       </p>
 
       {/* Receipt Box */}
       <div className="success-receipt-box">
         <div className="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
-          <span className="small text-muted fw-semibold">Return ID</span>
+          <span className="small text-muted fw-semibold">Return Transaction ID</span>
           <span className="badge bg-indigo-subtle text-primary fw-bold px-3 py-1 rounded-pill">
             {returnId}
           </span>
@@ -59,8 +54,8 @@ const ReturnSuccessView = ({
           </div>
 
           <div className="col-6">
-            <small className="text-muted d-block">Member</small>
-            <span className="fw-semibold text-dark small">{loan.memberName}</span>
+            <small className="text-muted d-block">Borrower</small>
+            <span className="fw-semibold text-dark small">{loan.userName}</span>
           </div>
 
           <div className="col-6">
@@ -71,26 +66,9 @@ const ReturnSuccessView = ({
           </div>
 
           <div className="col-6">
-            <small className="text-muted d-block">Condition</small>
-            <span className="fw-semibold text-dark small">{condition}</span>
-          </div>
-
-          <div className="col-6">
-            <small className="text-muted d-block">Fine Amount</small>
-            <span
-              className={`fw-bold small ${
-                fineAmount > 0 ? "text-amber" : "text-success"
-              }`}
-              style={fineAmount > 0 ? { color: "#b45309" } : {}}
-            >
-              ₹{fineAmount}
-            </span>
-          </div>
-
-          <div className="col-6">
-            <small className="text-muted d-block">Status</small>
+            <small className="text-muted d-block">Inventory Status</small>
             <span className="badge bg-success-subtle text-success px-2 py-1 rounded-pill small">
-              Completed
+              Restored (+1 Stock)
             </span>
           </div>
         </div>
@@ -101,10 +79,10 @@ const ReturnSuccessView = ({
         <button
           type="button"
           className="btn btn-outline-secondary fw-semibold rounded-3 px-4 py-2"
-          onClick={() => (window.location.href = "/dashboard")}
+          onClick={() => (window.location.href = "/books")}
         >
           <BookOpen size={16} className="me-2" />
-          View Loan History
+          View Catalog
         </button>
 
         <button

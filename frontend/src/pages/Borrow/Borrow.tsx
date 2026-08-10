@@ -1,12 +1,11 @@
 import { useState } from "react";
-import type { Member } from "./data/membersData";
-import type { Book } from "../Books/data/booksData";
 import BorrowHeader from "./components/BorrowHeader";
-import MemberSelector from "./components/MemberSelector";
-import BookSelector from "./components/BookSelector";
+import MemberSelector, { type BorrowableMember } from "./components/MemberSelector";
+import BookSelector, { type BorrowableBook } from "./components/BookSelector";
 import BorrowDetailsForm from "./components/BorrowDetailsForm";
 import BorrowSummaryCard from "./components/BorrowSummaryCard";
 import BorrowSuccessView from "./components/BorrowSuccessView";
+import { borrowService } from "../../services/borrow.service";
 import { toast } from "sonner";
 import "./borrow.css";
 
@@ -18,11 +17,10 @@ const Borrow = () => {
   const defaultDue = new Date(today);
   defaultDue.setDate(defaultDue.getDate() + 14);
 
-  const [selectedMember, setSelectedMember] = useState<Member | null>(null);
-  const [selectedBook, setSelectedBook] = useState<Book | null>(null);
+  const [selectedMember, setSelectedMember] = useState<BorrowableMember | null>(null);
+  const [selectedBook, setSelectedBook] = useState<BorrowableBook | null>(null);
   const [borrowDate, setBorrowDate] = useState<string>(toInputDate(today));
   const [dueDate, setDueDate] = useState<string>(toInputDate(defaultDue));
-  const [notes, setNotes] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [borrowId, setBorrowId] = useState("");
@@ -47,19 +45,28 @@ const Borrow = () => {
       selectedBook.availability === "Available"
   );
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     if (!isValid || !selectedMember || !selectedBook) return;
 
     setIsLoading(true);
-    setTimeout(() => {
-      const randomId = `BRW-${Math.floor(1000 + Math.random() * 9000)}`;
-      setBorrowId(randomId);
-      setIsLoading(false);
-      setIsSuccess(true);
-      toast.success("Borrow record created successfully!", {
-        description: `${selectedBook.title} issued to ${selectedMember.name}`,
+    try {
+      const result = await borrowService.issueBook({
+        userId: selectedMember.id,
+        bookId: selectedBook.id,
+        dueDate: dueDate,
       });
-    }, 1000);
+
+      setBorrowId(`BRW-${1000 + result.id}`);
+      setIsSuccess(true);
+      toast.success("Book Issued Successfully!", {
+        description: `"${selectedBook.title}" issued to ${selectedMember.name} (Stock updated in MySQL).`,
+      });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to issue book";
+      toast.error("Borrow Transaction Failed", { description: msg });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleReset = () => {
@@ -70,7 +77,6 @@ const Borrow = () => {
     due.setDate(due.getDate() + 14);
     setBorrowDate(toInputDate(now));
     setDueDate(toInputDate(due));
-    setNotes("");
     setIsSuccess(false);
     setBorrowId("");
   };
@@ -114,14 +120,12 @@ const Borrow = () => {
               onSelectBook={setSelectedBook}
             />
 
-            {/* Step 3: Dates & Notes */}
+            {/* Step 3: Dates */}
             <BorrowDetailsForm
               borrowDate={borrowDate}
               onBorrowDateChange={handleBorrowDateChange}
               dueDate={dueDate}
               onDueDateChange={setDueDate}
-              notes={notes}
-              onNotesChange={setNotes}
             />
           </div>
 

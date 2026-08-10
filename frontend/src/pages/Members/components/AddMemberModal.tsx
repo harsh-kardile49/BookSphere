@@ -148,7 +148,7 @@ const AddMemberModal = ({
                   <input
                     type="text"
                     className="form-control rounded-3 p-2.5 text-muted small bg-light font-monospace"
-                    value="MEM-1025 (Auto)"
+                    value="Auto-generated in MySQL DB"
                     disabled
                   />
                 </div>

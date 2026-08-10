@@ -1,8 +1,8 @@
 import { X } from "lucide-react";
-import type { ActiveLoan } from "../data/loansData";
+import type { ActiveBorrowLoan } from "./FindLoanSelector";
 
 interface SelectedLoanCardProps {
-  loan: ActiveLoan;
+  loan: ActiveBorrowLoan;
   onClear: () => void;
 }
 
@@ -31,22 +31,28 @@ const SelectedLoanCard = ({ loan, onClear }: SelectedLoanCardProps) => {
       {/* Meta Details */}
       <div className="flex-grow-1">
         <div className="d-flex align-items-center gap-2 mb-1">
-          <span className="badge bg-indigo-subtle text-primary px-2 py-1 rounded-pill small">
-            {loan.category}
-          </span>
           <span className="badge bg-slate-100 text-secondary px-2 py-1 rounded-pill small fw-bold">
             {loan.loanCode}
+          </span>
+          <span
+            className={`badge ${
+              loan.isOverdue
+                ? "bg-warning-subtle text-warning-emphasis"
+                : "bg-success-subtle text-success"
+            } px-2 py-1 rounded-pill small`}
+          >
+            {loan.isOverdue ? "Overdue" : "Active Loan"}
           </span>
         </div>
 
         <h6 className="fw-bold text-dark mb-0">{loan.bookTitle}</h6>
         <div className="text-muted small mt-1">
-          By <strong>{loan.author}</strong> · ISBN: {loan.isbn}
+          By <strong>{loan.bookAuthor}</strong> · ISBN: {loan.isbn}
         </div>
 
         <div className="mt-2 pt-2 border-top border-subtle d-flex flex-wrap gap-4 text-muted small">
           <div>
-            Borrower: <strong className="text-dark">{loan.memberName}</strong> ({loan.memberCode})
+            Borrower: <strong className="text-dark">{loan.userName}</strong> ({loan.userEmail})
           </div>
           <div>
             Borrowed: <strong className="text-dark">{formatDate(loan.borrowDate)}</strong>

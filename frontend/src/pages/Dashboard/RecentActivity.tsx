@@ -1,113 +1,90 @@
-import {
-  RotateCcw,
-  UserPlus,
-  BookPlus,
-  BookMarked,
-  ArrowRight,
-} from "lucide-react";
+import { BookOpen, ArrowRight } from "lucide-react";
+import type { BorrowResponseDTO } from "../../services/borrow.service";
 
-interface ActivityItem {
-  id: number;
-  icon: React.ReactNode;
-  iconBg: string;
-  iconColor: string;
-  text: React.ReactNode;
-  time: string;
+interface RecentActivityProps {
+  recentBorrows: BorrowResponseDTO[];
 }
 
-const activities: ActivityItem[] = [
-  {
-    id: 1,
-    icon: <RotateCcw size={14} />,
-    iconBg: "var(--bs-emerald-light)",
-    iconColor: "var(--bs-emerald)",
-    text: (
-      <>
-        <strong>Rahul Sharma</strong> returned <strong>"Clean Code"</strong>
-      </>
-    ),
-    time: "2 minutes ago",
-  },
-  {
-    id: 2,
-    icon: <UserPlus size={14} />,
-    iconBg: "var(--bs-indigo-light)",
-    iconColor: "var(--bs-indigo)",
-    text: (
-      <>
-        New member registered — <strong>Priya Patel</strong>
-      </>
-    ),
-    time: "12 minutes ago",
-  },
-  {
-    id: 3,
-    icon: <BookPlus size={14} />,
-    iconBg: "var(--bs-cyan-light)",
-    iconColor: "var(--bs-cyan)",
-    text: (
-      <>
-        <strong>"Design Patterns"</strong> was added to the library
-      </>
-    ),
-    time: "25 minutes ago",
-  },
-  {
-    id: 4,
-    icon: <BookMarked size={14} />,
-    iconBg: "var(--bs-amber-light)",
-    iconColor: "var(--bs-amber)",
-    text: (
-      <>
-        Reservation created for <strong>"Atomic Habits"</strong>
-      </>
-    ),
-    time: "1 hour ago",
-  },
-  {
-    id: 5,
-    icon: <RotateCcw size={14} />,
-    iconBg: "var(--bs-emerald-light)",
-    iconColor: "var(--bs-emerald)",
-    text: (
-      <>
-        <strong>Alex Morgan</strong> returned{" "}
-        <strong>"The Pragmatic Programmer"</strong>
-      </>
-    ),
-    time: "2 hours ago",
-  },
-];
+const formatDate = (dateStr: string) => {
+  if (!dateStr) return "-";
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return dateStr;
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+};
 
-const RecentActivity = () => {
+const RecentActivity = ({ recentBorrows }: RecentActivityProps) => {
   return (
-    <div className="dash-card" style={{ height: "100%" }}>
-      <div className="dash-card-header">
-        <h6 className="section-title">Recent Activity</h6>
-        <a href="#" className="section-link">
-          View all <ArrowRight size={13} />
-        </a>
+    <div className="card border-0 rounded-4 shadow-sm p-4 bg-white h-100">
+      <div className="d-flex align-items-center justify-content-between mb-3">
+        <div>
+          <h5 className="fw-bold text-dark mb-1">Recent Borrow Transactions</h5>
+          <p className="text-muted small mb-0">Latest book loans issued to library members.</p>
+        </div>
+        <button
+          type="button"
+          className="btn btn-sm btn-outline-primary rounded-pill px-3 fw-semibold"
+          onClick={() => (window.location.href = "/borrow")}
+        >
+          <span>Issue Book</span>
+          <ArrowRight size={14} className="ms-1" />
+        </button>
       </div>
 
-      <div>
-        {activities.map((act) => (
-          <div className="activity-item" key={act.id}>
-            <div
-              className="activity-dot"
-              style={{
-                background: act.iconBg,
-                color: act.iconColor,
-              }}
-            >
-              {act.icon}
-            </div>
-            <div style={{ flex: 1 }}>
-              <div className="activity-text">{act.text}</div>
-              <div className="activity-time">{act.time}</div>
-            </div>
-          </div>
-        ))}
-      </div>
+      {recentBorrows.length === 0 ? (
+        <div className="text-center py-4 text-muted small">
+          <BookOpen size={32} className="mb-2 text-secondary opacity-50" />
+          <p className="mb-0">No recent borrowing transactions found in database.</p>
+        </div>
+      ) : (
+        <div className="table-responsive">
+          <table className="table table-hover align-middle mb-0">
+            <thead className="table-light text-uppercase small text-muted">
+              <tr>
+                <th style={{ fontSize: "0.75rem" }}>Loan ID</th>
+                <th style={{ fontSize: "0.75rem" }}>Member</th>
+                <th style={{ fontSize: "0.75rem" }}>Book Title</th>
+                <th style={{ fontSize: "0.75rem" }}>Issued</th>
+                <th style={{ fontSize: "0.75rem" }}>Due</th>
+                <th style={{ fontSize: "0.75rem" }}>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {recentBorrows.slice(0, 5).map((loan) => (
+                <tr key={loan.id}>
+                  <td className="fw-semibold text-dark small">LN-{1000 + loan.id}</td>
+                  <td>
+                    <div className="fw-semibold text-dark small">{loan.userName}</div>
+                    <div className="text-muted style-small" style={{ fontSize: "0.72rem" }}>
+                      {loan.userEmail}
+                    </div>
+                  </td>
+                  <td>
+                    <div className="fw-semibold text-primary small">{loan.bookTitle}</div>
+                    <div className="text-muted style-small" style={{ fontSize: "0.72rem" }}>
+                      {loan.bookAuthor}
+                    </div>
+                  </td>
+                  <td className="small text-muted">{formatDate(loan.borrowDate)}</td>
+                  <td className="small text-muted">{formatDate(loan.dueDate)}</td>
+                  <td>
+                    <span
+                      className={`badge ${
+                        loan.status === "RETURNED"
+                          ? "bg-secondary-subtle text-secondary"
+                          : loan.isOverdue
+                          ? "bg-warning-subtle text-warning-emphasis"
+                          : "bg-success-subtle text-success"
+                      } px-2 py-1 rounded-pill small`}
+                    >
+                      {loan.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 };

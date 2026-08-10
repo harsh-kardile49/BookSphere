@@ -1,81 +1,112 @@
+import { useState, useEffect } from "react";
 import { useAuthStore } from "../../store/authStore";
 import KpiCards from "./KpiCards";
-import ActivityChart from "./ActivityChart";
-import PopularBooks from "./PopularBooks";
-import OverdueBooks from "./OverdueBooks";
 import RecentActivity from "./RecentActivity";
 import QuickActions from "./QuickActions";
-import AvailabilityRing from "./AvailabilityRing";
+import { bookService } from "../../services/book.service";
+import { userService } from "../../services/user.service";
+import { borrowService, type BorrowResponseDTO } from "../../services/borrow.service";
 import "./dashboard.css";
 
 const Dashboard = () => {
   const { user } = useAuthStore();
-  const firstName = user?.firstName ? user.firstName.replace(/\./g, " ") : "User";
+  const firstName = user?.firstName ? user.firstName.replace(/\./g, " ") : "Librarian";
+
+  // Dynamic KPI Counts
+  const [totalBooks, setTotalBooks] = useState(0);
+  const [availableStock, setAvailableStock] = useState(0);
+  const [activeLoans, setActiveLoans] = useState(0);
+  const [totalMembers, setTotalMembers] = useState(0);
+
+  // Recent Borrows
+  const [recentBorrows, setRecentBorrows] = useState<BorrowResponseDTO[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Greeting based on time of day
   const hour = new Date().getHours();
   const greeting =
     hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
 
+  // Fetch real counts on mount
+  useEffect(() => {
+    let isMounted = true;
+    const fetchDashboardMetrics = async () => {
+      setIsLoading(true);
+      try {
+        const [books, users, borrows] = await Promise.allSettled([
+          bookService.getAllBooks(),
+          userService.getAllUsers(),
+          borrowService.getAllBorrows(),
+        ]);
+
+        if (isMounted) {
+          if (books.status === "fulfilled" && Array.isArray(books.value)) {
+            setTotalBooks(books.value.length);
+            const stock = books.value.reduce((acc, b) => acc + (b.quantity ?? 1), 0);
+            setAvailableStock(stock);
+          }
+
+          if (users.status === "fulfilled" && Array.isArray(users.value)) {
+            setTotalMembers(users.value.length);
+          }
+
+          if (borrows.status === "fulfilled" && Array.isArray(borrows.value)) {
+            setRecentBorrows(borrows.value);
+            const activeCount = borrows.value.filter((b) => b.status === "ACTIVE").length;
+            setActiveLoans(activeCount);
+          }
+        }
+      } catch (err) {
+        console.warn("Dashboard metrics load error:", err);
+      } finally {
+        if (isMounted) setIsLoading(false);
+      }
+    };
+
+    fetchDashboardMetrics();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
   return (
     <div className="dashboard-page">
-      {/* ── Header ── */}
+      {/* Header */}
       <div className="mb-4">
-        <h4
-          style={{
-            fontWeight: 700,
-            color: "var(--text-primary)",
-            fontSize: "1.4rem",
-            marginBottom: "4px",
-          }}
-        >
+        <h4 className="fw-bold text-dark mb-1" style={{ fontSize: "1.4rem" }}>
           {greeting}, {firstName}
         </h4>
-        <p
-          style={{
-            fontSize: "0.88rem",
-            color: "var(--text-muted)",
-            margin: 0,
-          }}
-        >
-          Here's what's happening in your library today.
+        <p className="text-muted small mb-0">
+          Welcome to BookSphere Library System. Here's your real-time operational overview.
         </p>
       </div>
 
-      {/* ── KPI Cards ── */}
+      {/* 4 Live KPI Cards */}
       <div className="mb-4">
-        <KpiCards />
+        <KpiCards
+          totalBooks={totalBooks}
+          availableStock={availableStock}
+          activeLoans={activeLoans}
+          totalMembers={totalMembers}
+        />
       </div>
 
-      {/* ── Row: Chart + Popular Books ── */}
-      <div className="row g-3 mb-3">
-        <div className="col-12 col-lg-8">
-          <ActivityChart />
+      {/* Main Grid: Recent Activity Table + Quick Actions */}
+      {isLoading ? (
+        <div className="text-center py-5">
+          <div className="spinner-border text-primary mb-2" role="status" />
+          <p className="text-muted small">Loading library operational data...</p>
         </div>
-        <div className="col-12 col-lg-4">
-          <PopularBooks />
+      ) : (
+        <div className="row g-3">
+          <div className="col-12 col-lg-8">
+            <RecentActivity recentBorrows={recentBorrows} />
+          </div>
+          <div className="col-12 col-lg-4">
+            <QuickActions />
+          </div>
         </div>
-      </div>
-
-      {/* ── Row: Overdue + Availability Ring ── */}
-      <div className="row g-3 mb-3">
-        <div className="col-12 col-lg-8">
-          <OverdueBooks />
-        </div>
-        <div className="col-12 col-lg-4">
-          <AvailabilityRing />
-        </div>
-      </div>
-
-      {/* ── Row: Recent Activity + Quick Actions ── */}
-      <div className="row g-3 mb-3">
-        <div className="col-12 col-lg-8">
-          <RecentActivity />
-        </div>
-        <div className="col-12 col-lg-4">
-          <QuickActions />
-        </div>
-      </div>
+      )}
     </div>
   );
 };

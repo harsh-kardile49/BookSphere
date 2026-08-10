@@ -1,11 +1,11 @@
 import { Check, BookOpen, RotateCcw } from "lucide-react";
-import type { Member } from "../data/membersData";
-import type { Book } from "../../Books/data/booksData";
+import type { BorrowableMember } from "./MemberSelector";
+import type { BorrowableBook } from "./BookSelector";
 
 interface BorrowSuccessViewProps {
   borrowId: string;
-  member: Member;
-  book: Book;
+  member: BorrowableMember;
+  book: BorrowableBook;
   borrowDate: string;
   dueDate: string;
   onReset: () => void;
@@ -39,14 +39,14 @@ const BorrowSuccessView = ({
 
       <h2 className="fw-bold text-dark mb-2">Book Borrowed Successfully</h2>
       <p className="text-secondary small mb-0">
-        <strong>"{book.title}"</strong> has been successfully borrowed by{" "}
+        <strong>"{book.title}"</strong> has been successfully issued to{" "}
         <strong>{member.name}</strong>.
       </p>
 
       {/* Receipt Box */}
       <div className="success-receipt-box">
         <div className="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
-          <span className="small text-muted fw-semibold">Borrow ID</span>
+          <span className="small text-muted fw-semibold">Borrow Transaction ID</span>
           <span className="badge bg-indigo-subtle text-primary fw-bold px-3 py-1 rounded-pill">
             {borrowId}
           </span>
@@ -84,7 +84,7 @@ const BorrowSuccessView = ({
         <button
           type="button"
           className="btn btn-outline-secondary fw-semibold rounded-3 px-4 py-2"
-          onClick={() => (window.location.href = "/dashboard")}
+          onClick={() => (window.location.href = "/borrow")}
         >
           <BookOpen size={16} className="me-2" />
           View Loans

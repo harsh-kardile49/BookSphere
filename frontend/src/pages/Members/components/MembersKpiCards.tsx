@@ -1,7 +1,18 @@
 import { Users, UserCheck, BookOpen, AlertTriangle } from "lucide-react";
-import { MEMBERS_KPI } from "../data/membersData";
+import type { Member } from "../data/membersData";
 
-const MembersKpiCards = () => {
+interface MembersKpiCardsProps {
+  members: Member[];
+}
+
+const MembersKpiCards = ({ members }: MembersKpiCardsProps) => {
+  const totalCount = members.length;
+  const activeCount = members.filter((m) => m.status === "Active").length;
+  const activePercent = totalCount > 0 ? ((activeCount / totalCount) * 100).toFixed(1) : "0";
+
+  const borrowingCount = members.filter((m) => m.booksBorrowedCount > 0 || (m.activeLoans && m.activeLoans.length > 0)).length;
+  const overdueCount = members.filter((m) => m.overdueCount > 0 || (m.activeLoans && m.activeLoans.some((l) => l.isOverdue))).length;
+
   return (
     <div className="members-kpi-grid">
       {/* 1. Total Members */}
@@ -13,10 +24,8 @@ const MembersKpiCards = () => {
           <Users size={20} />
         </div>
         <div className="kpi-label">Total Members</div>
-        <div className="kpi-number">{MEMBERS_KPI.totalMembers.count}</div>
-        <div className="kpi-subtext text-success font-medium">
-          {MEMBERS_KPI.totalMembers.change}
-        </div>
+        <div className="kpi-number">{totalCount.toLocaleString()}</div>
+
       </div>
 
       {/* 2. Active Members */}
@@ -28,9 +37,9 @@ const MembersKpiCards = () => {
           <UserCheck size={20} />
         </div>
         <div className="kpi-label">Active Members</div>
-        <div className="kpi-number">{MEMBERS_KPI.activeMembers.count}</div>
+        <div className="kpi-number">{activeCount.toLocaleString()}</div>
         <div className="kpi-subtext text-emerald" style={{ color: "#047857" }}>
-          {MEMBERS_KPI.activeMembers.percent}
+          {activePercent}% of members
         </div>
       </div>
 
@@ -43,8 +52,8 @@ const MembersKpiCards = () => {
           <BookOpen size={20} />
         </div>
         <div className="kpi-label">Currently Borrowing</div>
-        <div className="kpi-number">{MEMBERS_KPI.currentlyBorrowing.count}</div>
-        <div className="kpi-subtext">{MEMBERS_KPI.currentlyBorrowing.label}</div>
+        <div className="kpi-number">{borrowingCount.toLocaleString()}</div>
+        <div className="kpi-subtext">Members with active loans</div>
       </div>
 
       {/* 4. Overdue Members */}
@@ -56,9 +65,9 @@ const MembersKpiCards = () => {
           <AlertTriangle size={20} />
         </div>
         <div className="kpi-label">Overdue Members</div>
-        <div className="kpi-number">{MEMBERS_KPI.overdueMembers.count}</div>
+        <div className="kpi-number">{overdueCount.toLocaleString()}</div>
         <div className="kpi-subtext" style={{ color: "#b45309" }}>
-          {MEMBERS_KPI.overdueMembers.label}
+          {overdueCount > 0 ? "Action required" : "No overdue loans"}
         </div>
       </div>
     </div>

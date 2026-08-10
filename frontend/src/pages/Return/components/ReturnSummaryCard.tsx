@@ -1,14 +1,10 @@
-import { BookCheck, CheckCircle2, AlertTriangle, AlertOctagon } from "lucide-react";
-import type { ActiveLoan } from "../data/loansData";
-import type { BookCondition } from "./ReturnConditionForm";
+import { BookCheck, CheckCircle2, AlertTriangle } from "lucide-react";
+import type { ActiveBorrowLoan } from "./FindLoanSelector";
 
 interface ReturnSummaryCardProps {
-  loan: ActiveLoan | null;
+  loan: ActiveBorrowLoan | null;
   returnDate: string;
-  condition: BookCondition;
   isOverdue: boolean;
-  daysOverdue: number;
-  fineAmount: number;
   isLoading: boolean;
   onConfirm: () => void;
   onCancel: () => void;
@@ -28,15 +24,11 @@ const formatDate = (dateStr: string) => {
 const ReturnSummaryCard = ({
   loan,
   returnDate,
-  condition,
   isOverdue,
-  daysOverdue,
-  fineAmount,
   isLoading,
   onConfirm,
   onCancel,
 }: ReturnSummaryCardProps) => {
-  const isLost = condition === "Lost";
   const isValid = Boolean(loan);
 
   return (
@@ -60,7 +52,7 @@ const ReturnSummaryCard = ({
           <div>
             <div className="fw-bold text-dark small">{loan.bookTitle}</div>
             <div className="text-muted" style={{ fontSize: ".76rem" }}>
-              By {loan.author}
+              By {loan.bookAuthor}
             </div>
           </div>
         </div>
@@ -74,7 +66,7 @@ const ReturnSummaryCard = ({
       <div className="summary-row">
         <span className="summary-label">Borrower</span>
         <span className="summary-value">
-          {loan ? loan.memberName : "-"}
+          {loan ? loan.userName : "-"}
         </span>
       </div>
 
@@ -97,11 +89,6 @@ const ReturnSummaryCard = ({
         <span className="summary-value">{formatDate(returnDate)}</span>
       </div>
 
-      <div className="summary-row">
-        <span className="summary-label">Condition</span>
-        <span className="summary-value fw-bold">{condition}</span>
-      </div>
-
       <div className="summary-divider" />
 
       {/* Status Pill */}
@@ -116,7 +103,7 @@ const ReturnSummaryCard = ({
             }}
           >
             <AlertTriangle size={15} />
-            <span>{daysOverdue} days overdue</span>
+            <span>Overdue Loan</span>
           </div>
         ) : (
           <div
@@ -128,74 +115,27 @@ const ReturnSummaryCard = ({
             }}
           >
             <CheckCircle2 size={15} />
-            <span>Returned on time</span>
+            <span>Active Loan</span>
           </div>
         )
       ) : null}
 
-      {/* Fine Section */}
-      {loan && (
-        <div className="fine-calc-box mb-3">
-          <div className="d-flex align-items-center justify-content-between mb-2">
-            <span className="fw-bold small text-dark">
-              {isOverdue ? "Late Return Fine" : "Fine Calculation"}
-            </span>
-            {!isOverdue && (
-              <span className="badge bg-success-subtle text-success rounded-pill small">
-                No fine
-              </span>
-            )}
-          </div>
-
-          {isOverdue ? (
-            <>
-              <div className="fine-calc-row">
-                <span className="text-muted">Days overdue</span>
-                <span className="fw-semibold">{daysOverdue} days</span>
-              </div>
-              <div className="fine-calc-row">
-                <span className="text-muted">Fine rate</span>
-                <span className="fw-semibold">₹5 / day</span>
-              </div>
-              <div className="fine-calc-row pt-2 mt-2 border-top border-warning-subtle">
-                <span className="fw-bold text-dark">Total Fine</span>
-                <span className="fw-bold fs-6 text-amber" style={{ color: "#b45309" }}>
-                  ₹{fineAmount}
-                </span>
-              </div>
-            </>
-          ) : (
-            <div className="text-muted small">No fine applicable for on-time returns.</div>
-          )}
-        </div>
-      )}
-
       {/* Action Buttons */}
       <button
         type="button"
-        className="btn-confirm-borrow"
-        style={
-          isLost
-            ? { background: "var(--bs-red)", boxShadow: "0 4px 12px rgba(239, 68, 68, 0.25)" }
-            : {}
-        }
+        className="btn-confirm-borrow mt-3"
         disabled={!isValid || isLoading}
         onClick={onConfirm}
       >
         {isLoading ? (
           <>
             <span className="spinner-border spinner-border-sm" role="status" />
-            <span>Processing Return...</span>
-          </>
-        ) : isLost ? (
-          <>
-            <AlertOctagon size={18} />
-            <span>Confirm Lost Book</span>
+            <span>Restoring Inventory...</span>
           </>
         ) : (
           <>
             <BookCheck size={18} />
-            <span>Confirm Return</span>
+            <span>Confirm & Return Book</span>
           </>
         )}
       </button>

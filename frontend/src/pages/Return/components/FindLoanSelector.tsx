@@ -1,20 +1,80 @@
 import { useState, useRef, useEffect } from "react";
-import { Search, ScanBarcode } from "lucide-react";
-import { ACTIVE_LOANS_DATA, type ActiveLoan } from "../data/loansData";
-import { toast } from "sonner";
+import { Search } from "lucide-react";
+import { borrowService, type BorrowResponseDTO } from "../../../services/borrow.service";
+
+export interface ActiveBorrowLoan {
+  id: number;
+  loanCode: string;
+  userName: string;
+  userEmail: string;
+  bookTitle: string;
+  bookAuthor: string;
+  isbn: string;
+  borrowDate: string;
+  dueDate: string;
+  status: string;
+  isOverdue: boolean;
+  coverGradient: string;
+  coverInitial: string;
+}
 
 interface FindLoanSelectorProps {
-  selectedLoan: ActiveLoan | null;
-  onSelectLoan: (loan: ActiveLoan | null) => void;
+  selectedLoan: ActiveBorrowLoan | null;
+  onSelectLoan: (loan: ActiveBorrowLoan | null) => void;
 }
+
+const GRADIENTS = [
+  "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)",
+  "linear-gradient(135deg, #6366f1 0%, #4338ca 100%)",
+  "linear-gradient(135deg, #06b6d4 0%, #0e7490 100%)",
+  "linear-gradient(135deg, #f59e0b 0%, #b45309 100%)",
+  "linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)",
+  "linear-gradient(135deg, #10b981 0%, #047857 100%)",
+];
 
 const FindLoanSelector = ({
   selectedLoan,
   onSelectLoan,
 }: FindLoanSelectorProps) => {
+  const [loansList, setLoansList] = useState<ActiveBorrowLoan[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Load real active loans from backend
+  useEffect(() => {
+    let isMounted = true;
+    const fetchActiveLoans = async () => {
+      try {
+        const activeBorrows: BorrowResponseDTO[] = await borrowService.getActiveBorrows();
+        if (isMounted && Array.isArray(activeBorrows)) {
+          const mapped: ActiveBorrowLoan[] = activeBorrows.map((b, i) => ({
+            id: b.id,
+            loanCode: `LN-${1000 + b.id}`,
+            userName: b.userName || "Library User",
+            userEmail: b.userEmail || "",
+            bookTitle: b.bookTitle || "Unknown Book",
+            bookAuthor: b.bookAuthor || "Unknown Author",
+            isbn: b.isbn || "978-0132350884",
+            borrowDate: b.borrowDate,
+            dueDate: b.dueDate,
+            status: b.status,
+            isOverdue: Boolean(b.isOverdue),
+            coverGradient: GRADIENTS[i % GRADIENTS.length],
+            coverInitial: (b.bookTitle[0] || "B").toUpperCase(),
+          }));
+          setLoansList(mapped);
+        }
+      } catch (err) {
+        console.warn("Error loading active borrows from API:", err);
+      }
+    };
+
+    fetchActiveLoans();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -30,38 +90,18 @@ const FindLoanSelector = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const filteredLoans = ACTIVE_LOANS_DATA.filter(
+  const filteredLoans = loansList.filter(
     (l) =>
       l.bookTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      l.memberName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      l.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       l.loanCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
       l.isbn.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleScanBarcode = () => {
-    // Simulate barcode scan
-    const randomLoan = ACTIVE_LOANS_DATA[0];
-    onSelectLoan(randomLoan);
-    toast.info("Barcode Scanned Successfully!", {
-      description: `Matched active loan ${randomLoan.loanCode} for ${randomLoan.bookTitle}`,
-    });
-  };
-
   return (
     <div className="form-section" ref={containerRef}>
       <div className="d-flex align-items-center justify-content-between mb-2">
-        <label className="form-section-label mb-0">Find Borrowing</label>
-
-        {!selectedLoan && (
-          <button
-            type="button"
-            className="btn-scan-barcode"
-            onClick={handleScanBarcode}
-          >
-            <ScanBarcode size={15} />
-            <span>Scan Barcode</span>
-          </button>
-        )}
+        <label className="form-section-label mb-0">Find Active Borrowing</label>
       </div>
 
       {!selectedLoan ? (
@@ -71,7 +111,7 @@ const FindLoanSelector = ({
             <input
               type="text"
               className="borrow-input"
-              placeholder="Search member, book title, or loan ID (e.g. LN-2048)..."
+              placeholder="Search member, book title, or loan ID..."
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);
@@ -86,7 +126,7 @@ const FindLoanSelector = ({
             <div className="dropdown-results-menu">
               {filteredLoans.length === 0 ? (
                 <div className="p-3 text-center text-muted small">
-                  No active loan records found matching "{searchTerm}"
+                  No active loan records found in database.
                 </div>
               ) : (
                 filteredLoans.map((loan) => (
@@ -116,7 +156,7 @@ const FindLoanSelector = ({
                           {loan.bookTitle}
                         </div>
                         <div className="text-muted" style={{ fontSize: ".74rem" }}>
-                          Borrowed by <strong>{loan.memberName}</strong> · Loan: {loan.loanCode}
+                          Borrowed by <strong>{loan.userName}</strong> · Loan: {loan.loanCode}
                         </div>
                       </div>
                     </div>
@@ -124,12 +164,12 @@ const FindLoanSelector = ({
                     <div>
                       <span
                         className={`badge ${
-                          loan.status === "Active"
-                            ? "bg-success-subtle text-success"
-                            : "bg-warning-subtle text-warning-emphasis"
+                          loan.isOverdue
+                            ? "bg-warning-subtle text-warning-emphasis"
+                            : "bg-success-subtle text-success"
                         } px-2 py-1 rounded-pill small`}
                       >
-                        {loan.status === "Overdue" ? `${loan.daysOverdue}d Overdue` : "Active"}
+                        {loan.isOverdue ? "Overdue" : "Active Loan"}
                       </span>
                     </div>
                   </div>

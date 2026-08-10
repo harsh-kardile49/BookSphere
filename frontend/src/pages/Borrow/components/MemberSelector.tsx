@@ -1,19 +1,76 @@
 import { useState, useRef, useEffect } from "react";
 import { Search, AlertCircle, X } from "lucide-react";
-import { MEMBERS_DATA, type Member } from "../data/membersData";
+import { userService } from "../../../services/user.service";
+
+export interface BorrowableMember {
+  id: number;
+  name: string;
+  email: string;
+  phone: string;
+  memberCode: string;
+  avatarBg: string;
+  avatarInitials: string;
+  eligible: boolean;
+  accountStatus: string;
+  currentBorrowedCount: number;
+  borrowingLimit: number;
+  ineligibilityReason?: string;
+}
 
 interface MemberSelectorProps {
-  selectedMember: Member | null;
-  onSelectMember: (member: Member | null) => void;
+  selectedMember: BorrowableMember | null;
+  onSelectMember: (member: BorrowableMember | null) => void;
 }
+
+const GRADIENTS = [
+  "linear-gradient(135deg, #6366f1 0%, #4338ca 100%)",
+  "linear-gradient(135deg, #10b981 0%, #047857 100%)",
+  "linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)",
+  "linear-gradient(135deg, #f97316 0%, #c2410c 100%)",
+  "linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)",
+];
 
 const MemberSelector = ({
   selectedMember,
   onSelectMember,
 }: MemberSelectorProps) => {
+  const [membersList, setMembersList] = useState<BorrowableMember[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Load real members from backend API
+  useEffect(() => {
+    let isMounted = true;
+    const loadUsers = async () => {
+      try {
+        const users = await userService.getAllUsers();
+        if (isMounted && Array.isArray(users)) {
+          const mapped: BorrowableMember[] = users.map((u, i) => ({
+            id: u.id,
+            name: `${u.firstName} ${u.lastName}`.trim(),
+            email: u.email,
+            phone: u.phone || "+91 98765 43210",
+            memberCode: `MEM-${1000 + u.id}`,
+            avatarBg: GRADIENTS[i % GRADIENTS.length],
+            avatarInitials: ((u.firstName[0] || "") + (u.lastName[0] || "")).toUpperCase() || "MB",
+            eligible: true,
+            accountStatus: "Active",
+            currentBorrowedCount: 0,
+            borrowingLimit: 5,
+          }));
+          setMembersList(mapped);
+        }
+      } catch (err) {
+        console.warn("Error fetching members for selector:", err);
+      }
+    };
+
+    loadUsers();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -29,7 +86,7 @@ const MemberSelector = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const filteredMembers = MEMBERS_DATA.filter(
+  const filteredMembers = membersList.filter(
     (m) =>
       m.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       m.memberCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -47,7 +104,7 @@ const MemberSelector = ({
             <input
               type="text"
               className="borrow-input"
-              placeholder="Search member by name, ID, or email..."
+              placeholder="Search registered member by name, ID, or email..."
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);

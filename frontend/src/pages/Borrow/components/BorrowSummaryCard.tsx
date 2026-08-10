@@ -1,10 +1,10 @@
 import { BookCheck, CheckCircle2 } from "lucide-react";
-import type { Member } from "../data/membersData";
-import type { Book } from "../../Books/data/booksData";
+import type { BorrowableMember } from "./MemberSelector";
+import type { BorrowableBook } from "./BookSelector";
 
 interface BorrowSummaryCardProps {
-  member: Member | null;
-  book: Book | null;
+  member: BorrowableMember | null;
+  book: BorrowableBook | null;
   borrowDate: string;
   dueDate: string;
   isValid: boolean;
