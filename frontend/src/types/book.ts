@@ -1,5 +1,41 @@
 /**
- * Author Model
+ * Backend API Book Request Payload (Do not send 'id' field when creating)
+ */
+export interface BookPayload {
+  title: string;
+  author: string;
+  publisher: string;
+  isbn: string;
+  category: string;
+  price: number;
+  quantity: number;
+  publishedYear: number;
+  imageUrl?: string;
+}
+
+/**
+ * Backend API Book Response Model
+ */
+export interface BackendBook extends BookPayload {
+  id: number;
+}
+
+/**
+ * Pagination Response Wrapper
+ */
+export interface PageResponse<T> {
+  content: T[];
+  totalPages: number;
+  totalElements: number;
+  size: number;
+  number: number;
+  first: boolean;
+  last: boolean;
+  empty: boolean;
+}
+
+/**
+ * Author Model (for frontend legacy compatibility)
  */
 export interface Author {
   id: number;
@@ -8,7 +44,7 @@ export interface Author {
 }
 
 /**
- * Book Model
+ * Legacy Book Model (for frontend mock components)
  */
 export interface Book {
   id: number;

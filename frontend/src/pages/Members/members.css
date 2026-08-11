@@ -1,0 +1,389 @@
+/* ============================================
+   BookSphere — Members Management Page CSS
+   ============================================ */
+
+/* ── Container ── */
+.members-container {
+  max-width: 1760px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* ── Header ── */
+.members-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.members-title-group h1 {
+  font-size: clamp(1.6rem, 2.2vw, 2.2rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+
+.members-title-group p {
+  font-size: clamp(0.85rem, 0.9vw, 0.95rem);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.btn-add-member {
+  background: var(--bs-indigo);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 10px 18px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.22);
+}
+
+.btn-add-member:hover {
+  background: #4f46e5;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3);
+}
+
+.btn-export-members {
+  background: var(--surface-card);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-export-members:hover {
+  background: var(--surface-page);
+  color: var(--text-primary);
+  border-color: var(--bs-slate-300);
+}
+
+/* ── KPI Stat Cards ── */
+.members-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.members-kpi-card {
+  background: var(--surface-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+}
+
+.members-kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.kpi-icon-box {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.kpi-number {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.kpi-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.kpi-subtext {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+/* ── Members Main Card ── */
+.members-main-card {
+  background: var(--surface-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  padding: clamp(20px, 2vw, 28px);
+  box-shadow: var(--shadow-sm);
+}
+
+.members-card-header {
+  margin-bottom: 20px;
+}
+
+.members-card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.members-card-subtitle {
+  font-size: 0.84rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* ── Toolbar / Filters ── */
+.members-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.members-search-group {
+  flex: 1;
+  min-width: 280px;
+  position: relative;
+}
+
+.members-search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+}
+
+.members-search-input {
+  width: 100%;
+  height: 42px;
+  padding-left: 42px;
+  padding-right: 14px;
+  background: var(--surface-page);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  transition: all var(--transition-fast);
+}
+
+.members-search-input:focus {
+  background: var(--surface-card);
+  border-color: var(--bs-indigo);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+.members-filter-select {
+  height: 42px;
+  padding: 0 14px;
+  background: var(--surface-page);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.members-filter-select:focus {
+  background: var(--surface-card);
+  border-color: var(--bs-indigo);
+  outline: none;
+}
+
+/* ── Members Directory Table ── */
+.members-table-wrapper {
+  overflow-x: auto;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+}
+
+.members-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.members-table th {
+  background: var(--surface-page);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-light);
+  white-space: nowrap;
+}
+
+.members-table td {
+  padding: 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  vertical-align: middle;
+  transition: background var(--transition-fast);
+}
+
+.members-table-row {
+  cursor: pointer;
+}
+
+.members-table-row:hover td {
+  background: rgba(99, 102, 241, 0.025);
+}
+
+.member-avatar-circle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* Membership Badges */
+.badge-membership-premium {
+  background: var(--bs-indigo-light);
+  color: var(--bs-indigo);
+  font-weight: 700;
+}
+
+.badge-membership-standard {
+  background: rgba(6, 182, 212, 0.1);
+  color: #0891b2;
+  font-weight: 700;
+}
+
+.badge-membership-student {
+  background: rgba(139, 92, 246, 0.1);
+  color: #7c3aed;
+  font-weight: 700;
+}
+
+/* Status Badges */
+.badge-status-active {
+  background: var(--bs-emerald-light);
+  color: #047857;
+  font-weight: 600;
+}
+
+.badge-status-inactive {
+  background: #f3f4f6;
+  color: #4b5563;
+  font-weight: 600;
+}
+
+.badge-status-suspended {
+  background: var(--bs-amber-light);
+  color: #b45309;
+  font-weight: 600;
+}
+
+/* ── Pagination ── */
+.members-pagination-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 20px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* ── Slide-Over Profile Drawer ── */
+.drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 1100;
+  display: flex;
+  justify-content: flex-end;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.drawer-content {
+  width: 100%;
+  max-width: 520px;
+  height: 100%;
+  background: var(--surface-card);
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  animation: slideInRight 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ── Responsive Breakpoints ── */
+@media (max-width: 1100px) {
+  .members-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .members-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+  .members-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .members-search-group {
+    width: 100%;
+  }
+  .drawer-content {
+    max-width: 100%;
+  }
+}

@@ -1,7 +1,11 @@
 import axios from "axios";
+import { getToken, clearStorage } from "../utils/storage";
+
+// Spring Boot backend API base URL
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: API_URL,
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
@@ -13,38 +17,39 @@ const api = axios.create({
 |--------------------------------------------------------------------------
 | Request Interceptor
 |--------------------------------------------------------------------------
-| Add JWT token here later.
+| Automatically attach JWT Bearer Token to outgoing API requests if available.
 */
-
 api.interceptors.request.use(
   (config) => {
-    // Example:
-    // const token = localStorage.getItem("token");
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    //
+    const token = getToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
     return config;
   },
-  (error) => Promise.reject(error),
+  (error) => {
+    return Promise.reject(error);
+  }
 );
 
 /*
 |--------------------------------------------------------------------------
 | Response Interceptor
 |--------------------------------------------------------------------------
-| Handle API errors globally.
+| Global error handling for HTTP responses, handles 401 Unauthorized and auto-cleanup.
 */
-
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Example:
-    // if (error.response?.status === 401) {
-    //   Redirect to login
-    // }
-
+    if (error.response && error.response.status === 401) {
+      console.warn("Unauthorized access detected (401). Clearing session...");
+      clearStorage();
+      if (window.location.pathname !== "/login") {
+        window.location.href = "/login";
+      }
+    }
     return Promise.reject(error);
-  },
+  }
 );
 
 export default api;

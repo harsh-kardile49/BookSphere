@@ -1,4 +1,8 @@
 package com.ibm.entity;
 
-public class Role {
+public enum Role {
+    STUDENT,
+    LIBRARIAN,
+    ADMIN,
+    USER
 }
