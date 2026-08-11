@@ -35,6 +35,7 @@ export interface Member {
   name: string;
   email: string;
   phone: string;
+  role: string;
   membershipType: MembershipType;
   avatarBg: string;
   avatarInitials: string;
@@ -57,6 +58,7 @@ export const INITIAL_MEMBERS_DATA: Member[] = [
     name: "System Admin",
     email: "admin@booksphere.com",
     phone: "+91 98765 43210",
+    role: "ADMIN",
     membershipType: "Premium",
     avatarBg: "linear-gradient(135deg, #6366f1 0%, #4338ca 100%)",
     avatarInitials: "SA",
@@ -77,6 +79,7 @@ export const INITIAL_MEMBERS_DATA: Member[] = [
     name: "Student Member",
     email: "student@booksphere.com",
     phone: "+91 98123 45678",
+    role: "STUDENT",
     membershipType: "Student",
     avatarBg: "linear-gradient(135deg, #10b981 0%, #047857 100%)",
     avatarInitials: "SM",

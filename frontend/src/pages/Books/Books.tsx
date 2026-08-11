@@ -6,6 +6,7 @@ import BookGrid from "./components/BookGrid";
 import CategoryPanel from "./components/CategoryPanel";
 import LibraryStatsWidget from "./components/LibraryStatsWidget";
 import BookDetailsModal from "./components/BookDetailsModal";
+import BooksSkeleton from "./components/BooksSkeleton";
 import { getAllBooks } from "../../services/book.service";
 import type { BackendBook } from "../../types/book";
 import { toast } from "sonner";
@@ -73,28 +74,26 @@ const Books = () => {
       setIsLoadingApi(true);
       setApiError(null);
       try {
-        console.log("Fetching books from GET http://localhost:8080/books ...");
         const data = await getAllBooks();
-        console.log("Backend API response:", data);
 
         if (isMounted && data && Array.isArray(data)) {
           const mapped = data.map(mapBackendToFrontendBook);
           setBooksList(mapped);
         } else if (isMounted && data && typeof data === "object" && "error" in data) {
           const errObj = data as { message?: string; error?: string };
-          setApiError(errObj.message || errObj.error || "Internal Server Error 500 from backend.");
+          setApiError(errObj.message || errObj.error || "Unable to load catalog.");
         }
-      } catch (err: any) {
-        console.error("Error fetching books from backend API:", err);
+      } catch (err: unknown) {
+        const errObj = err as { response?: { data?: { message?: string; error?: string } }; message?: string };
         const errMsg =
-          err?.response?.data?.message ||
-          err?.response?.data?.error ||
-          err?.message ||
-          "Failed to fetch books from backend API (HTTP 500/Connection Error).";
-        
+          errObj?.response?.data?.message ||
+          errObj?.response?.data?.error ||
+          errObj?.message ||
+          "Unable to load books catalog.";
+
         if (isMounted) {
           setApiError(errMsg);
-          toast.error("Backend API Error", { description: errMsg });
+          toast.error("Unable to load catalog", { description: errMsg });
         }
       } finally {
         if (isMounted) setIsLoadingApi(false);
@@ -209,16 +208,13 @@ const Books = () => {
 
       {/* ── Main Layout: Grid + Side Panels ── */}
       <div className="books-main-grid">
-        {/* Left: Book Cards Grid */}
+        {/* Left: Book Cards Grid or Skeleton Loader */}
         {isLoadingApi ? (
-          <div className="p-5 text-center my-4 bg-white rounded-4 border">
-            <div className="spinner-border text-primary mb-3" role="status" style={{ color: "var(--bs-indigo)" }} />
-            <h6 className="fw-semibold text-muted">Fetching books from GET /books API...</h6>
-          </div>
+          <BooksSkeleton />
         ) : apiError ? (
           <div className="p-5 text-center my-4 bg-white rounded-4 border border-danger-subtle shadow-sm">
             <div className="text-danger mb-2 fw-bold" style={{ fontSize: "1.1rem" }}>
-              Backend API Server Error (HTTP 500)
+              Unable to load catalog
             </div>
             <p className="text-secondary small mb-3">{apiError}</p>
             <button

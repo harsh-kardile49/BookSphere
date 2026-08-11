@@ -225,19 +225,11 @@ const Login = () => {
                 {/* Demo Credentials Section */}
                 <div className="d-flex align-items-center justify-content-between gap-1 mb-3">
                   <span className="text-muted" style={{ fontSize: ".74rem" }}>
-                    Demo:
+                    Demo Fill:
                   </span>
                   <button
                     type="button"
-                    className="btn btn-sm btn-outline-secondary rounded-pill px-2 py-0 border-light"
-                    style={{ fontSize: ".72rem", background: "var(--surface-page)" }}
-                    onClick={() => handleQuickFill("admin@booksphere.com", "Admin")}
-                  >
-                    Admin
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-sm btn-outline-secondary rounded-pill px-2 py-0 border-light"
+                    className="btn btn-sm btn-outline-secondary rounded-pill px-3 py-0 border-light"
                     style={{ fontSize: ".72rem", background: "var(--surface-page)" }}
                     onClick={() => handleQuickFill("librarian@booksphere.com", "Librarian")}
                   >
@@ -245,7 +237,7 @@ const Login = () => {
                   </button>
                   <button
                     type="button"
-                    className="btn btn-sm btn-outline-secondary rounded-pill px-2 py-0 border-light"
+                    className="btn btn-sm btn-outline-secondary rounded-pill px-3 py-0 border-light"
                     style={{ fontSize: ".72rem", background: "var(--surface-page)" }}
                     onClick={() => handleQuickFill("student@booksphere.com", "Student")}
                   >

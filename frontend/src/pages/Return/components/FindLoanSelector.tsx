@@ -128,7 +128,7 @@ const FindLoanSelector = ({
             <div className="dropdown-results-menu">
               {filteredLoans.length === 0 ? (
                 <div className="p-3 text-center text-muted small">
-                  No active loan records found in database.
+                  No active loan records found.
                 </div>
               ) : (
                 filteredLoans.map((loan) => (
@@ -154,11 +154,11 @@ const FindLoanSelector = ({
                         {loan.coverInitial}
                       </div>
                       <div>
-                        <div className="fw-semibold text-dark small">
+                        <div className="fw-semibold small" style={{ color: "var(--text-primary)" }}>
                           {loan.bookTitle}
                         </div>
                         <div className="text-muted" style={{ fontSize: ".74rem" }}>
-                          Borrowed by <strong>{loan.userName}</strong> · Loan: {loan.loanCode}
+                          Borrowed by <strong style={{ color: "var(--text-secondary)" }}>{loan.userName}</strong> · Loan: {loan.loanCode}
                         </div>
                       </div>
                     </div>

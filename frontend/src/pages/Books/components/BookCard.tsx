@@ -1,7 +1,10 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Star } from "lucide-react";
+import { Star, Bookmark } from "lucide-react";
 import type { Book } from "../data/booksData";
 import ProgressiveImage from "../../../components/common/ProgressiveImage";
+import { isBookSaved, toggleSaveBook } from "../../../utils/savedBooksStore";
+import { toast } from "sonner";
 
 interface BookCardProps {
   book: Book;
@@ -10,10 +13,22 @@ interface BookCardProps {
 
 const BookCard = ({ book, onSelectBook }: BookCardProps) => {
   const navigate = useNavigate();
+  const [saved, setSaved] = useState(() => isBookSaved(Number(book.id)));
 
   const handleCardClick = () => {
     onSelectBook(book);
     navigate(`/books/${book.id}`);
+  };
+
+  const handleToggleBookmark = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const newState = toggleSaveBook(Number(book.id));
+    setSaved(newState);
+    if (newState) {
+      toast.success("Saved to Wishlist", { description: `"${book.title}" added to your saved books` });
+    } else {
+      toast.info("Removed from Wishlist", { description: `"${book.title}" removed from saved books` });
+    }
   };
 
   const getStatusClass = (status: string) => {
@@ -35,9 +50,25 @@ const BookCard = ({ book, onSelectBook }: BookCardProps) => {
     <div className="book-card" onClick={handleCardClick}>
       {/* Cover Image Wrapper */}
       <div
-        className="book-card-cover-wrapper"
+        className="book-card-cover-wrapper position-relative"
         style={{ background: book.coverGradient }}
       >
+        <button
+          type="button"
+          className="btn p-1.5 position-absolute top-0 end-0 m-2 rounded-circle border-0 d-flex align-items-center justify-content-center"
+          style={{
+            zIndex: 10,
+            background: saved ? "rgba(99, 102, 241, 0.9)" : "rgba(0, 0, 0, 0.35)",
+            color: "#fff",
+            backdropFilter: "blur(4px)",
+            transition: "all 0.2s ease",
+          }}
+          onClick={handleToggleBookmark}
+          title={saved ? "Remove from Saved Wishlist" : "Save to Wishlist"}
+        >
+          <Bookmark size={14} fill={saved ? "#fff" : "none"} />
+        </button>
+
         {book.imageUrl ? (
           <ProgressiveImage
             src={book.imageUrl}
