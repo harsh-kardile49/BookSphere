@@ -32,7 +32,7 @@ const Return = () => {
       });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Failed to process return";
-      toast.error("Return Failed", { description: msg });
+      toast.error("Unable to return book", { description: msg });
     } finally {
       setIsLoading(false);
     }

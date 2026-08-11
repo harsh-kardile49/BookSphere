@@ -100,8 +100,8 @@ const BookDetail = () => {
   };
 
   const handleIssueBook = () => {
-    toast.success("Proceeding to Book Issue", {
-      description: `Opening borrow transaction for "${book?.title || 'Book'}".`,
+    toast.success("Opening issue form", {
+      description: `Selected "${book?.title || 'Book'}".`,
     });
     navigate("/borrow");
   };

@@ -63,7 +63,7 @@ const Borrow = () => {
       });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "Failed to issue book";
-      toast.error("Borrow Transaction Failed", { description: msg });
+      toast.error("Unable to issue book", { description: msg });
     } finally {
       setIsLoading(false);
     }
