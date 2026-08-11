@@ -210,11 +210,11 @@ const Settings = () => {
                 <h6 className="fw-bold text-dark mb-3">System Overview</h6>
                 <div className="d-flex align-items-center justify-content-between py-2 border-bottom">
                   <span className="text-muted small">Database Engine</span>
-                  <span className="fw-semibold text-dark small">MySQL 8.0</span>
+                  <span className="fw-semibold text-dark small">Relational Database</span>
                 </div>
                 <div className="d-flex align-items-center justify-content-between py-2 border-bottom">
-                  <span className="text-muted small">Backend Service</span>
-                  <span className="fw-semibold text-dark small">Spring Boot 3.2</span>
+                  <span className="text-muted small">API Gateway</span>
+                  <span className="fw-semibold text-dark small">REST Services</span>
                 </div>
                 <div className="d-flex align-items-center justify-content-between py-2 border-bottom">
                   <span className="text-muted small">LMS License</span>

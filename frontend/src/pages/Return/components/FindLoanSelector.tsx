@@ -128,7 +128,7 @@ const FindLoanSelector = ({
             <div className="dropdown-results-menu">
               {filteredLoans.length === 0 ? (
                 <div className="p-3 text-center text-muted small">
-                  No active loan records found in database.
+                  No active loan records found.
                 </div>
               ) : (
                 filteredLoans.map((loan) => (
