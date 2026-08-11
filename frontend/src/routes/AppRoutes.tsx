@@ -10,21 +10,11 @@ import BookDetail from "../pages/Books/BookDetail";
 import Borrow from "../pages/Borrow/Borrow";
 import Return from "../pages/Return/Return";
 import Members from "../pages/Members/Members";
+import Reports from "../pages/Reports/Reports";
+import SavedBooks from "../pages/Saved/SavedBooks";
 import Settings from "../pages/Settings/Settings";
 import NotFound from "../pages/NotFound";
 import ProtectedRoute from "./ProtectedRoute";
-
-// Placeholder pages for demonstration
-const PlaceholderPage = ({ title }: { title: string }) => (
-  <div className="container-fluid p-4">
-    <div className="card shadow-sm p-4 border-0">
-      <h3 className="fw-bold text-primary mb-2">📌 {title} Page</h3>
-      <p className="text-secondary mb-0">
-        This feature module is set up and will be completed in subsequent development days.
-      </p>
-    </div>
-  </div>
-);
 
 const AppRoutes = () => {
   return (
@@ -46,7 +36,7 @@ const AppRoutes = () => {
           <Route
             path="/books/add"
             element={
-              <ProtectedRoute allowedRoles={["ADMIN", "LIBRARIAN", "STUDENT", "USER"]}>
+              <ProtectedRoute allowedRoles={["ADMIN", "LIBRARIAN"]}>
                 <AddBook />
               </ProtectedRoute>
             }
@@ -55,40 +45,37 @@ const AppRoutes = () => {
           <Route
             path="/members"
             element={
-              <ProtectedRoute allowedRoles={["ADMIN", "LIBRARIAN", "STUDENT", "USER"]}>
+              <ProtectedRoute allowedRoles={["ADMIN", "LIBRARIAN"]}>
                 <Members />
               </ProtectedRoute>
             }
           />
-          <Route path="/borrow" element={<Borrow />} />
-          <Route path="/return" element={<Return />} />
+          <Route
+            path="/borrow"
+            element={
+              <ProtectedRoute allowedRoles={["ADMIN", "LIBRARIAN"]}>
+                <Borrow />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/return"
+            element={
+              <ProtectedRoute allowedRoles={["ADMIN", "LIBRARIAN"]}>
+                <Return />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/settings" element={<Settings />} />
           <Route
             path="/reports"
             element={
-              <ProtectedRoute allowedRoles={["ADMIN"]}>
-                <PlaceholderPage title="Analytics & Reports" />
+              <ProtectedRoute allowedRoles={["ADMIN", "LIBRARIAN"]}>
+                <Reports />
               </ProtectedRoute>
             }
           />
-
-          {/* Student Routes */}
-          <Route
-            path="/my-books"
-            element={
-              <ProtectedRoute allowedRoles={["STUDENT", "USER"]}>
-                <PlaceholderPage title="My Borrowed Books" />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute allowedRoles={["STUDENT", "USER"]}>
-                <PlaceholderPage title="User Profile" />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/saved" element={<SavedBooks />} />
         </Route>
       </Route>
 

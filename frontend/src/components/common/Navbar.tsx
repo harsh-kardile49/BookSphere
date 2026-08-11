@@ -1,13 +1,16 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
+import { useThemeStore } from "../../store/themeStore";
 import { getAllBooks } from "../../services/book.service";
 import { userService, type BackendUserDTO } from "../../services/user.service";
 import type { BackendBook } from "../../types/book";
+import { Sun, Moon } from "lucide-react";
 import { toast } from "sonner";
 
 const Navbar = () => {
   const { user, isAuthenticated, logout } = useAuthStore();
+  const { theme, toggleTheme } = useThemeStore();
   const navigate = useNavigate();
 
   // Dropdown UI states
@@ -157,11 +160,11 @@ const Navbar = () => {
     <nav
       className="navbar sticky-top py-2"
       style={{
-        background: "rgba(246, 244, 238, 0.85)",
+        background: "var(--surface-page)",
         backdropFilter: "blur(16px)",
         WebkitBackdropFilter: "blur(16px)",
-        borderBottom: "1px solid rgba(0, 0, 0, 0.05)",
-        boxShadow: "0 2px 12px rgba(0, 0, 0, 0.02)",
+        borderBottom: "1px solid var(--border-light)",
+        transition: "all 0.2s ease",
       }}
     >
       <div
@@ -174,7 +177,7 @@ const Navbar = () => {
             <div className="position-relative">
               <span
                 className="position-absolute top-50 translate-middle-y d-flex align-items-center"
-                style={{ left: 14, color: "#78716c", opacity: 0.6 }}
+                style={{ left: 14, color: "var(--text-muted)", opacity: 0.8 }}
               >
                 <svg
                   width="15"
@@ -205,12 +208,11 @@ const Navbar = () => {
                   paddingLeft: 38,
                   paddingRight: 44,
                   borderRadius: 50,
-                  background: "rgba(255, 255, 255, 0.85)",
-                  border: "1px solid rgba(0, 0, 0, 0.06)",
-                  boxShadow: "0 1px 3px rgba(0,0,0,0.02)",
+                  background: "var(--surface-card)",
+                  border: "1px solid var(--border-light)",
                   fontSize: ".85rem",
                   height: 38,
-                  color: "#1c1917",
+                  color: "var(--text-primary)",
                 }}
               />
 
@@ -234,9 +236,9 @@ const Navbar = () => {
                 className="position-absolute start-0 end-0 mt-2 rounded-4 shadow-lg overflow-hidden"
                 style={{
                   zIndex: 1060,
-                  background: "#ffffff",
-                  border: "1px solid rgba(0, 0, 0, 0.08)",
-                  boxShadow: "0 14px 36px rgba(0, 0, 0, 0.12)",
+                  background: "var(--surface-card)",
+                  border: "1px solid var(--border-light)",
+                  boxShadow: "var(--shadow-lg)",
                   padding: "6px",
                 }}
               >
@@ -263,7 +265,7 @@ const Navbar = () => {
                               cursor: "pointer",
                               transition: "background 0.15s ease",
                             }}
-                            onMouseEnter={(e) => (e.currentTarget.style.background = "#f5f5f4")}
+                            onMouseEnter={(e) => (e.currentTarget.style.background = "var(--surface-elevated)")}
                             onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
                             onClick={() => {
                               setIsSearchOpen(false);
@@ -272,22 +274,22 @@ const Navbar = () => {
                             }}
                           >
                             <div className="min-w-0 flex-grow-1 pe-2">
-                              <div className="fw-semibold text-dark text-truncate" style={{ fontSize: ".88rem" }}>
+                              <div className="fw-semibold text-truncate" style={{ fontSize: ".88rem", color: "var(--text-primary)" }}>
                                 {book.title}
                               </div>
-                              <div className="text-muted text-truncate" style={{ fontSize: ".76rem" }}>
-                                by {book.author} · <span className="text-secondary">{book.category || "General"}</span>
+                              <div className="text-truncate" style={{ fontSize: ".76rem", color: "var(--text-muted)" }}>
+                                by {book.author} · <span style={{ color: "var(--text-secondary)" }}>{book.category || "General"}</span>
                               </div>
                             </div>
 
                             <div className="d-flex align-items-center gap-2 flex-shrink-0">
                               <span
                                 className="fw-semibold small"
-                                style={{ color: "#2563eb", fontSize: ".82rem" }}
+                                style={{ color: "#6366f1", fontSize: ".82rem" }}
                               >
                                 ₹{book.price || 499}
                               </span>
-                              <span className="text-muted small" style={{ fontSize: ".75rem" }}>
+                              <span className="small" style={{ fontSize: ".75rem", color: "var(--text-muted)" }}>
                                 →
                               </span>
                             </div>
@@ -313,7 +315,7 @@ const Navbar = () => {
                               cursor: "pointer",
                               transition: "background 0.15s ease",
                             }}
-                            onMouseEnter={(e) => (e.currentTarget.style.background = "#f5f5f4")}
+                            onMouseEnter={(e) => (e.currentTarget.style.background = "var(--surface-elevated)")}
                             onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
                             onClick={() => {
                               setIsSearchOpen(false);
@@ -322,14 +324,14 @@ const Navbar = () => {
                             }}
                           >
                             <div className="min-w-0 flex-grow-1 pe-2">
-                              <div className="fw-semibold text-dark text-truncate" style={{ fontSize: ".88rem" }}>
+                              <div className="fw-semibold text-truncate" style={{ fontSize: ".88rem", color: "var(--text-primary)" }}>
                                 {userItem.firstName} {userItem.lastName}
                               </div>
-                              <div className="text-muted text-truncate" style={{ fontSize: ".76rem" }}>
+                              <div className="text-truncate" style={{ fontSize: ".76rem", color: "var(--text-muted)" }}>
                                 {userItem.email}
                               </div>
                             </div>
-                            <span className="badge bg-light text-secondary border rounded-pill px-2.5 py-1 small flex-shrink-0" style={{ fontSize: ".72rem" }}>
+                            <span className="badge bg-secondary-subtle text-secondary border rounded-pill px-2.5 py-1 small flex-shrink-0" style={{ fontSize: ".72rem" }}>
                               {userItem.role}
                             </span>
                           </div>
@@ -351,8 +353,8 @@ const Navbar = () => {
                   <button
                     className="btn d-flex align-items-center gap-2 rounded-pill ps-1 pe-3 py-1 border-0"
                     style={{
-                      background: "rgba(255,255,255,0.75)",
-                      border: "1px solid rgba(0,0,0,0.06)",
+                      background: "var(--surface-card)",
+                      border: "1px solid var(--border-light)",
                       backdropFilter: "blur(4px)",
                       transition: "all .2s",
                     }}
@@ -367,7 +369,7 @@ const Navbar = () => {
                         width: 32,
                         height: 32,
                         background:
-                          "linear-gradient(135deg, #f97316 0%, #ea580c 100%)",
+                          "linear-gradient(135deg, #6366f1 0%, #4338ca 100%)",
                         fontSize: ".75rem",
                         letterSpacing: "0.5px",
                       }}
@@ -376,7 +378,7 @@ const Navbar = () => {
                     </div>
                     <span
                       className="fw-semibold d-none d-md-inline"
-                      style={{ color: "#292524", fontSize: ".84rem" }}
+                      style={{ color: "var(--text-primary)", fontSize: ".84rem" }}
                     >
                       {displayName}
                     </span>
@@ -385,11 +387,12 @@ const Navbar = () => {
                       height="12"
                       viewBox="0 0 24 24"
                       fill="none"
-                      stroke="#9a3412"
+                      stroke="currentColor"
                       strokeWidth="2.5"
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       style={{
+                        color: "var(--text-muted)",
                         transform: showUserMenu
                           ? "rotate(180deg)"
                           : "rotate(0deg)",
@@ -407,16 +410,16 @@ const Navbar = () => {
                       style={{
                         width: 250,
                         zIndex: 1050,
-                        background: "rgba(255,252,248,0.95)",
+                        background: "var(--surface-card)",
                         backdropFilter: "blur(16px)",
-                        border: "1px solid rgba(234,88,12,0.1)",
+                        border: "1px solid var(--border-light)",
                       }}
                     >
                       {/* User Info Header */}
                       <div
                         className="px-3 py-3 d-flex align-items-center gap-2"
                         style={{
-                          borderBottom: "1px solid rgba(234,88,12,0.08)",
+                          borderBottom: "1px solid var(--border-light)",
                         }}
                       >
                         <div
@@ -425,7 +428,7 @@ const Navbar = () => {
                             width: 38,
                             height: 38,
                             background:
-                              "linear-gradient(135deg, #f97316 0%, #ea580c 100%)",
+                              "linear-gradient(135deg, #6366f1 0%, #4338ca 100%)",
                             fontSize: ".82rem",
                           }}
                         >
@@ -436,12 +439,12 @@ const Navbar = () => {
                             className="fw-bold"
                             style={{
                               fontSize: ".88rem",
-                              color: "#292524",
+                              color: "var(--text-primary)",
                             }}
                           >
                             {user.firstName} {user.lastName}
                           </div>
-                          <div style={{ fontSize: ".72rem", color: "#a8a29e" }}>
+                          <div style={{ fontSize: ".72rem", color: "var(--text-muted)" }}>
                             {user.email}
                           </div>
                         </div>
@@ -471,7 +474,7 @@ const Navbar = () => {
                       <div className="py-1">
                         <button
                           className="dropdown-item d-flex align-items-center gap-2 px-3 py-2 border-0 w-100 text-start"
-                          style={{ fontSize: ".84rem", color: "#44403c" }}
+                          style={{ fontSize: ".84rem", color: "var(--text-primary)" }}
                           onClick={() => {
                             setShowUserMenu(false);
                             navigate("/settings");
@@ -486,7 +489,7 @@ const Navbar = () => {
 
                         <button
                           className="dropdown-item d-flex align-items-center gap-2 px-3 py-2 border-0 w-100 text-start"
-                          style={{ fontSize: ".84rem", color: "#44403c" }}
+                          style={{ fontSize: ".84rem", color: "var(--text-primary)" }}
                           onClick={() => {
                             setShowUserMenu(false);
                             navigate("/settings");
@@ -497,6 +500,23 @@ const Navbar = () => {
                             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
                           </svg>
                           System Preferences
+                        </button>
+
+                        <button
+                          className="dropdown-item d-flex align-items-center justify-content-between px-3 py-2 border-0 w-100 text-start"
+                          style={{ fontSize: ".84rem", color: "var(--text-primary)" }}
+                          onClick={() => {
+                            toggleTheme();
+                            toast.info(`Switched to ${theme === "light" ? "Dark" : "Light"} mode`);
+                          }}
+                        >
+                          <div className="d-flex align-items-center gap-2">
+                            {theme === "dark" ? <Sun size={15} color="#f59e0b" /> : <Moon size={15} color="#6366f1" />}
+                            <span>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
+                          </div>
+                          <span className="badge bg-secondary-subtle text-secondary rounded-pill px-2 py-0.5" style={{ fontSize: ".68rem" }}>
+                            {theme.toUpperCase()}
+                          </span>
                         </button>
 
                         <button

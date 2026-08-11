@@ -53,6 +53,7 @@ function mapBackendUserToMember(
     name,
     email: user.email,
     phone: user.phone || "+91 98765 43210",
+    role: user.role || "STUDENT",
     membershipType: (user.role === "ADMIN" ? "Premium" : user.role === "LIBRARIAN" ? "Standard" : "Student") as MembershipType,
     avatarBg: gradient,
     avatarInitials: initials,
@@ -98,7 +99,9 @@ const Members = () => {
         const allBorrows = borrowsResult.status === "fulfilled" ? borrowsResult.value : [];
 
         if (isMounted && Array.isArray(backendUsers) && backendUsers.length > 0) {
-          const mapped = backendUsers.map((u, i) => mapBackendUserToMember(u, i, allBorrows));
+          // Hide ADMIN superusers completely from directory tables
+          const nonAdminUsers = backendUsers.filter((u) => u.role !== "ADMIN");
+          const mapped = nonAdminUsers.map((u, i) => mapBackendUserToMember(u, i, allBorrows));
           setMembersList(mapped);
         }
       } catch (err) {
@@ -118,6 +121,9 @@ const Members = () => {
   const filteredMembers = useMemo(() => {
     return membersList
       .filter((m) => {
+        // Hide ADMIN users
+        if (m.role === "ADMIN" || m.membershipType === "Premium") return false;
+
         // Search term filter
         const matchesSearch =
           m.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -143,6 +149,15 @@ const Members = () => {
       });
   }, [membersList, searchTerm, selectedStatus, selectedMembership, selectedSort]);
 
+  // Split into Student Members Directory and Librarians Staff Directory
+  const studentMembers = useMemo(() => {
+    return filteredMembers.filter((m) => m.role !== "LIBRARIAN" && m.membershipType !== "Standard");
+  }, [filteredMembers]);
+
+  const librarianMembers = useMemo(() => {
+    return filteredMembers.filter((m) => m.role === "LIBRARIAN" || m.membershipType === "Standard");
+  }, [filteredMembers]);
+
   // Handlers for Add Member
   const handleAddMemberSubmit = async (data: {
     name: string;
@@ -163,7 +178,7 @@ const Members = () => {
         email: data.email,
         phone: data.phone,
         password: "password123",
-        role: data.membershipType === "Premium" ? "ADMIN" : data.membershipType === "Standard" ? "LIBRARIAN" : "STUDENT",
+        role: data.membershipType === "Standard" ? "LIBRARIAN" : "STUDENT",
       });
 
       const newMember = mapBackendUserToMember(created, membersList.length, []);
@@ -203,7 +218,7 @@ const Members = () => {
           lastName,
           email: data.email,
           phone: data.phone,
-          role: data.membershipType === "Premium" ? "ADMIN" : data.membershipType === "Standard" ? "LIBRARIAN" : "STUDENT",
+          role: data.membershipType === "Standard" ? "LIBRARIAN" : "STUDENT",
         });
       }
 
@@ -274,7 +289,7 @@ const Members = () => {
 
   const handleExport = () => {
     toast.info("Exporting Members List", {
-      description: `Exporting ${filteredMembers.length} member records to CSV.`,
+      description: `Exporting ${studentMembers.length} member records to CSV.`,
     });
   };
 
@@ -301,21 +316,62 @@ const Members = () => {
         onSortChange={setSelectedSort}
       />
 
-      {/* Main Members Table Component */}
+      {/* Main Members Table Components (Bifurcated: Students vs Librarians) */}
       {isLoading ? (
         <div className="text-center py-5">
           <div className="spinner-border mb-2" role="status" style={{ color: "var(--bs-indigo)" }} />
           <p className="text-muted small">Loading library members from database...</p>
         </div>
       ) : (
-        <MembersTable
-          members={filteredMembers}
-          onSelectMember={(m) => setSelectedMember(m)}
-          onEditMember={handleEditMember}
-          onDeleteMember={(m) => setDeletingMember(m)}
-          onClearSearch={() => setSearchTerm("")}
-          searchTerm={searchTerm}
-        />
+        <div className="d-flex flex-column gap-5">
+          {/* Section 1: Student Members Directory */}
+          <div>
+            <div className="d-flex align-items-center justify-content-between mb-3">
+              <div className="d-flex align-items-center gap-2">
+                <h4 className="fw-bold m-0" style={{ fontSize: "1.15rem", color: "var(--text-primary)" }}>
+                  🎓 Student Members Directory
+                </h4>
+                <span className="badge rounded-pill px-3 py-1.5 small fw-semibold" style={{ background: "rgba(99, 102, 241, 0.15)", color: "#818cf8", border: "1px solid rgba(99, 102, 241, 0.3)" }}>
+                  {studentMembers.length} Registered
+                </span>
+              </div>
+              <span className="text-muted small">Active library borrowers</span>
+            </div>
+
+            <MembersTable
+              members={studentMembers}
+              onSelectMember={(m) => setSelectedMember(m)}
+              onEditMember={handleEditMember}
+              onDeleteMember={(m) => setDeletingMember(m)}
+              onClearSearch={() => setSearchTerm("")}
+              searchTerm={searchTerm}
+            />
+          </div>
+
+          {/* Section 2: Library Staff & Librarians Directory */}
+          <div>
+            <div className="d-flex align-items-center justify-content-between mb-3">
+              <div className="d-flex align-items-center gap-2">
+                <h4 className="fw-bold m-0" style={{ fontSize: "1.15rem", color: "var(--text-primary)" }}>
+                  🛡️ Library Staff & Librarians
+                </h4>
+                <span className="badge rounded-pill px-3 py-1.5 small fw-semibold" style={{ background: "rgba(161, 161, 170, 0.15)", color: "var(--text-secondary)", border: "1px solid var(--border-light)" }}>
+                  {librarianMembers.length} Librarians
+                </span>
+              </div>
+              <span className="text-muted small">Library operations team</span>
+            </div>
+
+            <MembersTable
+              members={librarianMembers}
+              onSelectMember={(m) => setSelectedMember(m)}
+              onEditMember={handleEditMember}
+              onDeleteMember={(m) => setDeletingMember(m)}
+              onClearSearch={() => setSearchTerm("")}
+              searchTerm={searchTerm}
+            />
+          </div>
+        </div>
       )}
 
       {/* Member Details Drawer */}

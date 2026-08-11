@@ -17,6 +17,7 @@ import {
   Layers,
   IndianRupee,
 } from "lucide-react";
+import { isBookSaved, toggleSaveBook } from "../../utils/savedBooksStore";
 import { getBookById, getAllBooks } from "../../services/book.service";
 import type { BackendBook } from "../../types/book";
 import ProgressiveImage from "../../components/common/ProgressiveImage";
@@ -40,6 +41,23 @@ const BookDetail = () => {
   const [allBooks, setAllBooks] = useState<BackendBook[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isBookmarked, setIsBookmarked] = useState(false);
+
+  useEffect(() => {
+    if (book) {
+      setIsBookmarked(isBookSaved(Number(book.id)));
+    }
+  }, [book]);
+
+  const handleToggleBookmark = () => {
+    if (!book) return;
+    const newState = toggleSaveBook(Number(book.id));
+    setIsBookmarked(newState);
+    if (newState) {
+      toast.success("Saved to Wishlist", { description: `"${book.title}" added to your saved books` });
+    } else {
+      toast.info("Removed from Wishlist", { description: `"${book.title}" removed from saved books` });
+    }
+  };
 
   // Load current book and all books catalog for carousel navigation
   useEffect(() => {
@@ -158,7 +176,7 @@ const BookDetail = () => {
     <div className="book-detail-page-container">
       {/* ── Navigation Header ── */}
       <div className="book-detail-header mb-4">
-        <Link to="/books" className="d-inline-flex align-items-center gap-2 text-decoration-none fw-semibold text-dark small bg-white border px-3 py-2 rounded-pill shadow-sm">
+        <Link to="/books" className="d-inline-flex align-items-center gap-2 text-decoration-none fw-semibold text-dark small card border px-3 py-2 rounded-pill shadow-sm">
           <ArrowLeft size={16} />
           <span>Back to Books Catalog</span>
         </Link>
@@ -247,11 +265,8 @@ const BookDetail = () => {
             <div className="d-flex align-items-center gap-2">
               <button
                 className={`book-detail-action-btn ${isBookmarked ? "active" : ""}`}
-                onClick={() => {
-                  setIsBookmarked(!isBookmarked);
-                  toast.success(isBookmarked ? "Removed from Saved" : "Added to Saved Books!");
-                }}
-                title="Save Book"
+                onClick={handleToggleBookmark}
+                title={isBookmarked ? "Remove from Saved Wishlist" : "Save to Wishlist"}
               >
                 <Bookmark size={18} fill={isBookmarked ? "currentColor" : "none"} />
               </button>
@@ -284,7 +299,7 @@ const BookDetail = () => {
             </div>
 
             {/* Library Shelf Location & Policy Box */}
-            <div className="d-flex flex-wrap gap-3 p-3 rounded-4 bg-light border">
+            <div className="d-flex flex-wrap gap-3 p-3 rounded-4 card border">
               <div className="d-flex align-items-center gap-2 text-dark small fw-semibold">
                 <MapPin size={16} className="text-primary" />
                 <span>Section B4 • Shelf 12</span>

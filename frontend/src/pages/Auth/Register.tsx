@@ -199,7 +199,6 @@ const Register = () => {
                     >
                       <option value="STUDENT">Student / Member</option>
                       <option value="LIBRARIAN">Librarian</option>
-                      <option value="ADMIN">System Administrator</option>
                     </select>
                   </div>
                   {errors.role && (

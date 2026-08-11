@@ -11,7 +11,7 @@ interface NavMenuItem {
 
 const MENU_ITEMS: NavMenuItem[] = [
   {
-    id: "dashboard",
+    id: "Dashboard",
     path: "/dashboard",
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -22,7 +22,7 @@ const MENU_ITEMS: NavMenuItem[] = [
     roles: ["ADMIN", "LIBRARIAN", "STUDENT", "USER"],
   },
   {
-    id: "books",
+    id: "Books Catalog",
     path: "/books",
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -33,7 +33,7 @@ const MENU_ITEMS: NavMenuItem[] = [
     roles: ["ADMIN", "LIBRARIAN", "STUDENT", "USER"],
   },
   {
-    id: "history",
+    id: "Issue Book",
     path: "/borrow",
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -41,10 +41,10 @@ const MENU_ITEMS: NavMenuItem[] = [
         <polyline points="12 6 12 12 16 14"></polyline>
       </svg>
     ),
-    roles: ["ADMIN", "LIBRARIAN", "STUDENT", "USER"],
+    roles: ["ADMIN", "LIBRARIAN"],
   },
   {
-    id: "return",
+    id: "Return Processing",
     path: "/return",
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -52,10 +52,10 @@ const MENU_ITEMS: NavMenuItem[] = [
         <path d="M3 3v5h5"></path>
       </svg>
     ),
-    roles: ["ADMIN", "LIBRARIAN", "STUDENT", "USER"],
+    roles: ["ADMIN", "LIBRARIAN"],
   },
   {
-    id: "members",
+    id: "Members Directory",
     path: "/members",
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -65,10 +65,22 @@ const MENU_ITEMS: NavMenuItem[] = [
         <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
       </svg>
     ),
-    roles: ["ADMIN", "LIBRARIAN", "STUDENT", "USER"],
+    roles: ["ADMIN", "LIBRARIAN"],
   },
   {
-    id: "saved",
+    id: "Reports & Analytics",
+    path: "/reports",
+    icon: (
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="18" y1="20" x2="18" y2="10"></line>
+        <line x1="12" y1="20" x2="12" y2="4"></line>
+        <line x1="6" y1="20" x2="6" y2="14"></line>
+      </svg>
+    ),
+    roles: ["ADMIN", "LIBRARIAN"],
+  },
+  {
+    id: "Saved Wishlist",
     path: "/saved",
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -78,7 +90,7 @@ const MENU_ITEMS: NavMenuItem[] = [
     roles: ["STUDENT", "USER"],
   },
   {
-    id: "settings",
+    id: "Settings & Preferences",
     path: "/settings",
     icon: (
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -103,8 +115,9 @@ const Sidebar = () => {
       className="min-vh-100 d-flex flex-column align-items-center py-4 position-fixed"
       style={{ 
         width: "90px",
-        backgroundColor: "#f6f4ee",
-        borderRight: "1px solid rgba(0,0,0,0.06)",
+        backgroundColor: "var(--surface-page)",
+        borderRight: "1px solid var(--border-light)",
+        transition: "all 0.2s ease",
         zIndex: 1000
       }}
     >
@@ -114,8 +127,7 @@ const Sidebar = () => {
           className="d-flex align-items-center justify-content-center"
           style={{ width: "40px", height: "40px" }}
         >
-          {/* Hand waving icon like in the image */}
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#292524" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--text-primary)" }}>
             <path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"></path>
             <path d="M14 4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"></path>
             <path d="M10 4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"></path>
@@ -141,9 +153,10 @@ const Sidebar = () => {
                 style={{
                   width: "44px",
                   height: "44px",
-                  color: isActive ? "#000" : "#78716c",
-                  backgroundColor: isActive ? "#fff" : "transparent",
-                  boxShadow: isActive ? "0 2px 8px rgba(0,0,0,0.06)" : "none",
+                  color: isActive ? "var(--text-primary)" : "var(--text-muted)",
+                  backgroundColor: isActive ? "var(--surface-card)" : "transparent",
+                  boxShadow: isActive ? "var(--shadow-md)" : "none",
+                  border: isActive ? "1px solid var(--border-light)" : "1px solid transparent",
                   transition: "all 0.2s ease"
                 }}
               >
