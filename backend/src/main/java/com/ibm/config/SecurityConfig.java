@@ -61,9 +61,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/auth/**",
-                                "/books/**",
-                                "/users/**",
-                                "/borrow/**",
                                 "/error"
                         ).permitAll()
                         .anyRequest().authenticated()
