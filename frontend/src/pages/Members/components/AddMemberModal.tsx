@@ -148,7 +148,7 @@ const AddMemberModal = ({
                   <input
                     type="text"
                     className="form-control rounded-3 p-2.5 text-muted small bg-light font-monospace"
-                    value="Auto-generated in MySQL DB"
+                    value="Auto-generated System ID"
                     disabled
                   />
                 </div>

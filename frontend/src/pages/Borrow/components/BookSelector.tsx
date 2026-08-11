@@ -140,7 +140,7 @@ const BookSelector = ({ selectedBook, onSelectBook }: BookSelectorProps) => {
                         {book.coverInitial}
                       </div>
                       <div>
-                        <div className="fw-semibold text-dark small">
+                        <div className="fw-semibold small" style={{ color: "var(--text-primary)" }}>
                           {book.title}
                         </div>
                         <div className="text-muted" style={{ fontSize: ".74rem" }}>

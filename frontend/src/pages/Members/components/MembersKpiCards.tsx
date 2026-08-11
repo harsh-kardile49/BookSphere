@@ -6,12 +6,17 @@ interface MembersKpiCardsProps {
 }
 
 const MembersKpiCards = ({ members }: MembersKpiCardsProps) => {
-  const totalCount = members.length;
-  const activeCount = members.filter((m) => m.status === "Active").length;
+  // Exclude ADMIN and LIBRARIAN staff from student member KPI counts
+  const studentMembers = members.filter(
+    (m) => m.role !== "ADMIN" && m.role !== "LIBRARIAN"
+  );
+
+  const totalCount = studentMembers.length;
+  const activeCount = studentMembers.filter((m) => m.status === "Active").length;
   const activePercent = totalCount > 0 ? ((activeCount / totalCount) * 100).toFixed(1) : "0";
 
-  const borrowingCount = members.filter((m) => m.booksBorrowedCount > 0 || (m.activeLoans && m.activeLoans.length > 0)).length;
-  const overdueCount = members.filter((m) => m.overdueCount > 0 || (m.activeLoans && m.activeLoans.some((l) => l.isOverdue))).length;
+  const borrowingCount = studentMembers.filter((m) => m.booksBorrowedCount > 0 || (m.activeLoans && m.activeLoans.length > 0)).length;
+  const overdueCount = studentMembers.filter((m) => m.overdueCount > 0 || (m.activeLoans && m.activeLoans.some((l) => l.isOverdue))).length;
 
   return (
     <div className="members-kpi-grid">
