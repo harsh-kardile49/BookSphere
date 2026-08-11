@@ -99,9 +99,10 @@
 
 .filter-search-input:focus {
   outline: none;
-  background: #ffffff;
+  background: var(--surface-card);
   border-color: var(--bs-indigo);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+  color: var(--text-primary);
 }
 
 .filter-search-icon {
