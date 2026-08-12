@@ -19,7 +19,11 @@ import "./settings.css";
 
 const Settings = () => {
   const { user } = useAuthStore();
-  const [activeTab, setActiveTab] = useState<"library" | "profile" | "notifications">("library");
+  const isLibrarianOrAdmin = user?.role === "LIBRARIAN" || user?.role === "ADMIN";
+
+  const [activeTab, setActiveTab] = useState<"library" | "profile" | "notifications">(
+    isLibrarianOrAdmin ? "library" : "profile"
+  );
 
   // Library Policy Settings
   const [maxLoanDays, setMaxLoanDays] = useState(14);
@@ -31,7 +35,7 @@ const Settings = () => {
   const [firstName, setFirstName] = useState(user?.firstName || "");
   const [lastName, setLastName] = useState(user?.lastName || "");
   const [email, setEmail] = useState(user?.email || "");
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState(user?.phone || "+91 98765 43210");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
 
@@ -48,8 +52,10 @@ const Settings = () => {
 
     setTimeout(() => {
       setIsSaving(false);
-      toast.success("Settings saved", {
-        description: "Library preferences updated",
+      toast.success("Preferences Saved", {
+        description: isLibrarianOrAdmin
+          ? "Library preferences updated successfully."
+          : "Your profile details and notification settings have been updated.",
       });
     }, 400);
   };
@@ -60,27 +66,33 @@ const Settings = () => {
       <div className="d-flex align-items-center justify-content-between mb-4">
         <div>
           <h1 className="fw-bold text-dark mb-1" style={{ fontSize: "1.75rem" }}>
-            Settings & System Preferences
+            {isLibrarianOrAdmin ? "Settings & System Preferences" : "Account & Preferences"}
           </h1>
           <p className="text-secondary small mb-0">
-            Configure library circulation policies, account profile, and notifications.
+            {isLibrarianOrAdmin
+              ? "Configure library circulation policies, account profile, and notifications."
+              : "Manage your member profile, security password, and email notifications."}
           </p>
         </div>
       </div>
 
       {/* ── Navigation Tabs ── */}
-      <div className="d-flex gap-2 mb-4 p-1 bg-white border rounded-pill shadow-sm d-inline-flex">
-        <button
-          className={`btn btn-sm rounded-pill px-4 py-2 fw-semibold d-flex align-items-center gap-2 border-0 ${
-            activeTab === "library" ? "btn-dark text-white shadow-sm" : "text-secondary"
-          }`}
-          onClick={() => setActiveTab("library")}
-        >
-          <Sliders size={16} />
-          <span>Library Rules & Policy</span>
-        </button>
+      <div className="d-flex gap-2 mb-4 p-1 bg-white border rounded-pill shadow-sm d-inline-flex flex-wrap">
+        {isLibrarianOrAdmin && (
+          <button
+            type="button"
+            className={`btn btn-sm rounded-pill px-4 py-2 fw-semibold d-flex align-items-center gap-2 border-0 ${
+              activeTab === "library" ? "btn-dark text-white shadow-sm" : "text-secondary"
+            }`}
+            onClick={() => setActiveTab("library")}
+          >
+            <Sliders size={16} />
+            <span>Library Rules & Policy</span>
+          </button>
+        )}
 
         <button
+          type="button"
           className={`btn btn-sm rounded-pill px-4 py-2 fw-semibold d-flex align-items-center gap-2 border-0 ${
             activeTab === "profile" ? "btn-dark text-white shadow-sm" : "text-secondary"
           }`}
@@ -91,6 +103,7 @@ const Settings = () => {
         </button>
 
         <button
+          type="button"
           className={`btn btn-sm rounded-pill px-4 py-2 fw-semibold d-flex align-items-center gap-2 border-0 ${
             activeTab === "notifications" ? "btn-dark text-white shadow-sm" : "text-secondary"
           }`}
@@ -99,6 +112,19 @@ const Settings = () => {
           <Bell size={16} />
           <span>Notifications</span>
         </button>
+
+        {!isLibrarianOrAdmin && (
+          <button
+            type="button"
+            className={`btn btn-sm rounded-pill px-4 py-2 fw-semibold d-flex align-items-center gap-2 border-0 ${
+              activeTab === "library" ? "btn-dark text-white shadow-sm" : "text-secondary"
+            }`}
+            onClick={() => setActiveTab("library")}
+          >
+            <Sliders size={16} />
+            <span>Library Rules</span>
+          </button>
+        )}
       </div>
 
       <form onSubmit={handleSaveSettings}>
@@ -106,126 +132,191 @@ const Settings = () => {
         {activeTab === "library" && (
           <div className="row g-4">
             <div className="col-lg-8">
-              <div className="bg-white border rounded-4 p-4 p-md-5 shadow-sm">
-                <div className="d-flex align-items-center gap-2 mb-4 pb-2 border-bottom">
-                  <BookOpen size={18} color="var(--bs-indigo)" />
-                  <h5 className="fw-bold text-dark mb-0">Circulation Rules & Policies</h5>
-                </div>
-
-                <div className="row g-4 mb-4">
-                  {/* Loan Duration */}
-                  <div className="col-md-6">
-                    <label className="form-label fw-semibold text-dark small mb-1 d-flex align-items-center gap-1.5">
-                      <Clock size={14} className="text-muted" />
-                      <span>Standard Loan Duration (Days)</span>
-                    </label>
-                    <input
-                      type="number"
-                      min="1"
-                      max="90"
-                      className="form-control rounded-3 p-2.5 text-dark small"
-                      style={{ background: "var(--surface-page)" }}
-                      value={maxLoanDays}
-                      onChange={(e) => setMaxLoanDays(Number(e.target.value))}
-                    />
-                    <small className="text-muted d-block mt-1">
-                      Default lending period for issued books.
-                    </small>
+              {isLibrarianOrAdmin ? (
+                /* Admin / Librarian Policy Controls */
+                <div className="bg-white border rounded-4 p-4 p-md-5 shadow-sm">
+                  <div className="d-flex align-items-center gap-2 mb-4 pb-2 border-bottom">
+                    <BookOpen size={18} color="var(--bs-indigo)" />
+                    <h5 className="fw-bold text-dark mb-0">Circulation Rules & Policies</h5>
                   </div>
 
-                  {/* Max Books Per Member */}
-                  <div className="col-md-6">
-                    <label className="form-label fw-semibold text-dark small mb-1 d-flex align-items-center gap-1.5">
-                      <BookOpen size={14} className="text-muted" />
-                      <span>Max Books Per Member</span>
-                    </label>
-                    <input
-                      type="number"
-                      min="1"
-                      max="20"
-                      className="form-control rounded-3 p-2.5 text-dark small"
-                      style={{ background: "var(--surface-page)" }}
-                      value={maxBooksPerMember}
-                      onChange={(e) => setMaxBooksPerMember(Number(e.target.value))}
-                    />
-                    <small className="text-muted d-block mt-1">
-                      Maximum active borrows allowed simultaneously.
-                    </small>
-                  </div>
-
-                  {/* Daily Fine Rate */}
-                  <div className="col-md-6">
-                    <label className="form-label fw-semibold text-dark small mb-1 d-flex align-items-center gap-1.5">
-                      <IndianRupee size={14} className="text-muted" />
-                      <span>Overdue Fine Rate (₹ / Day)</span>
-                    </label>
-                    <input
-                      type="number"
-                      min="0"
-                      step="0.5"
-                      className="form-control rounded-3 p-2.5 text-dark small"
-                      style={{ background: "var(--surface-page)" }}
-                      value={fineRatePerDay}
-                      onChange={(e) => setFineRatePerDay(Number(e.target.value))}
-                    />
-                    <small className="text-muted d-block mt-1">
-                      Daily fine penalty charged for overdue books.
-                    </small>
-                  </div>
-
-                  {/* Automated Reminders Toggle */}
-                  <div className="col-md-6">
-                    <label className="form-label fw-semibold text-dark small mb-1 d-flex align-items-center gap-1.5">
-                      <Bell size={14} className="text-muted" />
-                      <span>Automated Overdue Reminders</span>
-                    </label>
-                    <div className="form-check form-switch pt-2">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        role="switch"
-                        id="autoOverdueSwitch"
-                        checked={autoOverdueReminders}
-                        onChange={(e) => setAutoOverdueReminders(e.target.checked)}
-                      />
-                      <label className="form-check-label text-secondary small fw-medium ms-2" htmlFor="autoOverdueSwitch">
-                        Send daily email notifications for overdue loans
+                  <div className="row g-4 mb-4">
+                    <div className="col-md-6">
+                      <label className="form-label fw-semibold text-dark small mb-1 d-flex align-items-center gap-1.5">
+                        <Clock size={14} className="text-muted" />
+                        <span>Standard Loan Duration (Days)</span>
                       </label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="90"
+                        className="form-control rounded-3 p-2.5 text-dark small"
+                        style={{ background: "var(--surface-page)" }}
+                        value={maxLoanDays}
+                        onChange={(e) => setMaxLoanDays(Number(e.target.value))}
+                      />
+                      <small className="text-muted d-block mt-1">
+                        Default lending period for issued books.
+                      </small>
+                    </div>
+
+                    <div className="col-md-6">
+                      <label className="form-label fw-semibold text-dark small mb-1 d-flex align-items-center gap-1.5">
+                        <BookOpen size={14} className="text-muted" />
+                        <span>Max Books Per Member</span>
+                      </label>
+                      <input
+                        type="number"
+                        min="1"
+                        max="20"
+                        className="form-control rounded-3 p-2.5 text-dark small"
+                        style={{ background: "var(--surface-page)" }}
+                        value={maxBooksPerMember}
+                        onChange={(e) => setMaxBooksPerMember(Number(e.target.value))}
+                      />
+                      <small className="text-muted d-block mt-1">
+                        Maximum active borrows allowed simultaneously.
+                      </small>
+                    </div>
+
+                    <div className="col-md-6">
+                      <label className="form-label fw-semibold text-dark small mb-1 d-flex align-items-center gap-1.5">
+                        <IndianRupee size={14} className="text-muted" />
+                        <span>Overdue Fine Rate (₹ / Day)</span>
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.5"
+                        className="form-control rounded-3 p-2.5 text-dark small"
+                        style={{ background: "var(--surface-page)" }}
+                        value={fineRatePerDay}
+                        onChange={(e) => setFineRatePerDay(Number(e.target.value))}
+                      />
+                      <small className="text-muted d-block mt-1">
+                        Daily fine penalty charged for overdue books.
+                      </small>
+                    </div>
+
+                    <div className="col-md-6">
+                      <label className="form-label fw-semibold text-dark small mb-1 d-flex align-items-center gap-1.5">
+                        <Bell size={14} className="text-muted" />
+                        <span>Automated Overdue Reminders</span>
+                      </label>
+                      <div className="form-check form-switch pt-2">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          role="switch"
+                          id="autoOverdueSwitch"
+                          checked={autoOverdueReminders}
+                          onChange={(e) => setAutoOverdueReminders(e.target.checked)}
+                        />
+                        <label className="form-check-label text-secondary small fw-medium ms-2" htmlFor="autoOverdueSwitch">
+                          Send daily email notifications for overdue loans
+                        </label>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="p-3 bg-light rounded-3 d-flex align-items-center gap-3">
-                  <CheckCircle2 size={20} className="text-success flex-shrink-0" />
-                  <span className="text-secondary small">
-                    Circulation rules take effect immediately across all book borrowing and return workflows.
-                  </span>
+                  <div className="p-3 bg-light rounded-3 d-flex align-items-center gap-3">
+                    <CheckCircle2 size={20} className="text-success flex-shrink-0" />
+                    <span className="text-secondary small">
+                      Circulation rules take effect immediately across all book borrowing and return workflows.
+                    </span>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                /* Student / Member Read-Only Policy Overview */
+                <div className="bg-white border rounded-4 p-4 p-md-5 shadow-sm">
+                  <div className="d-flex align-items-center gap-2 mb-4 pb-2 border-bottom">
+                    <BookOpen size={18} color="var(--bs-indigo)" />
+                    <h5 className="fw-bold text-dark mb-0">Library Member Circulation Policies</h5>
+                  </div>
+
+                  <div className="row g-4 mb-4">
+                    <div className="col-md-4">
+                      <div className="p-3 bg-light rounded-3">
+                        <small className="text-muted d-block mb-1">Standard Loan Period</small>
+                        <span className="fw-bold fs-5 text-dark">14 Calendar Days</span>
+                      </div>
+                    </div>
+
+                    <div className="col-md-4">
+                      <div className="p-3 bg-light rounded-3">
+                        <small className="text-muted d-block mb-1">Borrowing Limit</small>
+                        <span className="fw-bold fs-5 text-dark">5 Active Books</span>
+                      </div>
+                    </div>
+
+                    <div className="col-md-4">
+                      <div className="p-3 bg-light rounded-3">
+                        <small className="text-muted d-block mb-1">Overdue Fine Rate</small>
+                        <span className="fw-bold fs-5 text-dark">₹5 / Day</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-indigo-subtle rounded-3 d-flex align-items-center gap-3">
+                    <CheckCircle2 size={20} className="text-primary flex-shrink-0" />
+                    <span className="text-dark small">
+                      These policies apply to all active loans under your student member account. Contact library admin for extension requests.
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Sidebar Summary Card */}
             <div className="col-lg-4">
               <div className="bg-white border rounded-4 p-4 shadow-sm">
-                <h6 className="fw-bold text-dark mb-3">System Overview</h6>
-                <div className="d-flex align-items-center justify-content-between py-2 border-bottom">
-                  <span className="text-muted small">Database Engine</span>
-                  <span className="fw-semibold text-dark small">Relational Database</span>
-                </div>
-                <div className="d-flex align-items-center justify-content-between py-2 border-bottom">
-                  <span className="text-muted small">API Gateway</span>
-                  <span className="fw-semibold text-dark small">REST Services</span>
-                </div>
-                <div className="d-flex align-items-center justify-content-between py-2 border-bottom">
-                  <span className="text-muted small">LMS License</span>
-                  <span className="fw-semibold text-dark small">Enterprise Demo</span>
-                </div>
-                <div className="d-flex align-items-center justify-content-between py-2">
-                  <span className="text-muted small">System Status</span>
-                  <span className="badge bg-success-subtle text-success rounded-pill px-2.5 py-1 small">
-                    ● Operational
-                  </span>
-                </div>
+                <h6 className="fw-bold text-dark mb-3">
+                  {isLibrarianOrAdmin ? "System Overview" : "Member Account Overview"}
+                </h6>
+
+                {isLibrarianOrAdmin ? (
+                  <>
+                    <div className="d-flex align-items-center justify-content-between py-2 border-bottom">
+                      <span className="text-muted small">Database Engine</span>
+                      <span className="fw-semibold text-dark small">Relational Database</span>
+                    </div>
+                    <div className="d-flex align-items-center justify-content-between py-2 border-bottom">
+                      <span className="text-muted small">API Gateway</span>
+                      <span className="fw-semibold text-dark small">REST Services</span>
+                    </div>
+                    <div className="d-flex align-items-center justify-content-between py-2 border-bottom">
+                      <span className="text-muted small">LMS License</span>
+                      <span className="fw-semibold text-dark small">Enterprise Demo</span>
+                    </div>
+                    <div className="d-flex align-items-center justify-content-between py-2">
+                      <span className="text-muted small">System Status</span>
+                      <span className="badge bg-success-subtle text-success rounded-pill px-2.5 py-1 small">
+                        ● Operational
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="d-flex align-items-center justify-content-between py-2 border-bottom">
+                      <span className="text-muted small">Account Type</span>
+                      <span className="fw-semibold text-dark small">{user?.role || "STUDENT"}</span>
+                    </div>
+                    <div className="d-flex align-items-center justify-content-between py-2 border-bottom">
+                      <span className="text-muted small">Borrow Allowance</span>
+                      <span className="fw-semibold text-dark small">5 Active Books</span>
+                    </div>
+                    <div className="d-flex align-items-center justify-content-between py-2 border-bottom">
+                      <span className="text-muted small">Standard Term</span>
+                      <span className="fw-semibold text-dark small">14 Days</span>
+                    </div>
+                    <div className="d-flex align-items-center justify-content-between py-2">
+                      <span className="text-muted small">Member Status</span>
+                      <span className="badge bg-success-subtle text-success rounded-pill px-2.5 py-1 small">
+                        ● Active Member
+                      </span>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -346,7 +437,7 @@ const Settings = () => {
                 <h5 className="fw-bold text-dark mb-1">{firstName} {lastName}</h5>
                 <p className="text-muted small mb-2">{email}</p>
                 <span className="badge bg-indigo-subtle text-primary rounded-pill px-3 py-1 fw-semibold small">
-                  {user?.role || "ADMIN"}
+                  {user?.role || "STUDENT"}
                 </span>
               </div>
             </div>

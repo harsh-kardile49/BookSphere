@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Search, AlertCircle, X } from "lucide-react";
 import { userService } from "../../../services/user.service";
+import { useAuthStore } from "../../../store/authStore";
 
 export interface BorrowableMember {
   id: number;
@@ -34,10 +35,36 @@ const MemberSelector = ({
   selectedMember,
   onSelectMember,
 }: MemberSelectorProps) => {
+  const { user } = useAuthStore();
+  const isStudentOrUser = user?.role === "STUDENT" || user?.role === "USER";
   const [membersList, setMembersList] = useState<BorrowableMember[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Auto pre-select current user if logged in as Student / Member
+  useEffect(() => {
+    if (user && !selectedMember && isStudentOrUser) {
+      const initials = (
+        (user.firstName?.[0] || "") + (user.lastName?.[0] || "")
+      ).toUpperCase() || "ME";
+
+      const numericId = Number(user.id) || 1;
+      onSelectMember({
+        id: numericId,
+        name: `${user.firstName || ""} ${user.lastName || ""}`.trim() || user.email,
+        email: user.email,
+        phone: user.phone || "+91 98765 43210",
+        memberCode: `MEM-${1000 + numericId}`,
+        avatarBg: "linear-gradient(135deg, #6366f1 0%, #4338ca 100%)",
+        avatarInitials: initials,
+        eligible: true,
+        accountStatus: "Active",
+        currentBorrowedCount: 0,
+        borrowingLimit: 5,
+      });
+    }
+  }, [user, selectedMember, isStudentOrUser, onSelectMember]);
 
   // Load real members from backend API
   useEffect(() => {
@@ -48,12 +75,12 @@ const MemberSelector = ({
         if (isMounted && Array.isArray(users)) {
           const mapped: BorrowableMember[] = users.map((u, i) => ({
             id: u.id,
-            name: `${u.firstName} ${u.lastName}`.trim(),
+            name: `${u.firstName || ""} ${u.lastName || ""}`.trim() || u.email,
             email: u.email,
             phone: u.phone || "",
             memberCode: `MEM-${1000 + u.id}`,
             avatarBg: GRADIENTS[i % GRADIENTS.length],
-            avatarInitials: ((u.firstName[0] || "") + (u.lastName[0] || "")).toUpperCase() || "MB",
+            avatarInitials: ((u.firstName?.[0] || "") + (u.lastName?.[0] || "")).toUpperCase() || "MB",
             eligible: true,
             accountStatus: "Active",
             currentBorrowedCount: 0,
@@ -204,14 +231,16 @@ const MemberSelector = ({
               </div>
             </div>
 
-            <button
-              type="button"
-              className="btn btn-outline-secondary btn-sm border-0 rounded-circle p-1"
-              onClick={() => onSelectMember(null)}
-              title="Change member"
-            >
-              <X size={18} />
-            </button>
+            {!isStudentOrUser && (
+              <button
+                type="button"
+                className="btn btn-outline-secondary btn-sm border-0 rounded-circle p-1"
+                onClick={() => onSelectMember(null)}
+                title="Change member"
+              >
+                <X size={18} />
+              </button>
+            )}
           </div>
         </div>
       )}

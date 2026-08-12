@@ -9,6 +9,8 @@ interface BookFiltersProps {
   onAuthorChange: (value: string) => void;
   selectedAvailability: string;
   onAvailabilityChange: (value: string) => void;
+  sortOption: string;
+  onSortChange: (value: string) => void;
   categories: string[];
   authors: string[];
   onClearFilters: () => void;
@@ -24,6 +26,8 @@ const BookFilters = ({
   onAuthorChange,
   selectedAvailability,
   onAvailabilityChange,
+  sortOption,
+  onSortChange,
   categories,
   authors,
   onClearFilters,
@@ -83,6 +87,21 @@ const BookFilters = ({
         <option value="Issued">Issued</option>
         <option value="Reserved">Reserved</option>
         <option value="Maintenance">Maintenance</option>
+      </select>
+
+      {/* Sorting Dropdown */}
+      <select
+        className="filter-select fw-semibold"
+        value={sortOption}
+        onChange={(e) => onSortChange(e.target.value)}
+        style={{ borderColor: sortOption ? "var(--bs-indigo)" : undefined }}
+      >
+        <option value="">Sort By</option>
+        <option value="price-asc">Price: Low to High (₹)</option>
+        <option value="price-desc">Price: High to Low (₹)</option>
+        <option value="title-asc">Title: A - Z</option>
+        <option value="title-desc">Title: Z - A</option>
+        <option value="year-desc">Year: Newest First</option>
       </select>
 
       {/* Clear Filters Button */}

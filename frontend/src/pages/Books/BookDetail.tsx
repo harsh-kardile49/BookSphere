@@ -16,11 +16,16 @@ import {
   Barcode,
   Layers,
   IndianRupee,
+  Edit,
+  Trash2,
 } from "lucide-react";
 import { isBookSaved, toggleSaveBook } from "../../utils/savedBooksStore";
 import { getBookById, getAllBooks } from "../../services/book.service";
 import type { BackendBook } from "../../types/book";
 import ProgressiveImage from "../../components/common/ProgressiveImage";
+import { useAuthStore } from "../../store/authStore";
+import EditBookModal from "./components/EditBookModal";
+import DeleteBookModal from "./components/DeleteBookModal";
 import { toast } from "sonner";
 import "./books.css";
 
@@ -36,11 +41,17 @@ const GRADIENTS = [
 const BookDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuthStore();
+  const isLibrarianOrAdmin = user?.role === "LIBRARIAN" || user?.role === "ADMIN";
 
   const [book, setBook] = useState<BackendBook | null>(null);
   const [allBooks, setAllBooks] = useState<BackendBook[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isBookmarked, setIsBookmarked] = useState(false);
+
+  // Librarian workflow: Edit & Delete modals state
+  const [isEditing, setIsEditing] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (book) {
@@ -56,6 +67,16 @@ const BookDetail = () => {
       toast.success("Saved to Wishlist", { description: `"${book.title}" added to your saved books` });
     } else {
       toast.info("Removed from Wishlist", { description: `"${book.title}" removed from saved books` });
+    }
+  };
+
+  const fetchBookDetails = async () => {
+    if (!id) return;
+    try {
+      const single = await getBookById(Number(id));
+      if (single) setBook(single);
+    } catch (err) {
+      console.warn("Error refreshing book details:", err);
     }
   };
 
@@ -262,6 +283,28 @@ const BookDetail = () => {
               <ArrowUpRight size={18} />
             </button>
 
+            {/* Librarian / Admin Edit & Delete Buttons */}
+            {isLibrarianOrAdmin && (
+              <>
+                <button
+                  type="button"
+                  className="book-detail-action-btn border border-primary text-primary"
+                  onClick={() => setIsEditing(true)}
+                  title="Edit Book Details"
+                >
+                  <Edit size={18} />
+                </button>
+                <button
+                  type="button"
+                  className="book-detail-action-btn border border-danger text-danger"
+                  onClick={() => setIsDeleting(true)}
+                  title="Delete Book Entry"
+                >
+                  <Trash2 size={18} />
+                </button>
+              </>
+            )}
+
             <div className="d-flex align-items-center gap-2">
               <button
                 className={`book-detail-action-btn ${isBookmarked ? "active" : ""}`}
@@ -379,6 +422,30 @@ const BookDetail = () => {
           </div>
         </div>
       </div>
+
+      {/* Librarian Edit Book Modal */}
+      {isEditing && (
+        <EditBookModal
+          book={book}
+          onClose={() => setIsEditing(false)}
+          onSuccess={() => {
+            setIsEditing(false);
+            fetchBookDetails();
+          }}
+        />
+      )}
+
+      {/* Librarian Delete Book Modal */}
+      {isDeleting && (
+        <DeleteBookModal
+          book={book}
+          onClose={() => setIsDeleting(false)}
+          onSuccess={() => {
+            setIsDeleting(false);
+            navigate("/books");
+          }}
+        />
+      )}
     </div>
   );
 };

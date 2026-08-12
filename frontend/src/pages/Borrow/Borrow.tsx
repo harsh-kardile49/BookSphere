@@ -12,7 +12,12 @@ import "./borrow.css";
 // Helper: Format date to YYYY-MM-DD for date inputs
 const toInputDate = (d: Date) => d.toISOString().split("T")[0];
 
+import { useAuthStore } from "../../store/authStore";
+
 const Borrow = () => {
+  const { user } = useAuthStore();
+  const isLibrarianOrAdmin = user?.role === "LIBRARIAN" || user?.role === "ADMIN";
+
   const today = new Date();
   const defaultDue = new Date(today);
   defaultDue.setDate(defaultDue.getDate() + 14);
@@ -52,7 +57,12 @@ const Borrow = () => {
     try {
       const result = await borrowService.issueBook({
         userId: selectedMember.id,
+        userName: selectedMember.name,
+        userEmail: selectedMember.email,
         bookId: selectedBook.id,
+        bookTitle: selectedBook.title,
+        bookAuthor: selectedBook.author,
+        isbn: selectedBook.isbn,
         dueDate: dueDate,
       });
 
@@ -102,9 +112,13 @@ const Borrow = () => {
           {/* Left Column: Form Workflow */}
           <div className="borrow-card">
             <div className="borrow-card-header">
-              <h2 className="borrow-card-title">Create Borrowing</h2>
+              <h2 className="borrow-card-title">
+                {isLibrarianOrAdmin ? "Create Borrowing" : "Issue Book Request"}
+              </h2>
               <p className="borrow-card-subtitle">
-                Select a member and the book they want to borrow.
+                {isLibrarianOrAdmin
+                  ? "Select a member and the book they want to borrow."
+                  : "Review your account details and select a book to borrow."}
               </p>
             </div>
 

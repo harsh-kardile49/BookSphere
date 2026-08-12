@@ -50,22 +50,8 @@ const AppRoutes = () => {
               </ProtectedRoute>
             }
           />
-          <Route
-            path="/borrow"
-            element={
-              <ProtectedRoute allowedRoles={["ADMIN", "LIBRARIAN"]}>
-                <Borrow />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/return"
-            element={
-              <ProtectedRoute allowedRoles={["ADMIN", "LIBRARIAN"]}>
-                <Return />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/borrow" element={<Borrow />} />
+          <Route path="/return" element={<Return />} />
           <Route path="/settings" element={<Settings />} />
           <Route
             path="/reports"

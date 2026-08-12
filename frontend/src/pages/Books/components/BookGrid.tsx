@@ -6,9 +6,11 @@ interface BookGridProps {
   books: Book[];
   onSelectBook: (book: Book) => void;
   onClearFilters: () => void;
+  onEditBook?: (book: Book) => void;
+  onDeleteBook?: (book: Book) => void;
 }
 
-const BookGrid = ({ books, onSelectBook, onClearFilters }: BookGridProps) => {
+const BookGrid = ({ books, onSelectBook, onClearFilters, onEditBook, onDeleteBook }: BookGridProps) => {
   if (books.length === 0) {
     return (
       <div className="books-empty-state">
@@ -32,7 +34,13 @@ const BookGrid = ({ books, onSelectBook, onClearFilters }: BookGridProps) => {
   return (
     <div className="book-cards-grid">
       {books.map((book) => (
-        <BookCard key={book.id} book={book} onSelectBook={onSelectBook} />
+        <BookCard
+          key={book.id}
+          book={book}
+          onSelectBook={onSelectBook}
+          onEditBook={onEditBook}
+          onDeleteBook={onDeleteBook}
+        />
       ))}
     </div>
   );

@@ -42,7 +42,7 @@ const MENU_ITEMS: NavMenuItem[] = [
         <polyline points="12 6 12 12 16 14"></polyline>
       </svg>
     ),
-    roles: ["ADMIN", "LIBRARIAN"],
+    roles: ["ADMIN", "LIBRARIAN", "STUDENT", "USER"],
   },
   {
     id: "Return Processing",
@@ -53,7 +53,7 @@ const MENU_ITEMS: NavMenuItem[] = [
         <path d="M3 3v5h5"></path>
       </svg>
     ),
-    roles: ["ADMIN", "LIBRARIAN"],
+    roles: ["ADMIN", "LIBRARIAN", "STUDENT", "USER"],
   },
   {
     id: "Members Directory",

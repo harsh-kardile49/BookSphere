@@ -1,14 +1,20 @@
 import { useNavigate } from "react-router-dom";
-import { Star, BookOpen, Calendar, Globe, Hash, Layers } from "lucide-react";
+import { Star, BookOpen, Calendar, Globe, Hash, Layers, Edit, Trash2 } from "lucide-react";
 import type { Book } from "../data/booksData";
+import { useAuthStore } from "../../../store/authStore";
 
 interface BookDetailsModalProps {
   book: Book | null;
   onClose: () => void;
+  onEditBook?: (book: Book) => void;
+  onDeleteBook?: (book: Book) => void;
 }
 
-const BookDetailsModal = ({ book, onClose }: BookDetailsModalProps) => {
+const BookDetailsModal = ({ book, onClose, onEditBook, onDeleteBook }: BookDetailsModalProps) => {
   const navigate = useNavigate();
+  const { user } = useAuthStore();
+  const isLibrarianOrAdmin = user?.role === "LIBRARIAN" || user?.role === "ADMIN";
+
   if (!book) return null;
 
   return (
@@ -41,7 +47,7 @@ const BookDetailsModal = ({ book, onClose }: BookDetailsModalProps) => {
               {/* Left: Book Cover */}
               <div className="col-12 col-md-4">
                 <div
-                  className="rounded-4 d-flex align-items-center justify-content-center text-white shadow-lg"
+                  className="rounded-4 d-flex align-items-center justify-content-center text-white shadow-lg position-relative"
                   style={{
                     aspectRatio: "3 / 4",
                     background: book.coverGradient,
@@ -123,7 +129,7 @@ const BookDetailsModal = ({ book, onClose }: BookDetailsModalProps) => {
                 </div>
 
                 {/* Actions */}
-                <div className="d-flex gap-2">
+                <div className="d-flex flex-wrap gap-2">
                   <button
                     type="button"
                     className="btn btn-dark fw-bold rounded-3 px-4 py-2 flex-grow-1"
@@ -137,6 +143,40 @@ const BookDetailsModal = ({ book, onClose }: BookDetailsModalProps) => {
                       ? "Issue Book"
                       : "Reserve Book"}
                   </button>
+
+                  {/* Librarian / Admin Edit & Delete Buttons */}
+                  {isLibrarianOrAdmin && (
+                    <>
+                      {onEditBook && (
+                        <button
+                          type="button"
+                          className="btn btn-outline-primary fw-semibold rounded-3 px-3 py-2 d-inline-flex align-items-center gap-1.5"
+                          onClick={() => {
+                            onClose();
+                            onEditBook(book);
+                          }}
+                        >
+                          <Edit size={15} />
+                          <span>Edit</span>
+                        </button>
+                      )}
+
+                      {onDeleteBook && (
+                        <button
+                          type="button"
+                          className="btn btn-outline-danger fw-semibold rounded-3 px-3 py-2 d-inline-flex align-items-center gap-1.5"
+                          onClick={() => {
+                            onClose();
+                            onDeleteBook(book);
+                          }}
+                        >
+                          <Trash2 size={15} />
+                          <span>Delete</span>
+                        </button>
+                      )}
+                    </>
+                  )}
+
                   <button
                     className="btn btn-outline-secondary fw-semibold rounded-3 px-4"
                     onClick={onClose}

@@ -6,6 +6,9 @@ import BookGrid from "./components/BookGrid";
 import CategoryPanel from "./components/CategoryPanel";
 import LibraryStatsWidget from "./components/LibraryStatsWidget";
 import BookDetailsModal from "./components/BookDetailsModal";
+import EditBookModal from "./components/EditBookModal";
+import DeleteBookModal from "./components/DeleteBookModal";
+import BookPagination from "./components/BookPagination";
 import BooksSkeleton from "./components/BooksSkeleton";
 import { getAllBooks } from "../../services/book.service";
 import type { BackendBook } from "../../types/book";
@@ -31,6 +34,12 @@ const mapBackendToFrontendBook = (b: BackendBook, index: number): Book => {
         .toUpperCase()
     : "BK";
 
+  // Parse numeric price safely from backend or assign realistic varied fallback for demo sorting
+  const rawPrice = Number(b.price);
+  const parsedPrice = !isNaN(rawPrice) && rawPrice > 0
+    ? rawPrice
+    : ((index * 137) % 850) + 149;
+
   return {
     id: String(b.id),
     title: b.title || "Untitled Book",
@@ -48,6 +57,7 @@ const mapBackendToFrontendBook = (b: BackendBook, index: number): Book => {
     rating: 5.0,
     reviewCount: 0,
     availability: (b.quantity ?? 0) > 0 ? "Available" : "Issued",
+    price: parsedPrice,
     imageUrl: b.imageUrl,
     description: b.publisher
       ? `Published by ${b.publisher}. Category: ${b.category || "General"}.`
@@ -55,22 +65,52 @@ const mapBackendToFrontendBook = (b: BackendBook, index: number): Book => {
   };
 };
 
+const ITEMS_PER_PAGE = 20;
+
 const Books = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedAuthor, setSelectedAuthor] = useState("");
   const [selectedAvailability, setSelectedAvailability] = useState("");
+  const [sortOption, setSortOption] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
+
+  // Librarian workflow: Edit and Delete modals state
+  const [editingBook, setEditingBook] = useState<Book | null>(null);
+  const [deletingBook, setDeletingBook] = useState<Book | null>(null);
+
+  // Reset pagination to page 1 whenever any filter or sort option changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedCategory, selectedAuthor, selectedAvailability, sortOption]);
 
   // Live books state loaded from backend API (GET /books)
   const [booksList, setBooksList] = useState<Book[]>([]);
   const [isLoadingApi, setIsLoadingApi] = useState(true);
   const [apiError, setApiError] = useState<string | null>(null);
 
+  // Function to re-fetch catalog
+  const fetchBackendBooks = async () => {
+    setIsLoadingApi(true);
+    setApiError(null);
+    try {
+      const data = await getAllBooks();
+      if (data && Array.isArray(data)) {
+        const mapped = data.map(mapBackendToFrontendBook);
+        setBooksList(mapped);
+      }
+    } catch (err: unknown) {
+      console.warn("Error refreshing books catalog:", err);
+    } finally {
+      setIsLoadingApi(false);
+    }
+  };
+
   // Load books strictly from backend API (GET /books)
   useEffect(() => {
     let isMounted = true;
-    const fetchBackendBooks = async () => {
+    const initialFetch = async () => {
       setIsLoadingApi(true);
       setApiError(null);
       try {
@@ -100,11 +140,19 @@ const Books = () => {
       }
     };
 
-    fetchBackendBooks();
+    initialFetch();
     return () => {
       isMounted = false;
     };
   }, []);
+
+  const handleBookUpdated = () => {
+    fetchBackendBooks();
+  };
+
+  const handleBookDeleted = (deletedId: number | string) => {
+    setBooksList((prev) => prev.filter((b) => String(b.id) !== String(deletedId)));
+  };
 
   // Compute category statistics dynamically from API books
   const categoryStatsList = useMemo<CategoryStat[]>(() => {
@@ -174,8 +222,36 @@ const Books = () => {
     });
   }, [booksList, searchTerm, selectedCategory, selectedAuthor, selectedAvailability]);
 
+  // Sorting logic (Price, Title, Year)
+  const sortedBooks = useMemo(() => {
+    const list = [...filteredBooks];
+    if (sortOption === "price-asc") {
+      return list.sort((a, b) => Number(a.price ?? 0) - Number(b.price ?? 0));
+    }
+    if (sortOption === "price-desc") {
+      return list.sort((a, b) => Number(b.price ?? 0) - Number(a.price ?? 0));
+    }
+    if (sortOption === "title-asc") {
+      return list.sort((a, b) => a.title.localeCompare(b.title));
+    }
+    if (sortOption === "title-desc") {
+      return list.sort((a, b) => b.title.localeCompare(a.title));
+    }
+    if (sortOption === "year-desc") {
+      return list.sort((a, b) => (b.publishedYear || 0) - (a.publishedYear || 0));
+    }
+    return list;
+  }, [filteredBooks, sortOption]);
+
+  // Pagination slicing (20 books per page)
+  const totalPages = Math.ceil(sortedBooks.length / ITEMS_PER_PAGE);
+  const paginatedBooks = useMemo(() => {
+    const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
+    return sortedBooks.slice(startIdx, startIdx + ITEMS_PER_PAGE);
+  }, [sortedBooks, currentPage]);
+
   const hasActiveFilters = Boolean(
-    searchTerm || selectedCategory || selectedAuthor || selectedAvailability
+    searchTerm || selectedCategory || selectedAuthor || selectedAvailability || sortOption
   );
 
   const handleClearFilters = () => {
@@ -183,6 +259,8 @@ const Books = () => {
     setSelectedCategory("");
     setSelectedAuthor("");
     setSelectedAvailability("");
+    setSortOption("");
+    setCurrentPage(1);
   };
 
   return (
@@ -200,6 +278,8 @@ const Books = () => {
         onAuthorChange={setSelectedAuthor}
         selectedAvailability={selectedAvailability}
         onAvailabilityChange={setSelectedAvailability}
+        sortOption={sortOption}
+        onSortChange={setSortOption}
         categories={categoriesList}
         authors={authorsList}
         onClearFilters={handleClearFilters}
@@ -208,7 +288,7 @@ const Books = () => {
 
       {/* ── Main Layout: Grid + Side Panels ── */}
       <div className="books-main-grid">
-        {/* Left: Book Cards Grid or Skeleton Loader */}
+        {/* Left: Book Cards Grid or Skeleton Loader + Pagination */}
         {isLoadingApi ? (
           <BooksSkeleton />
         ) : apiError ? (
@@ -225,11 +305,24 @@ const Books = () => {
             </button>
           </div>
         ) : (
-          <BookGrid
-            books={filteredBooks}
-            onSelectBook={setSelectedBook}
-            onClearFilters={handleClearFilters}
-          />
+          <div>
+            <BookGrid
+              books={paginatedBooks}
+              onSelectBook={setSelectedBook}
+              onClearFilters={handleClearFilters}
+              onEditBook={(book) => setEditingBook(book)}
+              onDeleteBook={(book) => setDeletingBook(book)}
+            />
+
+            {/* Pagination Component */}
+            <BookPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              totalItems={sortedBooks.length}
+              itemsPerPage={ITEMS_PER_PAGE}
+              onPageChange={setCurrentPage}
+            />
+          </div>
         )}
 
         {/* Right: Side Panels */}
@@ -252,6 +345,22 @@ const Books = () => {
       <BookDetailsModal
         book={selectedBook}
         onClose={() => setSelectedBook(null)}
+        onEditBook={(book) => setEditingBook(book)}
+        onDeleteBook={(book) => setDeletingBook(book)}
+      />
+
+      {/* ── Librarian Edit Book Modal ── */}
+      <EditBookModal
+        book={editingBook}
+        onClose={() => setEditingBook(null)}
+        onSuccess={handleBookUpdated}
+      />
+
+      {/* ── Librarian Delete Book Modal ── */}
+      <DeleteBookModal
+        book={deletingBook}
+        onClose={() => setDeletingBook(null)}
+        onSuccess={handleBookDeleted}
       />
     </div>
   );

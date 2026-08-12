@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![BookSphere Banner](assets/screenshots/dashboard-page.png)
+![BookSphere Dashboard](docs/images/dashboard.png)
 
 ### **Modern, Enterprise-Grade Full-Stack Library Management System**
 
@@ -22,6 +22,7 @@
 - [Overview](#-overview)
 - [Application Screenshots](#-application-screenshots)
 - [Key Features](#-key-features)
+- [Role-Based Workflows](#-role-based-workflows)
 - [Tech Stack](#-tech-stack)
 - [System Architecture](#-system-architecture)
 - [Project Directory Structure](#-project-directory-structure)
@@ -36,12 +37,13 @@
 
 ## 🌟 Overview
 
-**BookSphere** is a modern, enterprise-ready full-stack web application designed to automate and simplify core operations for academic, public, and institutional libraries. It replaces manual registers with a centralized, real-time digital management system.
+**BookSphere** is a state-of-the-art, enterprise-ready full-stack digital library management system built with **Spring Boot 3** and **React 19**. It automates library administration, catalog search, book circulation, user management, and fine tracking across academic and public library institutions.
 
-The application features:
-- **Stateless Security**: JWT token authentication with role-based authorization (`STUDENT`, `LIBRARIAN`, `ADMIN`).
-- **Real-time Inventory Tracking**: Dynamic database-level stock management where issuing books decrements available count and returning restores stock automatically.
-- **Modern User Experience**: Reactive Single-Page Application (SPA) built with React 19, Bootstrap 5, Lucide Icons, and dynamic toast notifications.
+### Highlights:
+- **Stateless Security**: Secure JWT authentication with role-based authorization (`STUDENT`, `USER`, `LIBRARIAN`, `ADMIN`).
+- **Dynamic Book Cataloging**: Real-time price sorting, category filters, availability tracking, pagination (20 books/page), and full modal CRUD for librarians.
+- **Synchronized Borrow & Return**: Stock-aware borrowing and return workflows with member pre-selection, live due date tracking, and automatic stock restoration.
+- **Adaptive UX**: Role-customized dashboards, quick shortcuts, settings preferences, and mode-adaptive BookSphere logo.
 
 ---
 
@@ -50,62 +52,93 @@ The application features:
 ### 1. Register Page
 > User account creation interface supporting role selection (`STUDENT` or `LIBRARIAN`) with client-side form validation.
 
-![Register Page](assets/screenshots/register-page.png)
+![Register Page](docs/images/register.png)
 
 ---
 
 ### 2. Login Page
 > Secure authentication portal with JWT token issuance, error alerts, and persistent session support.
 
-![Login Page](assets/screenshots/login-page.png)
+![Login Page](docs/images/login.png)
 
 ---
 
 ### 3. Dashboard Page
-> Centralized administrative overview displaying real-time database KPIs (Total Books, Available Stock, Active Loans, Registered Members), recent transactions, and quick action shortcuts.
+> Centralized operational portal displaying real-time database KPIs (Catalog Books, Inventory Stock, Active Loans, Registered Members), recent transactions table, and role-tailored Quick Shortcuts.
 
-![Dashboard Page](assets/screenshots/dashboard-page.png)
+![Dashboard Page](docs/images/dashboard.png)
 
 ---
 
 ### 4. Book Catalog Page
-> Dynamic book catalog featuring instant client-side search, category filters, availability badges, library statistics, and modal details views.
+> Dynamic book catalog featuring instant client-side search, category filters, price sorting, availability badges, library statistics, and modal CRUD operations.
 
-![Book Page](assets/screenshots/books-page.png)
+![Book Page](docs/images/books.png)
 
 ---
 
-### 5. Borrow & Return Page
-> Streamlined circulation workflow for active borrowing lookup, due date calculation, overdue penalty evaluation, and inventory restoration.
+### 5. Borrow Books Page
+> Streamlined borrowing workflow with automatic member pre-selection for students, catalog book search, and 14-day due date calculation.
 
-![Borrow Page](assets/screenshots/borrow-page.png)
+![Borrow Page](docs/images/borrow.png)
 
-*(Additional feature screens will be added as new modules are released)*
+---
+
+### 6. Return Books Page
+> Process returned books with active loan search, inventory stock restoration, and clean zero-loans empty state notice.
+
+![Return Book Page](docs/images/return.png)
+
+---
+
+### 7. Members Directory Page
+> Centralized member management directory split into Student Members and Library Staff & Librarians with membership status badges.
+
+![Members Page](docs/images/members.png)
+
+---
+
+### 8. Settings & Preferences Page
+> Role-adapted settings interface providing circulation policy controls, profile security, password management, and notification toggles.
+
+![Settings Page](docs/images/settings.png)
 
 ---
 
 ## ✨ Key Features
 
 ### 🔐 Authentication & Security
-- **Role-Based Access**: Role management for `STUDENT`, `LIBRARIAN`, and `ADMIN`.
-- **Stateless JWT Session**: Secure token-based session management attached automatically to outgoing requests via Axios interceptors.
-- **BCrypt Encryption**: Passwords encrypted using Spring Security's `BCryptPasswordEncoder`.
+- **Role-Based Authorization**: Distinct views and actions for `STUDENT`, `USER`, `LIBRARIAN`, and `ADMIN`.
+- **JWT Token Management**: Automatic token storage and request interception via Axios.
+- **Encrypted Credentials**: Password hashing via Spring Security `BCryptPasswordEncoder`.
 
-### 📚 Catalog Management
-- **Full RESTful CRUD**: Create, read, update, and delete book entries (Title, Author, Publisher, ISBN, Category, Price, Quantity, Published Year, Image URL).
-- **Instant Search & Filters**: Live filtering by title, author, category, and availability.
+### 📚 Book Catalog Management
+- **Librarian CRUD**: Add new books (`POST /books`), update existing entries (`PUT /books/{id}`), and delete titles (`DELETE /books/{id}`).
+- **Advanced Sorting & Pagination**: Sort by Price (Low to High / High to Low), Title (A-Z / Z-A), or Year with 20 items per page pagination.
+- **Stock Tracking**: Automatic stock inventory reduction on issue (+1 restoration on return).
 
-### 👥 Member Management
-- **User Directory**: Centralized view of registered members with active loan histories and fine metrics.
-- **Member CRUD**: Add, edit, or remove member accounts with instant table sync.
+### 👥 Member Directory & Profiles
+- **Member Directory**: Categorized view of registered students and library staff members.
+- **Settings & Preferences**: Role-adapted preferences panel for personal profile updates, password changes, and read-only student policy overview.
 
-### 🔄 Circulation (Borrow & Return)
-- **Stock-Aware Lending**: Issue books to registered members with automatic due-date calculation (default 14 days) and stock reduction.
-- **Inventory Restoration**: Return books to restore stock inventory (+1) and track overdue days.
+### 🔄 Circulation (Borrowing & Returns)
+- **Active Loan Synchronization**: Seamless state tracking connecting book issue transactions directly to return processing.
+- **Zero-Loans Empty State**: Clean empty state alerts on `/return` when all books are returned.
 
-### 📊 Real-Time Analytics & Reports
-- **Live Metrics**: Dashboard widgets reflecting exact counts from the MySQL database.
-- **Circulation Reports**: Audit log table with CSV report export functionality.
+---
+
+## 🎭 Role-Based Workflows
+
+| Capability / Feature | Student / Member | Librarian / Admin |
+|---|:---:|:---:|
+| Browse & Search Catalog | ✅ | ✅ |
+| Sort Books by Price & Year | ✅ | ✅ |
+| Issue Book Loan for Self | ✅ | ✅ |
+| Issue Loan for Any Member | ❌ | ✅ |
+| Return Borrowed Books | ✅ | ✅ |
+| Add / Edit / Delete Books | ❌ | ✅ |
+| Access Member Directory | ❌ | ✅ |
+| Modify System Policy Rules | ❌ | ✅ |
 
 ---
 
@@ -115,7 +148,7 @@ The application features:
 - **Framework**: Spring Boot 3.4.2
 - **Language**: Java 21 / Java 26
 - **Database**: MySQL 8.0+
-- **ORM / JPA**: Spring Data JPA & Hibernate
+- **ORM / Data Access**: Spring Data JPA & Hibernate
 - **Security**: Spring Security & JSON Web Tokens (`jjwt` 0.12.6)
 - **Build Tool**: Maven
 
@@ -124,8 +157,7 @@ The application features:
 - **Language**: TypeScript
 - **Styling**: Vanilla CSS3, Bootstrap 5.3, Lucide React Icons
 - **State Management**: Zustand
-- **Form & Validation**: React Hook Form, Zod
-- **HTTP Client**: Axios with Request/Response Interceptors
+- **HTTP Client**: Axios with Request & Response Interceptors
 - **Notifications**: Sonner Toast
 
 ---
@@ -135,7 +167,7 @@ The application features:
 ```
 +-------------------------------------------------------------+
 |                      React 19 SPA (Vite)                    |
-|  [ Dashboard ]  [ Books Catalog ]  [ Members ]  [ Return ]  |
+| [ Dashboard ] [ Books ] [ Borrow ] [ Return ] [ Members ]   |
 +------------------------------+------------------------------+
                                |
                         HTTP / REST APIs
@@ -165,41 +197,49 @@ The application features:
 
 ```
 BookSphere/
+├── docs/
+│   └── images/
+│       ├── register.png
+│       ├── login.png
+│       ├── dashboard.png
+│       ├── books.png
+│       ├── borrow.png
+│       ├── return.png
+│       ├── members.png
+│       └── settings.png
+│
 ├── assets/
 │   └── screenshots/
-│       ├── register-page.png
-│       ├── login-page.png
-│       ├── dashboard-page.png
-│       ├── books-page.png
-│       └── borrow-page.png
+│       ├── register.png
+│       ├── login.png
+│       ├── dashboard.png
+│       ├── books.png
+│       ├── borrow.png
+│       ├── return.png
+│       ├── members.png
+│       └── settings.png
 │
 ├── backend/
 │   ├── src/
 │   │   ├── main/
 │   │   │   ├── java/com/ibm/
-│   │   │   │   ├── config/ (SecurityConfig, WebConfig, PasswordConfig)
-│   │   │   │   ├── controller/ (AuthController, BookController, BorrowController, etc.)
-│   │   │   │   ├── dto/ (LoginRequest, JwtResponse, BorrowRequest, etc.)
-│   │   │   │   ├── entity/ (User, Book, BorrowTransaction, Role)
-│   │   │   │   ├── exception/ (GlobalExceptionHandler, Custom Exceptions)
+│   │   │   │   ├── config/ (SecurityConfig, WebConfig)
+│   │   │   │   ├── controller/ (AuthController, BookController, BorrowController)
+│   │   │   │   ├── dto/ (LoginRequest, JwtResponse, BorrowRequest)
+│   │   │   │   ├── entity/ (User, Book, BorrowTransaction)
 │   │   │   │   ├── repository/ (UserRepository, BookRepository, BorrowRepository)
-│   │   │   │   ├── security/ (JwtService, JwtAuthenticationFilter, UserPrincipal)
-│   │   │   │   ├── service/ (AuthService, BookService, BorrowService, UserService)
-│   │   │   │   └── BooksphereApplication.java
+│   │   │   │   └── service/ (AuthService, BookService, BorrowService)
 │   │   │   └── resources/
 │   │   │       └── application.properties
 │   └── pom.xml
 │
 └── frontend/
     ├── src/
-    │   ├── components/ (Navbar, Sidebar, Footer, LoadingSpinner, etc.)
-    │   ├── layouts/ (AdminLayout, AuthLayout)
-    │   ├── pages/ (Auth, Books, Borrow, Dashboard, Members, Reports, Return, Settings)
+    │   ├── components/ (Sidebar, Header, Logo, BookCard, Modals)
+    │   ├── pages/ (Auth, Books, Borrow, Dashboard, Members, Return, Settings)
     │   ├── services/ (api.ts, auth.service.ts, book.service.ts, borrow.service.ts)
     │   ├── store/ (authStore.ts)
-    │   ├── types/ (auth.ts, book.ts)
-    │   ├── utils/ (constants.ts, storage.ts)
-    │   └── validation/ (loginSchema.ts, registerSchema.ts)
+    │   └── types/ (auth.ts, book.ts)
     ├── package.json
     └── vite.config.ts
 ```
@@ -217,25 +257,25 @@ BookSphere/
 
 ### 1. Backend Setup (Spring Boot & MySQL)
 
-1. **Create MySQL Database**:
+1. **Create Database**:
    ```sql
    CREATE DATABASE booksphere_db;
    ```
 
-2. **Configure Database Credentials**:
-   Update `backend/src/main/resources/application.properties` (or set environment variables):
+2. **Configure Connection**:
+   Update `backend/src/main/resources/application.properties`:
    ```properties
    spring.datasource.url=jdbc:mysql://localhost:3306/booksphere_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
    spring.datasource.username=root
    spring.datasource.password=root
    ```
 
-3. **Build & Run Backend**:
+3. **Run Application**:
    ```bash
    cd backend
    mvnw clean spring-boot:run
    ```
-   The backend server starts on `http://localhost:8080`.
+   Backend API runs at `http://localhost:8080`.
 
 ---
 
@@ -251,7 +291,7 @@ BookSphere/
    ```bash
    npm run dev
    ```
-   The application will be accessible at `http://localhost:5173`.
+   Frontend Web App opens at `http://localhost:5173`.
 
 ---
 
@@ -265,21 +305,17 @@ BookSphere/
 | `/books/{id}` | `GET` | Authenticated | Fetch specific book details |
 | `/books` | `POST` | Admin / Librarian | Add new book to catalog |
 | `/books/{id}` | `PUT` | Admin / Librarian | Update existing book entry |
-| `/books/{id}` | `DELETE` | Admin | Delete book from catalog |
-| `/users` | `GET` | Authenticated | Fetch all library members |
-| `/users/{id}` | `PUT` | Admin | Update member details |
-| `/users/{id}` | `DELETE` | Admin | Delete member account |
-| `/borrows` | `GET` | Authenticated | Retrieve all borrowing transactions |
-| `/borrows/active` | `GET` | Authenticated | Fetch currently active loans |
-| `/borrows/issue` | `POST` | Librarian / Admin | Issue a book to a member |
-| `/borrows/return/{id}` | `POST` | Librarian / Admin | Process return for a borrowed book |
-| `/reports/summary` | `GET` | Admin / Librarian | Get aggregated operational metrics |
+| `/books/{id}` | `DELETE` | Admin / Librarian | Delete book from catalog |
+| `/users` | `GET` | Authenticated | Fetch registered library members |
+| `/borrow` | `POST` | Authenticated | Issue a book to member |
+| `/borrow/active` | `GET` | Authenticated | Fetch currently active loans |
+| `/borrow/{id}/return` | `PUT` | Authenticated | Process return for borrowed book |
 
 ---
 
 ## 📄 License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the MIT License. See `LICENSE` for details.
 
 <div align="center">
   <sub>Built with ❤️ for Modern Digital Libraries</sub>
