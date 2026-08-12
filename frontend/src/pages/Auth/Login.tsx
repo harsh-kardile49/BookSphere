@@ -14,7 +14,7 @@ import {
   ArrowRight,
   Sparkles,
   BookMarked,
-  ShieldCheck,
+
 } from "lucide-react";
 
 const Login = () => {
@@ -26,7 +26,6 @@ const Login = () => {
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { errors },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -51,11 +50,6 @@ const Login = () => {
     }
   };
 
-  const handleQuickFill = (email: string, roleName: string) => {
-    setValue("email", email, { shouldValidate: true });
-    setValue("password", "password123", { shouldValidate: true });
-    toast.info(`Credentials set for ${roleName}`);
-  };
 
   return (
     <div className="container py-3">
@@ -96,9 +90,8 @@ const Login = () => {
                     </span>
                     <input
                       type="email"
-                      className={`form-control border-light rounded-3 py-2 ${
-                        errors.email ? "is-invalid" : ""
-                      }`}
+                      className={`form-control border-light rounded-3 py-2 ${errors.email ? "is-invalid" : ""
+                        }`}
                       placeholder="name@example.com"
                       style={{
                         paddingLeft: 40,
@@ -146,9 +139,8 @@ const Login = () => {
                     </span>
                     <input
                       type={showPassword ? "text" : "password"}
-                      className={`form-control border-light rounded-3 py-2 ${
-                        errors.password ? "is-invalid" : ""
-                      }`}
+                      className={`form-control border-light rounded-3 py-2 ${errors.password ? "is-invalid" : ""
+                        }`}
                       placeholder="••••••••"
                       style={{
                         paddingLeft: 40,
@@ -221,38 +213,11 @@ const Login = () => {
                     </span>
                   )}
                 </button>
-
-                {/* Demo Credentials Section */}
-                <div className="d-flex align-items-center justify-content-between gap-1 mb-3">
-                  <span className="text-muted" style={{ fontSize: ".74rem" }}>
-                    Demo Fill:
-                  </span>
-                  <button
-                    type="button"
-                    className="btn btn-sm btn-outline-secondary rounded-pill px-3 py-0 border-light"
-                    style={{ fontSize: ".72rem", background: "var(--surface-page)" }}
-                    onClick={() => handleQuickFill("librarian@booksphere.com", "Librarian")}
-                  >
-                    Librarian
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-sm btn-outline-secondary rounded-pill px-3 py-0 border-light"
-                    style={{ fontSize: ".72rem", background: "var(--surface-page)" }}
-                    onClick={() => handleQuickFill("student@booksphere.com", "Student")}
-                  >
-                    Student
-                  </button>
-                </div>
               </form>
             </div>
 
             {/* Footer & Security Badge */}
             <div>
-              <div className="d-flex align-items-center justify-content-center gap-1 text-muted mb-2" style={{ fontSize: ".74rem" }}>
-                <ShieldCheck size={13} color="#10b981" />
-                <span>Protected by 256-bit SSL encryption</span>
-              </div>
               <p className="text-center text-muted small mb-0" style={{ fontSize: ".82rem" }}>
                 Don't have an account?{" "}
                 <Link
