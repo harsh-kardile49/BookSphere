@@ -6,6 +6,7 @@ import { registerSchema, type RegisterFormData } from "../../validation/register
 import { useAuthStore } from "../../store/authStore";
 import { toast } from "sonner";
 import ErrorAlert from "../../components/common/ErrorAlert";
+import Logo from "../../components/common/Logo";
 import {
   Mail,
   Lock,
@@ -69,6 +70,9 @@ const Register = () => {
           {/* ── Left Column: Clean Minimal Registration Form ── */}
           <div className="col-lg-6 p-4 p-md-5 d-flex flex-column justify-content-between">
             <div>
+              <div className="mb-4">
+                <Logo size="md" showText={true} />
+              </div>
               <h2 className="fw-bold text-dark mb-1" style={{ fontSize: "1.65rem" }}>
                 Create account
               </h2>

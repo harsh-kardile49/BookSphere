@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
 import { useAuthStore } from "../../store/authStore";
 import type { UserRole } from "../../types/auth";
+import Logo from "./Logo";
 
 interface NavMenuItem {
   id: string;
@@ -123,19 +124,7 @@ const Sidebar = () => {
     >
       {/* Top Logo / Brand Icon */}
       <div className="mb-5">
-        <div 
-          className="d-flex align-items-center justify-content-center"
-          style={{ width: "40px", height: "40px" }}
-        >
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--text-primary)" }}>
-            <path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"></path>
-            <path d="M14 4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"></path>
-            <path d="M10 4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"></path>
-            <path d="M6 6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"></path>
-            <path d="M4 14.5c0 3.5 2.5 6.5 6 6.5s6-3 6-6.5V11"></path>
-            <path d="M2.5 12l2 2.5"></path>
-          </svg>
-        </div>
+        <Logo size="md" showText={false} />
       </div>
 
       {/* Center Navigation Icons */}
