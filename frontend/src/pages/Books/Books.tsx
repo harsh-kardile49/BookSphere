@@ -263,10 +263,61 @@ const Books = () => {
     setCurrentPage(1);
   };
 
+  const handleExportCSV = () => {
+    const listToExport = sortedBooks.length > 0 ? sortedBooks : booksList;
+    if (listToExport.length === 0) {
+      toast.info("No books available to export");
+      return;
+    }
+
+    const headers = [
+      "ID",
+      "Title",
+      "Author",
+      "ISBN",
+      "Category",
+      "Price (₹)",
+      "Stock Copies",
+      "Availability",
+      "Published Year",
+      "Publisher",
+    ];
+
+    const rows = listToExport.map((b) => [
+      `"${b.id}"`,
+      `"${b.title.replace(/"/g, '""')}"`,
+      `"${b.author.replace(/"/g, '""')}"`,
+      `"${b.isbn}"`,
+      `"${b.category}"`,
+      `₹${b.price || 0}`,
+      b.issuesCount ?? 0,
+      `"${b.availability}"`,
+      b.publishedYear,
+      `"${(b.publisher || "").replace(/"/g, '""')}"`,
+    ]);
+
+    const csvContent = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute(
+      "download",
+      `BookSphere_Catalog_${new Date().toISOString().slice(0, 10)}.csv`
+    );
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    toast.success("Book catalog exported to CSV", {
+      description: `${listToExport.length} titles included in CSV file`,
+    });
+  };
+
   return (
     <div className="books-container">
       {/* ── Editorial Header ── */}
-      <BooksHeader />
+      <BooksHeader onExportCSV={handleExportCSV} />
 
       {/* ── Search & Filter Toolbar ── */}
       <BookFilters
