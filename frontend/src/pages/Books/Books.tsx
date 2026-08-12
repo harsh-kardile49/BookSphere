@@ -37,21 +37,21 @@ const mapBackendToFrontendBook = (b: BackendBook, index: number): Book => {
     author: b.author || "Unknown Author",
     isbn: b.isbn || "N/A",
     category: b.category || "General",
-    publishedYear: b.publishedYear || 2026,
-    publisher: b.publisher || "Prentice Hall",
+    publishedYear: b.publishedYear || new Date().getFullYear(),
+    publisher: b.publisher || "",
     language: "English",
-    pages: 350,
-    issuesCount: b.quantity ?? 10,
+    pages: 0,
+    issuesCount: b.quantity ?? 0,
     coverColor: "#6366f1",
     coverGradient: GRADIENTS[index % GRADIENTS.length],
     coverInitial: initials || "BK",
-    rating: 4.8,
-    reviewCount: 24,
-    availability: (b.quantity ?? 1) > 0 ? "Available" : "Issued",
+    rating: 5.0,
+    reviewCount: 0,
+    availability: (b.quantity ?? 0) > 0 ? "Available" : "Issued",
     imageUrl: b.imageUrl,
-    description: `Published by ${b.publisher || "BookSphere"}. A comprehensive title in ${
-      b.category || "General"
-    }. Price: ₹${b.price || 499}.`,
+    description: b.publisher
+      ? `Published by ${b.publisher}. Category: ${b.category || "General"}.`
+      : `Category: ${b.category || "General"}.`,
   };
 };
 

@@ -50,7 +50,7 @@ const MemberSelector = ({
             id: u.id,
             name: `${u.firstName} ${u.lastName}`.trim(),
             email: u.email,
-            phone: u.phone || "+91 98765 43210",
+            phone: u.phone || "",
             memberCode: `MEM-${1000 + u.id}`,
             avatarBg: GRADIENTS[i % GRADIENTS.length],
             avatarInitials: ((u.firstName[0] || "") + (u.lastName[0] || "")).toUpperCase() || "MB",

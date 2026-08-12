@@ -51,47 +51,5 @@ export interface Member {
   activityTimeline: MemberActivity[];
 }
 
-export const INITIAL_MEMBERS_DATA: Member[] = [
-  {
-    id: "1",
-    memberCode: "MEM-1001",
-    name: "System Admin",
-    email: "admin@booksphere.com",
-    phone: "+91 98765 43210",
-    role: "ADMIN",
-    membershipType: "Premium",
-    avatarBg: "linear-gradient(135deg, #6366f1 0%, #4338ca 100%)",
-    avatarInitials: "SA",
-    booksBorrowedCount: 0,
-    overdueCount: 0,
-    totalBorrowedCount: 12,
-    finesAmount: 0,
-    status: "Active",
-    joinedDate: "Aug 2026",
-    address: "BookSphere Central Library",
-    activeLoans: [],
-    borrowingHistory: [],
-    activityTimeline: [],
-  },
-  {
-    id: "2",
-    memberCode: "MEM-1002",
-    name: "Student Member",
-    email: "student@booksphere.com",
-    phone: "+91 98123 45678",
-    role: "STUDENT",
-    membershipType: "Student",
-    avatarBg: "linear-gradient(135deg, #10b981 0%, #047857 100%)",
-    avatarInitials: "SM",
-    booksBorrowedCount: 0,
-    overdueCount: 0,
-    totalBorrowedCount: 4,
-    finesAmount: 0,
-    status: "Active",
-    joinedDate: "Aug 2026",
-    address: "University Campus",
-    activeLoans: [],
-    borrowingHistory: [],
-    activityTimeline: [],
-  },
-];
+export const INITIAL_MEMBERS_DATA: Member[] = [];
+

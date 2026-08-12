@@ -57,7 +57,7 @@ const FindLoanSelector = ({
             userEmail: b.userEmail || "",
             bookTitle: b.bookTitle || "Unknown Book",
             bookAuthor: b.bookAuthor || "Unknown Author",
-            isbn: b.isbn || "978-0132350884",
+            isbn: b.isbn || "N/A",
             borrowDate: b.borrowDate,
             dueDate: b.dueDate,
             status: b.status,

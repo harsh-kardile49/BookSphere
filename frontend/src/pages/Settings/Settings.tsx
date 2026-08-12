@@ -28,10 +28,10 @@ const Settings = () => {
   const [autoOverdueReminders, setAutoOverdueReminders] = useState(true);
 
   // Profile Settings
-  const [firstName, setFirstName] = useState(user?.firstName || "Admin");
-  const [lastName, setLastName] = useState(user?.lastName || "User");
-  const [email, setEmail] = useState(user?.email || "admin@booksphere.com");
-  const [phone, setPhone] = useState("+91 98765 43210");
+  const [firstName, setFirstName] = useState(user?.firstName || "");
+  const [lastName, setLastName] = useState(user?.lastName || "");
+  const [email, setEmail] = useState(user?.email || "");
+  const [phone, setPhone] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
 
