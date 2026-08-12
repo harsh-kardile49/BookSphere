@@ -318,5 +318,5 @@ BookSphere/
 Distributed under the MIT License. See `LICENSE` for details.
 
 <div align="center">
-  <sub>Built with ❤️ for Modern Digital Libraries</sub>
+  <sub>Crafted by Harsh Kardile, Saumajit Malakar & Vedant Wasdikar. Excellence isn’t optional.</sub>
 </div>
