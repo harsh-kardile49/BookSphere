@@ -1,10 +1,10 @@
-# 📚 BookSphere
+# BookSphere
 
 <div align="center">
 
 ![BookSphere Dashboard](docs/images/dashboard.png)
 
-### **Modern, Enterprise-Grade Full-Stack Library Management System**
+### **Uncompromising, Enterprise-Grade Full-Stack Library Intelligence**
 
 [![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.4.2-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
 [![React](https://img.shields.io/badge/React-19.0-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
@@ -17,152 +17,150 @@
 
 ---
 
-## 📖 Table of Contents
+## Table of Contents
 
-- [Overview](#-overview)
-- [Application Screenshots](#-application-screenshots)
-- [Key Features](#-key-features)
-- [Role-Based Workflows](#-role-based-workflows)
-- [Tech Stack](#-tech-stack)
-- [System Architecture](#-system-architecture)
-- [Project Directory Structure](#-project-directory-structure)
-- [Getting Started](#-getting-started)
+- [Executive Overview](#executive-overview)
+- [Command Center Visuals](#command-center-visuals)
+- [Core Capabilities](#core-capabilities)
+- [Role Matrix & Permissions](#role-matrix--permissions)
+- [Technology Stack](#technology-stack)
+- [Architectural Blueprint](#architectural-blueprint)
+- [Project Directory Structure](#project-directory-structure)
+- [Deployment & Execution](#deployment--execution)
   - [Prerequisites](#prerequisites)
-  - [1. Backend Setup (Spring Boot & MySQL)](#1-backend-setup-spring-boot--mysql)
-  - [2. Frontend Setup (React & Vite)](#2-frontend-setup-react--vite)
-- [API Documentation](#-api-documentation)
-- [License](#-license)
+  - [1. Backend Deployment (Spring Boot & MySQL)](#1-backend-deployment-spring-boot--mysql)
+  - [2. Frontend Deployment (React & Vite)](#2-frontend-deployment-react--vite)
+- [API Interface Specs](#api-interface-specs)
+- [License & Authorship](#license--authorship)
 
 ---
 
-## 🌟 Overview
+## Executive Overview
 
-**BookSphere** is a state-of-the-art, enterprise-ready full-stack digital library management system built with **Spring Boot 3** and **React 19**. It automates library administration, catalog search, book circulation, user management, and fine tracking across academic and public library institutions.
+Average platforms manage records. **BookSphere dominates operations.** Built with **Spring Boot 3** and **React 19**, BookSphere is an enterprise-grade digital library ecosystem designed for organizations that accept nothing less than absolute precision. 
 
-### Highlights:
-- **Stateless Security**: Secure JWT authentication with role-based authorization (`STUDENT`, `USER`, `LIBRARIAN`, `ADMIN`).
-- **Dynamic Book Cataloging**: Real-time price sorting, category filters, availability tracking, pagination (20 books/page), and full modal CRUD for librarians.
-- **Synchronized Borrow & Return**: Stock-aware borrowing and return workflows with member pre-selection, live due date tracking, and automatic stock restoration.
-- **Adaptive UX**: Role-customized dashboards, quick shortcuts, settings preferences, and mode-adaptive BookSphere logo.
+When you manage thousands of assets across members and staff, excuses are not an option. BookSphere eliminates friction by automating inventory tracking, role-gated circulation, real-time analytics, and automated fine enforcement.
+
+### Strategic Advantages:
+- **Zero-Trust Security Standard**: Stateless JWT authentication backed by role-gated authorization (`STUDENT`, `USER`, `LIBRARIAN`, `ADMIN`).
+- **High-Velocity Cataloging**: Sub-millisecond client-side search, multi-tier price sorting, 7-category collapsible breakdown, and complete librarian CRUD control.
+- **Flawless Stock Synchronization**: Real-time inventory deduction on issue and instant +1 copy restoration upon return.
+- **Context-Adaptive Interface**: Precision dashboards tailored specifically to the user's role—delivering only the tools required to close the task.
 
 ---
 
-## 🖼️ Application Screenshots
+## Command Center Visuals
 
-### 1. Register Page
-> User account creation interface supporting role selection (`STUDENT` or `LIBRARIAN`) with client-side form validation.
+### 1. User Onboarding
+> Client-side validated registration interface with role assignment (`STUDENT` or `LIBRARIAN`).
 
 ![Register Page](docs/images/register.png)
 
 ---
 
-### 2. Login Page
-> Secure authentication portal with JWT token issuance, error alerts, and persistent session support.
+### 2. Authentication Gateway
+> High-security login portal issuing 24-hour cryptographic JWT tokens.
 
 ![Login Page](docs/images/login.png)
 
 ---
 
-### 3. Dashboard Page
-> Centralized operational portal displaying real-time database KPIs (Catalog Books, Inventory Stock, Active Loans, Registered Members), recent transactions table, and role-tailored Quick Shortcuts.
+### 3. Operational Dashboard
+> Executive command portal monitoring real-time KPIs: Active Inventory, Total Loans, Overdue Penalties, and Registered Members.
 
 ![Dashboard Page](docs/images/dashboard.png)
 
 ---
 
-### 4. Book Catalog Page
-> Dynamic book catalog featuring instant client-side search, category filters, price sorting, availability badges, library statistics, and modal CRUD operations.
+### 4. Book Catalog Command
+> Dynamic catalog engine supporting live multi-parameter filtering, price sorting, modal CRUD operations, and instant CSV export.
 
 ![Book Page](docs/images/books.png)
 
 ---
 
-### 5. Borrow Books Page
-> Streamlined borrowing workflow with automatic member pre-selection for students, catalog book search, and 14-day due date calculation.
+### 5. Issue Circulation Workflow
+> Streamlined loan issuance interface featuring auto-locked student borrower profiles and automatic 14-day due date calculation.
 
 ![Borrow Page](docs/images/borrow.png)
 
 ---
 
-### 6. Return Books Page
-> Process returned books with active loan search, inventory stock restoration, and clean zero-loans empty state notice.
+### 6. Return Processing Workflow
+> Automated return processing engine with live loan matching, fine computation, and zero-loans empty state notice.
 
 ![Return Book Page](docs/images/return.png)
 
 ---
 
-### 7. Members Directory Page
-> Centralized member management directory split into Student Members and Library Staff & Librarians with membership status badges.
+### 7. Member Directory Management
+> Institutional membership directory separating student patrons from administrative library staff.
 
 ![Members Page](docs/images/members.png)
 
 ---
 
-### 8. Settings & Preferences Page
-> Role-adapted settings interface providing circulation policy controls, profile security, password management, and notification toggles.
+### 8. Policy & System Settings
+> Role-gated control panel managing circulation rules, user credentials, and security parameters.
 
 ![Settings Page](docs/images/settings.png)
 
 ---
 
-## ✨ Key Features
+## Core Capabilities
 
-### 🔐 Authentication & Security
-- **Role-Based Authorization**: Distinct views and actions for `STUDENT`, `USER`, `LIBRARIAN`, and `ADMIN`.
-- **JWT Token Management**: Automatic token storage and request interception via Axios.
-- **Encrypted Credentials**: Password hashing via Spring Security `BCryptPasswordEncoder`.
+### Authentication & Security
+- **Strict Role Boundaries**: Enforces exact operational permissions for `STUDENT`, `USER`, `LIBRARIAN`, and `ADMIN`.
+- **Stateless Bearer Interception**: Automated request interception and JWT injection via Axios interceptors.
+- **Cryptographic Encryption**: Password hashing using Spring Security `BCryptPasswordEncoder`.
 
-### 📚 Book Catalog Management
-- **Librarian CRUD**: Add new books (`POST /books`), update existing entries (`PUT /books/{id}`), and delete titles (`DELETE /books/{id}`).
-- **Advanced Sorting & Pagination**: Sort by Price (Low to High / High to Low), Title (A-Z / Z-A), or Year with 20 items per page pagination.
-- **Stock Tracking**: Automatic stock inventory reduction on issue (+1 restoration on return).
+### Asset & Catalog Mastery
+- **Full Operational CRUD**: Librarians create (`POST`), update (`PUT`), and remove (`DELETE`) catalog titles seamlessly.
+- **Dynamic Sorting & Pagination**: Sort inventory by Price (Low to High / High to Low), Title, or Year across paginated grids.
+- **Inventory Stock Protection**: Automatic stock decrement on checkout, preventing over-borrowing beyond physical copies.
 
-### 👥 Member Directory & Profiles
-- **Member Directory**: Categorized view of registered students and library staff members.
-- **Settings & Preferences**: Role-adapted preferences panel for personal profile updates, password changes, and read-only student policy overview.
-
-### 🔄 Circulation (Borrowing & Returns)
-- **Active Loan Synchronization**: Seamless state tracking connecting book issue transactions directly to return processing.
-- **Zero-Loans Empty State**: Clean empty state alerts on `/return` when all books are returned.
+### Circulation & Audit Logs
+- **Transaction Continuity**: Connects loan issuance records directly to return audit histories.
+- **CSV Data Exporter**: One-click catalog and audit report export for institutional reporting.
 
 ---
 
-## 🎭 Role-Based Workflows
+## Role Matrix & Permissions
 
-| Capability / Feature | Student / Member | Librarian / Admin |
+| Platform Feature | Patrons (Student / Member) | Executive Staff (Librarian / Admin) |
 |---|:---:|:---:|
-| Browse & Search Catalog | ✅ | ✅ |
-| Sort Books by Price & Year | ✅ | ✅ |
-| Issue Book Loan for Self | ✅ | ✅ |
-| Issue Loan for Any Member | ❌ | ✅ |
-| Return Borrowed Books | ✅ | ✅ |
-| Add / Edit / Delete Books | ❌ | ✅ |
-| Access Member Directory | ❌ | ✅ |
-| Modify System Policy Rules | ❌ | ✅ |
+| Search & Filter Catalog | Granted | Granted |
+| Sort Inventory by Price & Year | Granted | Granted |
+| Self-Service Book Checkout | Granted | Granted |
+| Issue Loans for Any Patron | Restricted | Granted |
+| Return Borrowed Assets | Granted | Granted |
+| Add, Edit, or Delete Catalog Titles | Restricted | Granted |
+| Access Institutional Member Directory | Restricted | Granted |
+| Configure System Policies | Restricted | Granted |
 
 ---
 
-## 🛠️ Tech Stack
+## Technology Stack
 
-### Backend
+### Backend Engine
 - **Framework**: Spring Boot 3.4.2
-- **Language**: Java 21 / Java 26
-- **Database**: MySQL 8.0+
-- **ORM / Data Access**: Spring Data JPA & Hibernate
-- **Security**: Spring Security & JSON Web Tokens (`jjwt` 0.12.6)
-- **Build Tool**: Maven
+- **Runtime**: Java 21 / Java 26
+- **Database Engine**: MySQL 8.0+
+- **Persistence**: Spring Data JPA & Hibernate 6
+- **Security Standard**: Spring Security 6 & JSON Web Tokens (`jjwt` 0.12.6)
+- **Build System**: Apache Maven
 
-### Frontend
-- **Framework**: React 19 (Vite 8 SPA)
-- **Language**: TypeScript
-- **Styling**: Vanilla CSS3, Bootstrap 5.3, Lucide React Icons
-- **State Management**: Zustand
-- **HTTP Client**: Axios with Request & Response Interceptors
-- **Notifications**: Sonner Toast
+### Frontend Engine
+- **Core Framework**: React 19 (Vite 8 SPA)
+- **Type Safety**: TypeScript 5.0+
+- **Styling Architecture**: Vanilla CSS3, Bootstrap 5.3 Grid, Lucide Icons
+- **State Management**: Zustand 5
+- **Network Layer**: Axios (Interceptors for Bearer Injection & Auto 401 Redirect)
+- **Feedback & Validation**: Sonner Toast & Zod Schema Validation
 
 ---
 
-## 📐 System Architecture
+## Architectural Blueprint
 
 ```
 +-------------------------------------------------------------+
@@ -193,23 +191,12 @@
 
 ---
 
-## 📁 Project Directory Structure
+## Project Directory Structure
 
 ```
 BookSphere/
 ├── docs/
 │   └── images/
-│       ├── register.png
-│       ├── login.png
-│       ├── dashboard.png
-│       ├── books.png
-│       ├── borrow.png
-│       ├── return.png
-│       ├── members.png
-│       └── settings.png
-│
-├── assets/
-│   └── screenshots/
 │       ├── register.png
 │       ├── login.png
 │       ├── dashboard.png
@@ -246,23 +233,23 @@ BookSphere/
 
 ---
 
-## 🚀 Getting Started
+## Deployment & Execution
 
 ### Prerequisites
-- **Java**: JDK 21 or higher
-- **Node.js**: Node 18+ and `npm`
-- **Database**: MySQL Server 8.0+ running on `localhost:3306`
+- **Java Development Kit**: JDK 21 or higher
+- **Node Environment**: Node 18+ and `npm`
+- **Database Engine**: MySQL Server 8.0+ on `localhost:3306`
 
 ---
 
-### 1. Backend Setup (Spring Boot & MySQL)
+### 1. Backend Deployment (Spring Boot & MySQL)
 
-1. **Create Database**:
+1. **Initialize Database**:
    ```sql
    CREATE DATABASE booksphere_db;
    ```
 
-2. **Configure Connection**:
+2. **Configure Database Credentials**:
    Update `backend/src/main/resources/application.properties`:
    ```properties
    spring.datasource.url=jdbc:mysql://localhost:3306/booksphere_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
@@ -270,16 +257,16 @@ BookSphere/
    spring.datasource.password=root
    ```
 
-3. **Run Application**:
+3. **Execute Backend**:
    ```bash
    cd backend
    mvnw clean spring-boot:run
    ```
-   Backend API runs at `http://localhost:8080`.
+   Backend Service operational at `http://localhost:8080`.
 
 ---
 
-### 2. Frontend Setup (React & Vite)
+### 2. Frontend Deployment (React & Vite)
 
 1. **Install Dependencies**:
    ```bash
@@ -287,33 +274,33 @@ BookSphere/
    npm install
    ```
 
-2. **Run Dev Server**:
+2. **Launch Development Server**:
    ```bash
    npm run dev
    ```
-   Frontend Web App opens at `http://localhost:5173`.
+   Frontend Client operational at `http://localhost:5173`.
 
 ---
 
-## 🔌 API Documentation
+## API Interface Specs
 
-| Endpoint | Method | Access | Description |
+| Endpoint | Method | Access Level | Operational Description |
 |---|---|---|---|
 | `/auth/register` | `POST` | Public | Register new user account |
-| `/auth/login` | `POST` | Public | Authenticate user & receive JWT token |
-| `/books` | `GET` | Authenticated | Retrieve full catalog of books |
-| `/books/{id}` | `GET` | Authenticated | Fetch specific book details |
-| `/books` | `POST` | Admin / Librarian | Add new book to catalog |
-| `/books/{id}` | `PUT` | Admin / Librarian | Update existing book entry |
-| `/books/{id}` | `DELETE` | Admin / Librarian | Delete book from catalog |
-| `/users` | `GET` | Authenticated | Fetch registered library members |
-| `/borrow` | `POST` | Authenticated | Issue a book to member |
-| `/borrow/active` | `GET` | Authenticated | Fetch currently active loans |
-| `/borrow/{id}/return` | `PUT` | Authenticated | Process return for borrowed book |
+| `/auth/login` | `POST` | Public | Authenticate user & issue JWT bearer token |
+| `/books` | `GET` | Authenticated | Fetch catalog books |
+| `/books/{id}` | `GET` | Authenticated | Retrieve specific book details |
+| `/books` | `POST` | Admin / Librarian | Create catalog title |
+| `/books/{id}` | `PUT` | Admin / Librarian | Update existing title |
+| `/books/{id}` | `DELETE` | Admin / Librarian | Delete title from catalog |
+| `/users` | `GET` | Authenticated | Fetch member accounts |
+| `/borrow` | `POST` | Authenticated | Issue book loan |
+| `/borrow/active` | `GET` | Authenticated | Retrieve active circulation records |
+| `/borrow/{id}/return` | `PUT` | Authenticated | Process return & restore inventory |
 
 ---
 
-## 📄 License
+## License & Authorship
 
 Distributed under the MIT License. See `LICENSE` for details.
 
