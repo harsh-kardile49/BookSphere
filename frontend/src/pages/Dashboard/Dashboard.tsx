@@ -6,6 +6,7 @@ import QuickActions from "./QuickActions";
 import { bookService } from "../../services/book.service";
 import { userService } from "../../services/user.service";
 import { borrowService, type BorrowResponseDTO } from "../../services/borrow.service";
+import OverdueBooks from "./OverdueBooks";
 import "./dashboard.css";
 
 const Dashboard = () => {
@@ -51,8 +52,13 @@ const Dashboard = () => {
           }
 
           if (borrows.status === "fulfilled" && Array.isArray(borrows.value)) {
-            setRecentBorrows(borrows.value);
-            const activeCount = borrows.value.filter((b) => b.status === "ACTIVE").length;
+            const isStudent = user?.role === "STUDENT" || user?.role === "USER";
+            const filteredBorrows = isStudent
+              ? borrows.value.filter((b) => b.userId === user?.id || b.userEmail?.toLowerCase() === user?.email?.toLowerCase())
+              : borrows.value;
+
+            setRecentBorrows(filteredBorrows);
+            const activeCount = filteredBorrows.filter((b) => b.status === "ACTIVE").length;
             setActiveLoans(activeCount);
           }
         }
@@ -67,18 +73,40 @@ const Dashboard = () => {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [user]);
+
+  const userRoleTitle =
+    user?.role === "ADMIN"
+      ? "System Administrator Portal"
+      : user?.role === "LIBRARIAN"
+      ? "Librarian Operations Portal"
+      : "Student Learning Workspace";
 
   return (
     <div className="dashboard-page">
       {/* Header */}
-      <div className="mb-4">
-        <h4 className="fw-bold text-dark mb-1" style={{ fontSize: "1.4rem" }}>
-          {greeting}, {firstName}
-        </h4>
-        <p className="text-muted small mb-0">
-          Welcome to BookSphere Library System. Here's your real-time operational overview.
-        </p>
+      <div className="mb-4 d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <div>
+          <div className="d-flex align-items-center gap-2 mb-1">
+            <h4 className="fw-bold text-dark mb-0" style={{ fontSize: "1.4rem" }}>
+              {greeting}, {firstName}
+            </h4>
+            <span
+              className="badge rounded-pill px-3 py-1"
+              style={{
+                background: user?.role === "ADMIN" ? "rgba(99,102,241,0.12)" : user?.role === "LIBRARIAN" ? "rgba(249,115,22,0.12)" : "rgba(16,185,129,0.12)",
+                color: user?.role === "ADMIN" ? "#4338ca" : user?.role === "LIBRARIAN" ? "#c2410c" : "#047857",
+                fontSize: ".75rem",
+                fontWeight: 600,
+              }}
+            >
+              {user?.role || "STUDENT"}
+            </span>
+          </div>
+          <p className="text-muted small mb-0">
+            Welcome to BookSphere. Here's your tailored {userRoleTitle.toLowerCase()}.
+          </p>
+        </div>
       </div>
 
       {/* 4 Live KPI Cards */}
@@ -102,7 +130,8 @@ const Dashboard = () => {
           <div className="col-12 col-lg-8">
             <RecentActivity recentBorrows={recentBorrows} />
           </div>
-          <div className="col-12 col-lg-4">
+          <div className="col-12 col-lg-4 d-flex flex-column gap-3">
+            <OverdueBooks borrows={recentBorrows} />
             <QuickActions />
           </div>
         </div>

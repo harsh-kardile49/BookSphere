@@ -23,18 +23,18 @@ const MembersTable = ({
 
   if (members.length === 0) {
     return (
-      <div className="p-5 text-center my-4 bg-light rounded-4">
+      <div className="p-5 text-center my-4 card border rounded-4 shadow-sm" style={{ background: "var(--surface-card)" }}>
         <div
-          className="rounded-circle mx-auto d-flex align-items-center justify-content-center mb-3 text-primary"
-          style={{ width: 56, height: 56, background: "var(--bs-indigo-light)" }}
+          className="rounded-circle mx-auto d-flex align-items-center justify-content-center mb-3"
+          style={{ width: 56, height: 56, background: "rgba(99, 102, 241, 0.15)", color: "#818cf8" }}
         >
           <User size={28} />
         </div>
-        <h5 className="fw-bold text-dark mb-1">No members found</h5>
-        <p className="text-secondary small mb-3">
+        <h5 className="fw-bold mb-1" style={{ color: "var(--text-primary)" }}>No members found</h5>
+        <p className="small mb-3" style={{ color: "var(--text-muted)" }}>
           {searchTerm
             ? `Try searching with a different name, email, or member ID matching "${searchTerm}".`
-            : "Add your first library member to start managing borrowing activity."}
+            : "No library members registered under this section."}
         </p>
         {searchTerm && (
           <button

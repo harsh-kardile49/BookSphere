@@ -88,6 +88,15 @@ public class BorrowServiceImpl implements BorrowService {
         transaction.setReturnDate(today);
         transaction.setStatus("RETURNED");
 
+        // Calculate Overdue Fine (₹10 per day overdue)
+        double fine = 0.0;
+        if (transaction.getDueDate() != null && today.isAfter(transaction.getDueDate())) {
+            long overdueDays = java.time.temporal.ChronoUnit.DAYS.between(transaction.getDueDate(), today);
+            double finePerDay = 10.0;
+            fine = Math.max(0.0, overdueDays * finePerDay);
+        }
+        transaction.setFine(fine);
+
         // Increment book inventory stock back
         Book book = transaction.getBook();
         if (book != null) {
@@ -103,6 +112,8 @@ public class BorrowServiceImpl implements BorrowService {
         boolean overdue = false;
         if ("ACTIVE".equalsIgnoreCase(t.getStatus()) && t.getDueDate() != null) {
             overdue = LocalDate.now().isAfter(t.getDueDate());
+        } else if ("RETURNED".equalsIgnoreCase(t.getStatus()) && t.getReturnDate() != null && t.getDueDate() != null) {
+            overdue = t.getReturnDate().isAfter(t.getDueDate());
         }
 
         return BorrowResponse.builder()

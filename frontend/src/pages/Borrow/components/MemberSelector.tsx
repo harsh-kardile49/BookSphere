@@ -145,7 +145,7 @@ const MemberSelector = ({
                         {member.avatarInitials}
                       </div>
                       <div>
-                        <div className="fw-semibold text-dark small">
+                        <div className="fw-semibold small" style={{ color: "var(--text-primary)" }}>
                           {member.name}
                         </div>
                         <div className="text-muted" style={{ fontSize: ".74rem" }}>

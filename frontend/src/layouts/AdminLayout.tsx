@@ -4,7 +4,7 @@ import Sidebar from "../components/common/Sidebar";
 
 const AdminLayout = () => {
   return (
-    <div className="d-flex min-vh-100" style={{ backgroundColor: "#f6f4ee" }}>
+    <div className="d-flex min-vh-100" style={{ backgroundColor: "var(--surface-page)", transition: "background-color 0.2s ease" }}>
       {/* Sidebar - Narrow Full Height on Left */}
       <div className="d-none d-md-block" style={{ width: "90px", flexShrink: 0 }}>
         <Sidebar />

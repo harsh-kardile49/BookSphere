@@ -17,7 +17,7 @@ const KpiCards = ({
     {
       label: "Catalog Books",
       value: totalBooks.toLocaleString(),
-      subtext: "Titles registered in DB",
+      subtext: "Total registered titles",
       icon: <BookOpen size={20} />,
       iconBg: "var(--bs-indigo-light)",
       iconColor: "var(--bs-indigo)",

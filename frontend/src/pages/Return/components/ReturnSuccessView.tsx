@@ -35,7 +35,7 @@ const ReturnSuccessView = ({
       <h2 className="fw-bold text-dark mb-2">Book Returned & Stock Restored</h2>
       <p className="text-secondary small mb-0">
         <strong>"{loan.bookTitle}"</strong> has been successfully returned by{" "}
-        <strong>{loan.userName}</strong>. Inventory stock has been restored in MySQL.
+        <strong>{loan.userName}</strong>. Inventory copy returned to catalog shelf.
       </p>
 
       {/* Receipt Box */}
