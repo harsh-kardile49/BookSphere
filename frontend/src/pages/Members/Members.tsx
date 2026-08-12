@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { INITIAL_MEMBERS_DATA, type Member, type MembershipType, type MemberStatus, type MemberLoan } from "./data/membersData";
+import { type Member, type MembershipType, type MemberStatus, type MemberLoan } from "./data/membersData";
 import MembersHeader from "./components/MembersHeader";
 import MembersKpiCards from "./components/MembersKpiCards";
 import MembersToolbar from "./components/MembersToolbar";
@@ -52,7 +52,7 @@ function mapBackendUserToMember(
     memberCode: `MEM-${1000 + user.id}`,
     name,
     email: user.email,
-    phone: user.phone || "+91 98765 43210",
+    phone: user.phone || "",
     role: user.role || "STUDENT",
     membershipType: (user.role === "ADMIN" ? "Premium" : user.role === "LIBRARIAN" ? "Standard" : "Student") as MembershipType,
     avatarBg: gradient,
@@ -62,8 +62,8 @@ function mapBackendUserToMember(
     totalBorrowedCount: userBorrows.length,
     finesAmount: 0,
     status: "Active" as MemberStatus,
-    joinedDate: "2026",
-    address: "Library Registered Member",
+    joinedDate: "",
+    address: "",
     activeLoans: activeLoans,
     borrowingHistory: [],
     activityTimeline: [],
@@ -71,7 +71,7 @@ function mapBackendUserToMember(
 }
 
 const Members = () => {
-  const [membersList, setMembersList] = useState<Member[]>(INITIAL_MEMBERS_DATA);
+  const [membersList, setMembersList] = useState<Member[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("ALL");

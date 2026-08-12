@@ -134,11 +134,11 @@ const BookDetail = () => {
   const currentGradient = GRADIENTS[(Number(book?.id || 1)) % GRADIENTS.length];
   const coverInitials = book?.title
     ? book.title
-        .split(" ")
-        .map((w) => w[0])
-        .join("")
-        .slice(0, 2)
-        .toUpperCase()
+      .split(" ")
+      .map((w) => w[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase()
     : "BK";
 
   if (isLoading) {
@@ -176,7 +176,7 @@ const BookDetail = () => {
     <div className="book-detail-page-container">
       {/* ── Navigation Header ── */}
       <div className="book-detail-header mb-4">
-        <Link to="/books" className="d-inline-flex align-items-center gap-2 text-decoration-none fw-semibold text-dark small card border px-3 py-2 rounded-pill shadow-sm">
+        <Link to="/books" className="d-inline-flex align-items-center gap-2 text-decoration-none fw-semibold text-dark small bg-white border px-3 py-2 rounded-pill shadow-sm">
           <ArrowLeft size={16} />
           <span>Back to Books Catalog</span>
         </Link>

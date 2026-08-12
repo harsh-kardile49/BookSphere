@@ -16,7 +16,7 @@ import {
   ArrowRight,
   Sparkles,
   CheckCircle2,
-  ShieldCheck,
+
 } from "lucide-react";
 
 const Register = () => {
@@ -94,10 +94,9 @@ const Register = () => {
                       </span>
                       <input
                         type="text"
-                        className={`form-control border-light rounded-3 py-2 ${
-                          errors.firstName ? "is-invalid" : ""
-                        }`}
-                        placeholder="Alex"
+                        className={`form-control border-light rounded-3 py-2 ${errors.firstName ? "is-invalid" : ""
+                          }`}
+                        placeholder="John"
                         style={{
                           paddingLeft: 36,
                           fontSize: ".88rem",
@@ -120,10 +119,9 @@ const Register = () => {
                     </label>
                     <input
                       type="text"
-                      className={`form-control border-light rounded-3 py-2 ${
-                        errors.lastName ? "is-invalid" : ""
-                      }`}
-                      placeholder="Morgan"
+                      className={`form-control border-light rounded-3 py-2 ${errors.lastName ? "is-invalid" : ""
+                        }`}
+                      placeholder="Doe"
                       style={{
                         fontSize: ".88rem",
                         height: 42,
@@ -153,10 +151,9 @@ const Register = () => {
                     </span>
                     <input
                       type="email"
-                      className={`form-control border-light rounded-3 py-2 ${
-                        errors.email ? "is-invalid" : ""
-                      }`}
-                      placeholder="alex.morgan@example.com"
+                      className={`form-control border-light rounded-3 py-2 ${errors.email ? "is-invalid" : ""
+                        }`}
+                      placeholder="john.doe@example.com"
                       style={{
                         paddingLeft: 40,
                         fontSize: ".88rem",
@@ -186,9 +183,8 @@ const Register = () => {
                       <Shield size={16} />
                     </span>
                     <select
-                      className={`form-select border-light rounded-3 py-2 ${
-                        errors.role ? "is-invalid" : ""
-                      }`}
+                      className={`form-select border-light rounded-3 py-2 ${errors.role ? "is-invalid" : ""
+                        }`}
                       style={{
                         paddingLeft: 40,
                         fontSize: ".88rem",
@@ -223,9 +219,8 @@ const Register = () => {
                       </span>
                       <input
                         type={showPassword ? "text" : "password"}
-                        className={`form-control border-light rounded-3 py-2 ${
-                          errors.password ? "is-invalid" : ""
-                        }`}
+                        className={`form-control border-light rounded-3 py-2 ${errors.password ? "is-invalid" : ""
+                          }`}
                         placeholder="••••••••"
                         style={{
                           paddingLeft: 36,
@@ -259,9 +254,8 @@ const Register = () => {
                     </label>
                     <input
                       type={showPassword ? "text" : "password"}
-                      className={`form-control border-light rounded-3 py-2 ${
-                        errors.confirmPassword ? "is-invalid" : ""
-                      }`}
+                      className={`form-control border-light rounded-3 py-2 ${errors.confirmPassword ? "is-invalid" : ""
+                        }`}
                       placeholder="••••••••"
                       style={{
                         fontSize: ".88rem",
@@ -307,10 +301,6 @@ const Register = () => {
 
             {/* Footer & Security Badge */}
             <div>
-              <div className="d-flex align-items-center justify-content-center gap-1 text-muted mb-2" style={{ fontSize: ".74rem" }}>
-                <ShieldCheck size={13} color="#10b981" />
-                <span>Protected by 256-bit SSL encryption</span>
-              </div>
               <p className="text-center text-muted small mb-0" style={{ fontSize: ".82rem" }}>
                 Already have an account?{" "}
                 <Link
